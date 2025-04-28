@@ -1,9 +1,7 @@
 
 import React, { useState } from 'react';
 import Header from '@/components/Header';
-import SummaryCard from '@/components/SummaryCard';
 import Sidebar from '@/components/Sidebar';
-import { CircleDollarSign, CalendarDays, Award, Calendar, FileMinus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -18,62 +16,13 @@ const Index = () => {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <Header onMenuClick={toggleSidebar} />
       
-      <main className="p-4 max-w-md mx-auto">
-        <section className="space-y-4 mb-8">
-          <h2 className="text-lg font-semibold mb-2">Resumo</h2>
-          
-          <SummaryCard 
-            title="Bankroll"
-            value="R$ 2.500,00"
-            icon={CircleDollarSign}
+      <main className="flex justify-center items-center p-4">
+        <div className="w-full max-w-3xl">
+          <img 
+            src="/lovable-uploads/77a82eaa-be06-4f0d-b570-77e7d2fee8c6.png"
+            alt="Jogador de poker com cartas e fichas"
+            className="w-full h-auto rounded-lg shadow-lg"
           />
-          
-          <SummaryCard 
-            title="Próximo Torneio"
-            value="Texas Hold'em - R$ 500"
-            subtitle="23/04 - 19:00 - Clube do Poker"
-            icon={CalendarDays}
-          />
-          
-          <SummaryCard 
-            title="Último Jogo"
-            value="+R$ 350,00"
-            subtitle="20/04 - Cash Game"
-            icon={Award}
-          />
-        </section>
-
-        <section className="space-y-4">
-          <h2 className="text-lg font-semibold mb-2">Ações Rápidas</h2>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <Button className="gold-button flex items-center gap-2 h-auto py-3">
-              <Calendar size={18} />
-              Novo Torneio
-            </Button>
-            
-            <Button className="gold-button flex items-center gap-2 h-auto py-3">
-              <Award size={18} />
-              Registrar Jogo
-            </Button>
-            
-            <Button className="gold-button flex items-center gap-2 h-auto py-3">
-              <Award size={18} />
-              Ver Rankings
-            </Button>
-            
-            <Button className="gold-button flex items-center gap-2 h-auto py-3">
-              <FileMinus size={18} />
-              Despesas
-            </Button>
-          </div>
-        </section>
-
-        {/* Alerta/Destaque */}
-        <div className="mt-8 p-4 bg-poker-red bg-opacity-10 rounded-lg border border-poker-red">
-          <p className="text-sm text-poker-red font-medium">
-            Torneio importante em breve! Não se esqueça de confirmar sua presença até amanhã.
-          </p>
         </div>
       </main>
     </div>
@@ -81,3 +30,4 @@ const Index = () => {
 };
 
 export default Index;
+
