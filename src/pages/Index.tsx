@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Header from '@/components/Header';
 import SummaryCard from '@/components/SummaryCard';
 import Sidebar from '@/components/Sidebar';
-import { Chip, Cards, Trophy, Calendar, FileMinus } from 'lucide-react';
+import { CircleDollarSign, CalendarDays, Award, Calendar, FileMinus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
@@ -25,21 +25,21 @@ const Index = () => {
           <SummaryCard 
             title="Bankroll"
             value="R$ 2.500,00"
-            icon={Chip}
+            icon={CircleDollarSign}
           />
           
           <SummaryCard 
             title="Próximo Torneio"
             value="Texas Hold'em - R$ 500"
             subtitle="23/04 - 19:00 - Clube do Poker"
-            icon={Calendar}
+            icon={CalendarDays}
           />
           
           <SummaryCard 
             title="Último Jogo"
             value="+R$ 350,00"
             subtitle="20/04 - Cash Game"
-            icon={Cards}
+            icon={Award}
           />
         </section>
 
@@ -53,12 +53,12 @@ const Index = () => {
             </Button>
             
             <Button className="gold-button flex items-center gap-2 h-auto py-3">
-              <Cards size={18} />
+              <Award size={18} />
               Registrar Jogo
             </Button>
             
             <Button className="gold-button flex items-center gap-2 h-auto py-3">
-              <Trophy size={18} />
+              <Award size={18} />
               Ver Rankings
             </Button>
             

@@ -92,7 +92,7 @@
   }
 
   body {
-    @apply bg-poker-background text-poker-text-dark font-roboto;
+    @apply bg-poker-background text-poker-text-dark font-sans;
     font-family: 'Roboto', sans-serif;
   }
 }
