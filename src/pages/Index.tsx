@@ -16,13 +16,24 @@ const Index = () => {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <Header onMenuClick={toggleSidebar} />
       
-      <main className="flex justify-center items-center p-4">
-        <div className="w-full max-w-3xl">
+      <main className="flex flex-col justify-center items-center p-4 gap-8">
+        <div className="w-full max-w-md">
           <img 
             src="/lovable-uploads/77a82eaa-be06-4f0d-b570-77e7d2fee8c6.png"
             alt="Jogador de poker com cartas e fichas"
-            className="w-full h-auto rounded-lg shadow-lg"
+            className="w-full h-auto rounded-lg"
           />
+        </div>
+        
+        <div className="relative">
+          {/* Light ray effect */}
+          <div className="absolute -inset-2 bg-gradient-to-r from-poker-gold/50 to-poker-gold/30 blur-xl animate-pulse"></div>
+          
+          <Button 
+            className="relative px-8 py-6 text-xl font-bold bg-poker-gold hover:bg-poker-gold/90 text-poker-text-light"
+          >
+            Iniciar
+          </Button>
         </div>
       </main>
     </div>
@@ -30,4 +41,3 @@ const Index = () => {
 };
 
 export default Index;
-
