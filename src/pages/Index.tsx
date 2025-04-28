@@ -1,11 +1,13 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import { Button } from '@/components/ui/button';
 
 const Index = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -26,11 +28,11 @@ const Index = () => {
         </div>
         
         <div className="relative">
-          {/* Light ray effect */}
           <div className="absolute -inset-2 bg-gradient-to-r from-poker-gold/50 to-poker-gold/30 blur-xl animate-pulse"></div>
           
           <Button 
             className="relative px-8 py-6 text-xl font-bold bg-poker-gold hover:bg-poker-gold/90 text-poker-text-light"
+            onClick={() => navigate('/register-club')}
           >
             Iniciar
           </Button>
