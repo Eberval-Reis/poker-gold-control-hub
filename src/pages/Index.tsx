@@ -15,7 +15,7 @@ const Index = () => {
       
       <main className="flex flex-col justify-center items-center p-4 gap-8 bg-neutral-800">
         <div className="w-full max-w-md">
-          <img alt="Jogador de poker com cartas e fichas" className="w-full h-auto rounded-lg" src="/lovable-uploads/f1a8745e-4a99-4d21-93a8-de99717a9b35.jpg" />
+          <img alt="Jogador de poker com cartas e fichas" className="w-full h-auto rounded-lg" src="/lovable-uploads/bc2d854d-b1fb-4321-ab88-f11760fd0850.png" />
         </div>
         
         <div className="relative">
