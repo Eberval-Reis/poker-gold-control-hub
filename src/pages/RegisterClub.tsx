@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { ArrowLeft, Trophy, House, Phone, User, MapPin, Link } from 'lucide-react';
@@ -13,6 +13,8 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { useToast } from '@/components/ui/use-toast';
+import Header from '@/components/Header';
+import Sidebar from '@/components/Sidebar';
 
 type FormData = {
   name: string;
@@ -27,7 +29,12 @@ type FormData = {
 const RegisterClub = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
   
   const {
     register,
@@ -45,6 +52,9 @@ const RegisterClub = () => {
 
   return (
     <div className="min-h-screen bg-poker-background">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Header onMenuClick={toggleSidebar} />
+
       <div className="max-w-2xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8">
