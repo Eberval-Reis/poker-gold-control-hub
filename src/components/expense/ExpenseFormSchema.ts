@@ -7,7 +7,7 @@ export const expenseFormSchema = z.object({
   date: z.date({
     required_error: 'Campo obrigatório',
   }),
-  tournament: z.string().optional(),
+  tournament_id: z.string().optional(),
   description: z.string().optional(),
   receipt: z.instanceof(File).optional().nullable(),
 });
@@ -21,11 +21,4 @@ export const expenseTypes = [
   { id: 'accommodation', name: 'Hospedagem', icon: 'hotel' },
   { id: 'material', name: 'Material', icon: 'clipboard' },
   { id: 'other', name: 'Outros', icon: 'file-text' },
-];
-
-// Mock tournaments for dropdown
-export const tournaments = [
-  { id: '1', name: 'Torneio de Poker A - 20/05/2025' },
-  { id: '2', name: 'Torneio de Poker B - 10/06/2025' },
-  { id: '3', name: 'Torneio de Poker C - 25/06/2025' },
 ];

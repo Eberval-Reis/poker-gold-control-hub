@@ -1,13 +1,11 @@
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { CalendarIcon, Tag, Droplet, ArrowLeft, PaperclipIcon } from 'lucide-react';
-import { toast } from "@/hooks/use-toast";
-import { expenseFormSchema, ExpenseFormData, expenseTypes, tournaments } from './ExpenseFormSchema';
-
+import { CalendarIcon, Tag, Droplet, PaperclipIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -28,10 +26,17 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { toast } from '@/hooks/use-toast';
+import { expenseFormSchema, ExpenseFormData, expenseTypes } from './ExpenseFormSchema';
+import { expenseService } from '@/services/expense.service';
+import { tournamentService } from '@/services/tournament.service';
 
 const ExpenseForm = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const queryClient = useQueryClient();
   const [receiptFileName, setReceiptFileName] = useState<string | null>(null);
+  const isEditing = Boolean(id);
   
   const form = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseFormSchema),
@@ -39,9 +44,47 @@ const ExpenseForm = () => {
       type: '',
       amount: '',
       date: new Date(),
-      tournament: '',
+      tournament_id: '',
       description: '',
       receipt: null,
+    },
+  });
+
+  // Fetch tournaments for dropdown
+  const { data: tournaments = [] } = useQuery({
+    queryKey: ['tournaments'],
+    queryFn: tournamentService.getTournaments,
+  });
+  
+  // Get expense data if editing
+  const { isLoading: isLoadingExpense } = useQuery({
+    queryKey: ['expense', id],
+    queryFn: () => expenseService.getExpenseById(id as string),
+    enabled: !!id,
+    onSuccess: (data) => {
+      if (data) {
+        form.reset({
+          type: data.type,
+          amount: String(data.amount),
+          date: new Date(data.date),
+          tournament_id: data.tournament_id || '',
+          description: data.description || '',
+          receipt: null, // Can't set File object from URL
+        });
+        
+        if (data.receipt_url) {
+          const fileName = data.receipt_url.split('/').pop() || 'comprovante';
+          setReceiptFileName(fileName);
+        }
+      }
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar dados da despesa",
+        description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
+      });
+      navigate('/expenses');
     },
   });
 
@@ -53,25 +96,42 @@ const ExpenseForm = () => {
       onChange(file);
     }
   };
+  
+  // Create or update expense mutation
+  const mutation = useMutation({
+    mutationFn: (data: ExpenseFormData) => {
+      const { receipt, ...expenseData } = data;
+      const numericAmount = parseFloat(expenseData.amount);
+      
+      const formattedData = {
+        ...expenseData,
+        amount: numericAmount,
+        date: data.date.toISOString().split('T')[0],
+      };
+      
+      return isEditing
+        ? expenseService.updateExpense(id as string, formattedData, receipt || undefined)
+        : expenseService.createExpense(formattedData, receipt || undefined);
+    },
+    onSuccess: () => {
+      toast({
+        title: `Despesa ${isEditing ? 'atualizada' : 'cadastrada'} com sucesso!`,
+        description: "Os dados foram salvos.",
+      });
+      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      navigate('/expenses');
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: `Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} despesa`,
+        description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
+      });
+    },
+  });
 
   const onSubmit = (data: ExpenseFormData) => {
-    console.log("Form submitted:", data);
-    
-    // Show success toast
-    toast({
-      title: "Despesa cadastrada com sucesso!",
-      description: `${data.type} - R$ ${data.amount}`,
-      duration: 3000,
-    });
-    
-    // Clear form
-    form.reset();
-    setReceiptFileName(null);
-    
-    // Navigate back after short delay
-    setTimeout(() => {
-      navigate('/');
-    }, 2000);
+    mutation.mutate(data);
   };
 
   return (
@@ -87,7 +147,7 @@ const ExpenseForm = () => {
                 <Tag className="h-4 w-4 text-poker-gold" />
                 Tipo de Despesa*
               </FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="bg-white">
                     <SelectValue placeholder="Selecione o tipo de despesa" />
@@ -178,20 +238,20 @@ const ExpenseForm = () => {
         {/* Tournament (optional) */}
         <FormField
           control={form.control}
-          name="tournament"
+          name="tournament_id"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Torneio Relacionado (opcional)</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="bg-white">
                     <SelectValue placeholder="Vincular a um torneio específico" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {tournaments.map((tournament) => (
+                  {tournaments.map((tournament: any) => (
                     <SelectItem key={tournament.id} value={tournament.id}>
-                      {tournament.name}
+                      {tournament.name} - {format(new Date(tournament.date), 'dd/MM/yyyy')}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -238,7 +298,7 @@ const ExpenseForm = () => {
                     className="bg-white"
                     onClick={() => document.getElementById('receipt-upload')?.click()}
                   >
-                    Anexar Foto/PDF
+                    {isEditing && receiptFileName ? 'Trocar comprovante' : 'Anexar Foto/PDF'}
                   </Button>
                   {receiptFileName && (
                     <span className="text-sm text-muted-foreground">
@@ -262,14 +322,21 @@ const ExpenseForm = () => {
 
         {/* Form Actions */}
         <div className="flex gap-4 pt-4">
-          <Button type="submit" className="bg-poker-gold hover:bg-poker-gold/90">
-            Salvar
+          <Button 
+            type="submit" 
+            className="bg-poker-gold hover:bg-poker-gold/90"
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending 
+              ? 'Salvando...' 
+              : isEditing ? 'Atualizar' : 'Salvar'}
           </Button>
           <Button
             type="button"
             variant="outline"
             className="border-poker-gold text-poker-gold hover:bg-poker-gold/10"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/expenses')}
+            disabled={mutation.isPending}
           >
             Cancelar
           </Button>

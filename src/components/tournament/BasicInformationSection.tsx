@@ -2,6 +2,7 @@
 import React from 'react';
 import { Trophy, Building, Calendar, Clock, BarChart } from 'lucide-react';
 import { format } from 'date-fns';
+import { useQuery } from '@tanstack/react-query';
 import { UseFormReturn } from 'react-hook-form';
 import {
   FormField,
@@ -26,13 +27,20 @@ import {
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
-import { TournamentFormData, clubs, tournamentTypes } from './TournamentFormSchema';
+import { TournamentFormData, tournamentTypes } from './TournamentFormSchema';
+import { clubService } from '@/services/club.service';
 
 interface BasicInformationSectionProps {
   form: UseFormReturn<TournamentFormData>;
 }
 
 const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form }) => {
+  // Fetch clubs from Supabase
+  const { data: clubs = [], isLoading } = useQuery({
+    queryKey: ['clubs'],
+    queryFn: clubService.getClubs,
+  });
+  
   return (
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-poker-text-dark">Informações Básicas</h2>
@@ -56,7 +64,7 @@ const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form 
 
       <FormField
         control={form.control}
-        name="club"
+        name="club_id"
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center gap-2">
@@ -65,11 +73,12 @@ const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form 
             </FormLabel>
             <Select
               onValueChange={field.onChange}
-              defaultValue={field.value}
+              value={field.value}
+              disabled={isLoading}
             >
               <FormControl>
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Selecione um clube" />
+                  <SelectValue placeholder={isLoading ? "Carregando..." : "Selecione um clube"} />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
@@ -162,7 +171,7 @@ const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form 
             </FormLabel>
             <Select
               onValueChange={field.onChange}
-              defaultValue={field.value}
+              value={field.value}
             >
               <FormControl>
                 <SelectTrigger className="w-full">

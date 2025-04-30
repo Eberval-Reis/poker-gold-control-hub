@@ -1,13 +1,14 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
 } from '@/components/ui/form';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
@@ -15,23 +16,86 @@ import BasicInformationSection from '@/components/tournament/BasicInformationSec
 import TournamentStructureSection from '@/components/tournament/TournamentStructureSection';
 import AdditionalDetailsSection from '@/components/tournament/AdditionalDetailsSection';
 import { TournamentFormData, tournamentFormSchema } from '@/components/tournament/TournamentFormSchema';
+import { tournamentService } from '@/services/tournament.service';
 
 const RegisterTournament = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { id } = useParams();
+  const queryClient = useQueryClient();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const isEditing = Boolean(id);
   
   const form = useForm<TournamentFormData>({
     resolver: zodResolver(tournamentFormSchema),
     defaultValues: {
       name: '',
-      club: '',
+      club_id: '',
       time: '',
       type: '',
-      initialStack: '',
-      blindStructure: '',
+      initial_stack: '',
+      blind_structure: '',
       prizes: '',
       notes: '',
+    },
+  });
+
+  // Get tournament data if editing
+  const { isLoading: isLoadingTournament } = useQuery({
+    queryKey: ['tournament', id],
+    queryFn: () => tournamentService.getTournamentById(id as string),
+    enabled: !!id,
+    onSuccess: (data) => {
+      if (data) {
+        form.reset({
+          name: data.name,
+          club_id: data.club_id,
+          date: new Date(data.date),
+          time: data.time,
+          type: data.type,
+          initial_stack: data.initial_stack || '',
+          blind_structure: data.blind_structure || '',
+          prizes: data.prizes || '',
+          notes: data.notes || '',
+        });
+      }
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar dados do torneio",
+        description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
+      });
+      navigate('/tournaments');
+    },
+  });
+
+  // Create or update tournament mutation
+  const mutation = useMutation({
+    mutationFn: (data: TournamentFormData) => {
+      // Format date for database storage
+      const formattedData = {
+        ...data,
+        date: data.date.toISOString().split('T')[0],
+      };
+      
+      return isEditing
+        ? tournamentService.updateTournament(id as string, formattedData)
+        : tournamentService.createTournament(formattedData);
+    },
+    onSuccess: () => {
+      toast({
+        title: `Torneio ${isEditing ? 'atualizado' : 'cadastrado'} com sucesso!`,
+        description: "Os dados foram salvos.",
+      });
+      queryClient.invalidateQueries({ queryKey: ['tournaments'] });
+      navigate('/tournaments');
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: `Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} torneio`,
+        description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
+      });
     },
   });
 
@@ -40,15 +104,11 @@ const RegisterTournament = () => {
   };
 
   const useStandardStructure = () => {
-    form.setValue('blindStructure', '1: 25/50, 2: 50/100, 3: 75/150, 4: 100/200, 5: 150/300...');
+    form.setValue('blind_structure', '1: 25/50, 2: 50/100, 3: 75/150, 4: 100/200, 5: 150/300...');
   };
 
   const onSubmit = (data: TournamentFormData) => {
-    console.log(data);
-    toast({
-      title: "Torneio cadastrado com sucesso!",
-      description: "Os dados foram salvos.",
-    });
+    mutation.mutate(data);
   };
 
   return (
@@ -63,44 +123,57 @@ const RegisterTournament = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/tournaments')}
               className="text-poker-gold hover:text-poker-gold/80"
             >
               <ArrowLeft className="h-6 w-6" />
             </Button>
-            <h1 className="text-2xl font-bold text-poker-text-dark">Cadastrar Torneio</h1>
+            <h1 className="text-2xl font-bold text-poker-text-dark">
+              {isEditing ? 'Editar Torneio' : 'Cadastrar Torneio'}
+            </h1>
           </div>
           <p className="text-[#5a5a5a]">
-            Preencha os detalhes do torneio
+            {isEditing 
+              ? 'Atualize os detalhes do torneio'
+              : 'Preencha os detalhes do torneio'}
           </p>
         </div>
 
-        {/* Form */}
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <BasicInformationSection form={form} />
-            <TournamentStructureSection form={form} useStandardStructure={useStandardStructure} />
-            <AdditionalDetailsSection form={form} />
+        {isLoadingTournament ? (
+          <div className="flex justify-center items-center p-8">
+            <p>Carregando...</p>
+          </div>
+        ) : (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <BasicInformationSection form={form} />
+              <TournamentStructureSection form={form} useStandardStructure={useStandardStructure} />
+              <AdditionalDetailsSection form={form} />
 
-            {/* Form Actions */}
-            <div className="flex gap-4 pt-4">
-              <Button
-                type="submit"
-                className="flex-1 bg-poker-gold hover:bg-poker-gold/90 text-white"
-              >
-                Salvar
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate('/')}
-                className="flex-1 border-poker-gold text-poker-gold hover:bg-poker-gold/10"
-              >
-                Cancelar
-              </Button>
-            </div>
-          </form>
-        </Form>
+              {/* Form Actions */}
+              <div className="flex gap-4 pt-4">
+                <Button
+                  type="submit"
+                  className="flex-1 bg-poker-gold hover:bg-poker-gold/90 text-white"
+                  disabled={mutation.isPending}
+                >
+                  {mutation.isPending 
+                    ? 'Salvando...' 
+                    : isEditing ? 'Atualizar' : 'Salvar'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/tournaments')}
+                  className="flex-1 border-poker-gold text-poker-gold hover:bg-poker-gold/10"
+                  disabled={mutation.isPending}
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </form>
+          </Form>
+        )}
       </div>
     </div>
   );
