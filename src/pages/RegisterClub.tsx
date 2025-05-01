@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -66,40 +65,52 @@ const RegisterClub = () => {
     queryKey: ['club', id],
     queryFn: () => clubService.getClubById(id as string),
     enabled: !!id,
-    onSuccess: (data) => {
-      if (data) {
-        form.reset({
-          name: data.name || '',
-          location: data.location || '',
-          phone: data.phone || '',
-          contact_person: data.contact_person || '',
-          reference: data.reference || '',
-          address_link: data.address_link || '',
-          observations: data.observations || '',
-        });
-        
-        // Expand additional section if any field is filled
-        if (data.phone || data.contact_person || data.reference || data.address_link) {
-          setIsOpen(true);
+    meta: {
+      onSuccess: (data: any) => {
+        if (data) {
+          form.reset({
+            name: data.name || '',
+            location: data.location || '',
+            phone: data.phone || '',
+            contact_person: data.contact_person || '',
+            reference: data.reference || '',
+            address_link: data.address_link || '',
+            observations: data.observations || '',
+          });
+          
+          // Expand additional section if any field is filled
+          if (data.phone || data.contact_person || data.reference || data.address_link) {
+            setIsOpen(true);
+          }
         }
+      },
+      onError: (error: Error) => {
+        toast({
+          variant: "destructive",
+          title: "Erro ao carregar dados do clube",
+          description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
+        });
+        navigate('/clubs');
       }
-    },
-    onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Erro ao carregar dados do clube",
-        description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
-      });
-      navigate('/clubs');
-    },
+    }
   });
   
   // Create or update club mutation
   const mutation = useMutation({
     mutationFn: (data: ClubFormData) => {
+      const formattedData = {
+        name: data.name, // Ensure required field
+        location: data.location, // Ensure required field
+        phone: data.phone,
+        contact_person: data.contact_person,
+        reference: data.reference,
+        address_link: data.address_link,
+        observations: data.observations,
+      };
+      
       return isEditing
-        ? clubService.updateClub(id as string, data)
-        : clubService.createClub(data);
+        ? clubService.updateClub(id as string, formattedData)
+        : clubService.createClub(formattedData);
     },
     onSuccess: () => {
       toast({
@@ -117,7 +128,7 @@ const RegisterClub = () => {
       });
     },
   });
-  
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };

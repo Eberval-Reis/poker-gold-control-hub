@@ -27,7 +27,7 @@ const TournamentStructureSection: React.FC<TournamentStructureSectionProps> = ({
       
       <FormField
         control={form.control}
-        name="initialStack"
+        name="initial_stack"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Stack Inicial</FormLabel>
@@ -45,7 +45,7 @@ const TournamentStructureSection: React.FC<TournamentStructureSectionProps> = ({
 
       <FormField
         control={form.control}
-        name="blindStructure"
+        name="blind_structure"
         render={({ field }) => (
           <FormItem>
             <div className="flex items-center justify-between">

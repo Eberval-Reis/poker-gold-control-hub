@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -61,31 +60,33 @@ const ExpenseForm = () => {
     queryKey: ['expense', id],
     queryFn: () => expenseService.getExpenseById(id as string),
     enabled: !!id,
-    onSuccess: (data) => {
-      if (data) {
-        form.reset({
-          type: data.type,
-          amount: String(data.amount),
-          date: new Date(data.date),
-          tournament_id: data.tournament_id || '',
-          description: data.description || '',
-          receipt: null, // Can't set File object from URL
-        });
-        
-        if (data.receipt_url) {
-          const fileName = data.receipt_url.split('/').pop() || 'comprovante';
-          setReceiptFileName(fileName);
+    meta: {
+      onSuccess: (data: any) => {
+        if (data) {
+          form.reset({
+            type: data.type,
+            amount: String(data.amount),
+            date: new Date(data.date),
+            tournament_id: data.tournament_id || '',
+            description: data.description || '',
+            receipt: null, // Can't set File object from URL
+          });
+          
+          if (data.receipt_url) {
+            const fileName = data.receipt_url.split('/').pop() || 'comprovante';
+            setReceiptFileName(fileName);
+          }
         }
+      },
+      onError: (error: Error) => {
+        toast({
+          variant: "destructive",
+          title: "Erro ao carregar dados da despesa",
+          description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
+        });
+        navigate('/expenses');
       }
-    },
-    onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Erro ao carregar dados da despesa",
-        description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
-      });
-      navigate('/expenses');
-    },
+    }
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (file: File | null) => void) => {
@@ -105,6 +106,7 @@ const ExpenseForm = () => {
       
       const formattedData = {
         ...expenseData,
+        type: expenseData.type, // Ensure this is required
         amount: numericAmount,
         date: data.date.toISOString().split('T')[0],
       };

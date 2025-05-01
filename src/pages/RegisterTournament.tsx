@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -44,29 +43,31 @@ const RegisterTournament = () => {
     queryKey: ['tournament', id],
     queryFn: () => tournamentService.getTournamentById(id as string),
     enabled: !!id,
-    onSuccess: (data) => {
-      if (data) {
-        form.reset({
-          name: data.name,
-          club_id: data.club_id,
-          date: new Date(data.date),
-          time: data.time,
-          type: data.type,
-          initial_stack: data.initial_stack || '',
-          blind_structure: data.blind_structure || '',
-          prizes: data.prizes || '',
-          notes: data.notes || '',
+    meta: {
+      onSuccess: (data: any) => {
+        if (data) {
+          form.reset({
+            name: data.name,
+            club_id: data.club_id,
+            date: new Date(data.date),
+            time: data.time,
+            type: data.type,
+            initial_stack: data.initial_stack || '',
+            blind_structure: data.blind_structure || '',
+            prizes: data.prizes || '',
+            notes: data.notes || '',
+          });
+        }
+      },
+      onError: (error: Error) => {
+        toast({
+          variant: "destructive",
+          title: "Erro ao carregar dados do torneio",
+          description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
         });
+        navigate('/tournaments');
       }
-    },
-    onError: (error) => {
-      toast({
-        variant: "destructive",
-        title: "Erro ao carregar dados do torneio",
-        description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
-      });
-      navigate('/tournaments');
-    },
+    }
   });
 
   // Create or update tournament mutation
@@ -75,7 +76,15 @@ const RegisterTournament = () => {
       // Format date for database storage
       const formattedData = {
         ...data,
+        name: data.name,
+        club_id: data.club_id,
         date: data.date.toISOString().split('T')[0],
+        time: data.time,
+        type: data.type,
+        initial_stack: data.initial_stack,
+        blind_structure: data.blind_structure,
+        prizes: data.prizes,
+        notes: data.notes,
       };
       
       return isEditing
