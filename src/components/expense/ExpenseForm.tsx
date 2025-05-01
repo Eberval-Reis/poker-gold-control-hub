@@ -1,34 +1,23 @@
+
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
-import { CalendarIcon, Tag, Droplet, PaperclipIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { cn } from '@/lib/utils';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form } from '@/components/ui/form';
 import { toast } from '@/hooks/use-toast';
-import { expenseFormSchema, ExpenseFormData, expenseTypes } from './ExpenseFormSchema';
+import { expenseFormSchema, ExpenseFormData } from './ExpenseFormSchema';
 import { expenseService } from '@/services/expense.service';
 import { tournamentService } from '@/services/tournament.service';
+
+// Import the component fields
+import ExpenseTypeField from './ExpenseTypeField';
+import AmountField from './AmountField';
+import DateField from './DateField';
+import TournamentField from './TournamentField';
+import DescriptionField from './DescriptionField';
+import ReceiptField from './ReceiptField';
+import FormActions from './FormActions';
 
 const ExpenseForm = () => {
   const navigate = useNavigate();
@@ -88,15 +77,6 @@ const ExpenseForm = () => {
       }
     }
   });
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, onChange: (file: File | null) => void) => {
-    const file = e.target.files?.[0] || null;
-    
-    if (file) {
-      setReceiptFileName(file.name);
-      onChange(file);
-    }
-  };
   
   // Create or update expense mutation
   const mutation = useMutation({
@@ -106,7 +86,7 @@ const ExpenseForm = () => {
       
       const formattedData = {
         ...expenseData,
-        type: expenseData.type, // Ensure this is required
+        type: expenseData.type,
         amount: numericAmount,
         date: data.date.toISOString().split('T')[0],
       };
@@ -139,210 +119,22 @@ const ExpenseForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {/* Type of Expense */}
-        <FormField
-          control={form.control}
-          name="type"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="flex items-center gap-2">
-                <Tag className="h-4 w-4 text-poker-gold" />
-                Tipo de Despesa*
-              </FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="bg-white">
-                    <SelectValue placeholder="Selecione o tipo de despesa" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {expenseTypes.map((type) => (
-                    <SelectItem key={type.id} value={type.id}>
-                      {type.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
+        <ExpenseTypeField form={form} />
+        <AmountField form={form} />
+        <DateField form={form} />
+        <TournamentField form={form} tournaments={tournaments} />
+        <DescriptionField form={form} />
+        <ReceiptField 
+          form={form} 
+          receiptFileName={receiptFileName} 
+          setReceiptFileName={setReceiptFileName}
+          isEditing={isEditing}
         />
-
-        {/* Amount */}
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="flex items-center gap-2">
-                <Droplet className="h-4 w-4 text-poker-gold" />
-                Valor (R$)*
-              </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="0,00"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  className="bg-white"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+        <FormActions 
+          isSubmitting={mutation.isPending} 
+          isEditing={isEditing} 
+          onCancel={() => navigate('/expenses')} 
         />
-
-        {/* Date */}
-        <FormField
-          control={form.control}
-          name="date"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="flex items-center gap-2">
-                <CalendarIcon className="h-4 w-4 text-poker-gold" />
-                Data*
-              </FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-3 text-left font-normal bg-white",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "dd/MM/yyyy")
-                      ) : (
-                        <span>Selecione uma data</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    initialFocus
-                    className="p-3 pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Tournament (optional) */}
-        <FormField
-          control={form.control}
-          name="tournament_id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Torneio Relacionado (opcional)</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger className="bg-white">
-                    <SelectValue placeholder="Vincular a um torneio específico" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {tournaments.map((tournament: any) => (
-                    <SelectItem key={tournament.id} value={tournament.id}>
-                      {tournament.name} - {format(new Date(tournament.date), 'dd/MM/yyyy')}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Description (optional) */}
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Descrição (opcional)</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Detalhes da despesa (ex: 'Gasolina para torneio em SP')"
-                  className="bg-white"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Receipt (optional) */}
-        <FormField
-          control={form.control}
-          name="receipt"
-          render={({ field: { value, onChange, ...field } }) => (
-            <FormItem>
-              <FormLabel className="flex items-center gap-2">
-                <PaperclipIcon className="h-4 w-4 text-poker-gold" />
-                Comprovante (opcional)
-              </FormLabel>
-              <FormControl>
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="bg-white"
-                    onClick={() => document.getElementById('receipt-upload')?.click()}
-                  >
-                    {isEditing && receiptFileName ? 'Trocar comprovante' : 'Anexar Foto/PDF'}
-                  </Button>
-                  {receiptFileName && (
-                    <span className="text-sm text-muted-foreground">
-                      {receiptFileName}
-                    </span>
-                  )}
-                  <Input
-                    id="receipt-upload"
-                    type="file"
-                    accept="image/*,application/pdf"
-                    className="hidden"
-                    onChange={(e) => handleFileChange(e, onChange)}
-                    {...field}
-                  />
-                </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Form Actions */}
-        <div className="flex gap-4 pt-4">
-          <Button 
-            type="submit" 
-            className="bg-poker-gold hover:bg-poker-gold/90"
-            disabled={mutation.isPending}
-          >
-            {mutation.isPending 
-              ? 'Salvando...' 
-              : isEditing ? 'Atualizar' : 'Salvar'}
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="border-poker-gold text-poker-gold hover:bg-poker-gold/10"
-            onClick={() => navigate('/expenses')}
-            disabled={mutation.isPending}
-          >
-            Cancelar
-          </Button>
-        </div>
       </form>
     </Form>
   );
