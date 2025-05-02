@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
-import ExpenseForm from '@/components/expense/ExpenseForm';
 
 const RegisterExpense = () => {
   const navigate = useNavigate();
@@ -28,20 +27,23 @@ const RegisterExpense = () => {
               variant="ghost" 
               size="icon" 
               className="text-poker-gold hover:text-poker-gold hover:bg-gray-100" 
-              onClick={() => navigate('/expenses')}
+              onClick={() => navigate('/')}
             >
               <ArrowLeft size={24} />
             </Button>
             <h1 className="text-2xl font-bold">Cadastrar Despesa</h1>
           </div>
           <p className="text-[#5a5a5a]">
-            Registre gastos com torneios, viagens ou outros
+            Supabase foi desconectado. Este formulário não está funcional.
           </p>
         </div>
         
         <Card>
           <CardContent className="pt-6 mx-0 px-0">
-            <ExpenseForm />
+            <div className="p-4">
+              <p>A integração com o Supabase foi removida.</p>
+              <p className="mt-4">Para restaurar a funcionalidade, você precisará reconectar o Supabase.</p>
+            </div>
           </CardContent>
         </Card>
       </div>
