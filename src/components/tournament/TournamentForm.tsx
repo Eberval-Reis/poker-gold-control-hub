@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -10,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import BasicInformationSection from '@/components/tournament/BasicInformationSection';
 import TournamentStructureSection from '@/components/tournament/TournamentStructureSection';
 import AdditionalDetailsSection from '@/components/tournament/AdditionalDetailsSection';
+import FormActions from '@/components/tournament/FormActions';
 import { TournamentFormData, tournamentFormSchema } from '@/components/tournament/TournamentFormSchema';
 import { tournamentService } from '@/services/tournament.service';
 
