@@ -6,21 +6,49 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
+import { toast } from '@/hooks/use-toast';
 import {
   Carousel,
   CarouselContent,
   CarouselItem
 } from '@/components/ui/autoplay-carousel';
+import { login } from '@/services/auth.service';
 
 const Index = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login with:', email, password);
-    navigate('/register-club');
+    setIsLoading(true);
+    
+    try {
+      const result = await login({ email, password });
+      
+      if (result.success) {
+        toast({
+          title: "Login bem-sucedido",
+          description: "Bem-vindo ao sistema!"
+        });
+        navigate('/register-club');
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Erro de login",
+          description: result.error || "Credenciais inválidas"
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro de conexão",
+        description: "Não foi possível conectar ao serviço de autenticação"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleRegister = () => {
@@ -119,8 +147,9 @@ const Index = () => {
               <Button
                 type="submit"
                 className="w-full bg-poker-gold hover:bg-poker-gold/90 text-black font-bold transition-all"
+                disabled={isLoading}
               >
-                Entrar
+                {isLoading ? 'Entrando...' : 'Entrar'}
               </Button>
               
               <div className="pt-4 text-center">
