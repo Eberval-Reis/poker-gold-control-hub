@@ -1,115 +1,140 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Wallet, TrendingUp, Building, FileText } from 'lucide-react';
-import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
+import { Chip, Cards, Key, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem
+} from '@/components/ui/autoplay-carousel';
 
 const Index = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Login with:', email, password);
+    navigate('/register-club');
+  };
+
+  const handleRegister = () => {
+    navigate('/register-club');
   };
   
   return (
-    <div className="min-h-screen bg-poker-background">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <Header onMenuClick={toggleSidebar} />
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Background Carousel */}
+      <div className="absolute inset-0 z-0">
+        <Carousel autoplay={true} interval={6000} loop={true} className="w-full h-full">
+          <CarouselContent className="h-screen">
+            <CarouselItem className="h-full">
+              <div className="relative w-full h-full">
+                <img 
+                  src="/lovable-uploads/bc2d854d-b1fb-4321-ab88-f11760fd0850.png" 
+                  alt="Poker table with cards" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80"></div>
+              </div>
+            </CarouselItem>
+            <CarouselItem className="h-full">
+              <div className="relative w-full h-full">
+                <img 
+                  src="/lovable-uploads/77a82eaa-be06-4f0d-b570-77e7d2fee8c6.png" 
+                  alt="Poker chips on table" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80"></div>
+              </div>
+            </CarouselItem>
+            <CarouselItem className="h-full">
+              <div className="relative w-full h-full">
+                <img 
+                  src="/lovable-uploads/abccd166-aa10-4419-be2b-f38e178e2b38.png" 
+                  alt="Poker cards close up" 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80"></div>
+              </div>
+            </CarouselItem>
+          </CarouselContent>
+        </Carousel>
+      </div>
+
+      {/* Poker Theme Elements */}
+      <div className="absolute top-8 left-8 z-10">
+        <Chip size={32} className="text-poker-gold animate-pulse" />
+      </div>
+      <div className="absolute bottom-8 right-8 z-10">
+        <Cards size={40} className="text-poker-gold animate-pulse" />
+      </div>
       
-      <main className="p-6">
-        <div className="max-w-4xl mx-auto space-y-8">
-          {/* Hero Section */}
-          <div className="flex flex-col md:flex-row items-center gap-8 bg-neutral-800 p-6 rounded-lg">
-            <div className="w-full max-w-xs">
-              <img 
-                alt="Jogador de poker com cartas e fichas" 
-                className="w-full h-auto rounded-lg" 
-                src="/lovable-uploads/bc2d854d-b1fb-4321-ab88-f11760fd0850.png" 
-              />
-            </div>
-            
-            <div className="flex-1 space-y-4">
-              <h1 className="text-3xl font-bold text-white">Poker Club Manager</h1>
-              <p className="text-gray-300">
-                Gerencie clubes, torneios e despesas relacionadas a jogos de poker em um único lugar.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <Button 
-                  className="bg-poker-gold hover:bg-poker-gold/90 text-black font-bold"
-                  onClick={() => navigate('/register-club')}
+      {/* Login Form */}
+      <div className="relative z-20 flex items-center justify-center min-h-screen px-4">
+        <Card className="w-full max-w-md bg-black/80 border border-poker-gold/30 backdrop-blur-sm">
+          <div className="pt-8 px-6 text-center">
+            <h1 className="text-4xl font-bold text-poker-gold mb-2">BEM VINDO</h1>
+            <p className="text-gray-300 mb-6">FAÇA LOGIN</p>
+          </div>
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-gray-200">Email</Label>
+                <div className="relative">
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Seu email"
+                    className="bg-black/40 border-gray-700 text-white pl-10"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                  <Key className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-gray-200">Senha</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Sua senha"
+                    className="bg-black/40 border-gray-700 text-white pl-10"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <LogIn className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                </div>
+              </div>
+              
+              <Button
+                type="submit"
+                className="w-full bg-poker-gold hover:bg-poker-gold/90 text-black font-bold transition-all"
+              >
+                Entrar
+              </Button>
+              
+              <div className="pt-4 text-center">
+                <Button
+                  variant="link"
+                  className="text-poker-gold hover:text-poker-gold/80"
+                  onClick={handleRegister}
                 >
-                  Começar
+                  Novo Login
                 </Button>
               </div>
-            </div>
-          </div>
-          
-          {/* Feature Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <FeatureCard 
-              title="Clubes" 
-              description="Cadastre e gerencie clubes de poker" 
-              icon={Building}
-              onClick={() => navigate('/register-club')} 
-            />
-            
-            <FeatureCard 
-              title="Torneios" 
-              description="Organize torneios e acompanhe resultados" 
-              icon={TrendingUp}
-              onClick={() => navigate('/register-tournament')} 
-            />
-            
-            <FeatureCard 
-              title="Despesas" 
-              description="Registre e controle todas as despesas" 
-              icon={Wallet}
-              onClick={() => navigate('/register-expense')} 
-            />
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-};
-
-const FeatureCard = ({ 
-  title, 
-  description, 
-  icon: Icon, 
-  onClick 
-}: { 
-  title: string; 
-  description: string; 
-  icon: React.ElementType; 
-  onClick: () => void;
-}) => {
-  return (
-    <div 
-      className="relative overflow-hidden group cursor-pointer bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all"
-      onClick={onClick}
-    >
-      <div className="absolute -inset-2 bg-gradient-to-r from-poker-gold/20 to-poker-gold/10 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-      
-      <div className="relative flex flex-col h-full">
-        <div className="rounded-full bg-poker-gold/10 p-3 w-fit mb-4">
-          <Icon size={24} className="text-poker-gold" />
-        </div>
-        
-        <h3 className="text-xl font-bold mb-2 text-poker-text-dark">{title}</h3>
-        <p className="text-gray-600 mb-4">{description}</p>
-        
-        <div className="mt-auto pt-4">
-          <Button 
-            variant="ghost" 
-            className="w-full text-poker-gold hover:text-poker-gold hover:bg-poker-gold/10"
-          >
-            Gerenciar
-          </Button>
-        </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
