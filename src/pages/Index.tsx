@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Chip, Cards, Key, LogIn } from 'lucide-react';
+import { CircleDollarSign, Diamond, Key, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -69,10 +69,10 @@ const Index = () => {
 
       {/* Poker Theme Elements */}
       <div className="absolute top-8 left-8 z-10">
-        <Chip size={32} className="text-poker-gold animate-pulse" />
+        <CircleDollarSign size={32} className="text-poker-gold animate-pulse" />
       </div>
       <div className="absolute bottom-8 right-8 z-10">
-        <Cards size={40} className="text-poker-gold animate-pulse" />
+        <Diamond size={40} className="text-poker-gold animate-pulse" />
       </div>
       
       {/* Login Form */}
