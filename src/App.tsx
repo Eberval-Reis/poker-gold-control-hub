@@ -8,6 +8,10 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import RegisterClub from "./pages/RegisterClub";
 import RegisterTournament from "./pages/RegisterTournament";
+import RegisterExpense from "./pages/RegisterExpense";
+import ClubList from "./pages/ClubList";
+import TournamentList from "./pages/TournamentList";
+import ExpenseList from "./pages/ExpenseList";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +24,14 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/register-club" element={<RegisterClub />} />
+          <Route path="/register-club/:id" element={<RegisterClub />} />
           <Route path="/register-tournament" element={<RegisterTournament />} />
+          <Route path="/register-tournament/:id" element={<RegisterTournament />} />
+          <Route path="/register-expense" element={<RegisterExpense />} />
+          <Route path="/register-expense/:id" element={<RegisterExpense />} />
+          <Route path="/clubs" element={<ClubList />} />
+          <Route path="/tournaments" element={<TournamentList />} />
+          <Route path="/expenses" element={<ExpenseList />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
