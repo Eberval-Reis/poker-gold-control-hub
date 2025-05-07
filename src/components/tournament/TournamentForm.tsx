@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@/components/ui/form';
 import { toast } from '@/hooks/use-toast';
@@ -12,15 +13,22 @@ import AdditionalDetailsSection from '@/components/tournament/AdditionalDetailsS
 import FormActions from '@/components/tournament/FormActions';
 import { TournamentFormData, tournamentFormSchema } from '@/components/tournament/TournamentFormSchema';
 import { tournamentService } from '@/services/tournament.service';
+import { Tournament } from '@/lib/supabase';
 
 interface TournamentFormProps {
-  isEditing: boolean;
+  tournamentId?: string;
+  tournamentData?: Tournament | null;
+  isLoading?: boolean;
 }
 
-const TournamentForm: React.FC<TournamentFormProps> = ({ isEditing }) => {
+const TournamentForm: React.FC<TournamentFormProps> = ({ 
+  tournamentId, 
+  tournamentData, 
+  isLoading = false 
+}) => {
   const navigate = useNavigate();
-  const { id } = useParams();
   const queryClient = useQueryClient();
+  const isEditing = !!tournamentId;
   
   const form = useForm<TournamentFormData>({
     resolver: zodResolver(tournamentFormSchema),
@@ -36,37 +44,22 @@ const TournamentForm: React.FC<TournamentFormProps> = ({ isEditing }) => {
     },
   });
 
-  // Get tournament data if editing
-  const { isLoading: isLoadingTournament } = useQuery({
-    queryKey: ['tournament', id],
-    queryFn: () => tournamentService.getTournamentById(id as string),
-    enabled: !!id,
-    meta: {
-      onSuccess: (data: any) => {
-        if (data) {
-          form.reset({
-            name: data.name,
-            club_id: data.club_id,
-            date: new Date(data.date),
-            time: data.time,
-            type: data.type,
-            initial_stack: data.initial_stack || '',
-            blind_structure: data.blind_structure || '',
-            prizes: data.prizes || '',
-            notes: data.notes || '',
-          });
-        }
-      },
-      onError: (error: Error) => {
-        toast({
-          variant: "destructive",
-          title: "Erro ao carregar dados do torneio",
-          description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
-        });
-        navigate('/tournaments');
-      }
+  // Set form values if tournament data is available
+  React.useEffect(() => {
+    if (tournamentData) {
+      form.reset({
+        name: tournamentData.name,
+        club_id: tournamentData.club_id,
+        date: tournamentData.date ? new Date(tournamentData.date) : new Date(),
+        time: tournamentData.time,
+        type: tournamentData.type,
+        initial_stack: tournamentData.initial_stack || '',
+        blind_structure: tournamentData.blind_structure || '',
+        prizes: tournamentData.prizes || '',
+        notes: tournamentData.notes || '',
+      });
     }
-  });
+  }, [tournamentData, form]);
 
   // Create or update tournament mutation
   const mutation = useMutation({
@@ -86,7 +79,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({ isEditing }) => {
       };
       
       return isEditing
-        ? tournamentService.updateTournament(id as string, formattedData)
+        ? tournamentService.updateTournament(tournamentId as string, formattedData)
         : tournamentService.createTournament(formattedData);
     },
     onSuccess: () => {
@@ -116,7 +109,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({ isEditing }) => {
 
   return (
     <>
-      {isLoadingTournament ? (
+      {isLoading ? (
         <div className="flex justify-center items-center p-8">
           <p>Carregando...</p>
         </div>
