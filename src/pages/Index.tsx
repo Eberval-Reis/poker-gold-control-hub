@@ -1,170 +1,162 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { CircleDollarSign, Diamond, Key, LogIn } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Home, List, Building2, Trophy, Wallet, BarChart3 } from 'lucide-react';
+import Header from '@/components/Header';
+import Sidebar from '@/components/Sidebar';
+import SummaryCard from '@/components/SummaryCard';
 import { Card, CardContent } from '@/components/ui/card';
-import { toast } from '@/hooks/use-toast';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem
-} from '@/components/ui/autoplay-carousel';
-import { login } from '@/services/auth.service';
+import { useQuery } from '@tanstack/react-query';
+import { clubService } from '@/services/club.service';
+import { tournamentService } from '@/services/tournament.service';
+import { expenseService } from '@/services/expense.service';
 
 const Index = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    
-    try {
-      const result = await login({ email, password });
-      
-      if (result.success) {
-        toast({
-          title: "Login bem-sucedido",
-          description: "Bem-vindo ao sistema!"
-        });
-        navigate('/register-club');
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Erro de login",
-          description: result.error || "Credenciais inválidas"
-        });
-      }
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Erro de conexão",
-        description: "Não foi possível conectar ao serviço de autenticação"
-      });
-    } finally {
-      setIsLoading(false);
+  // Get counts for summary cards
+  const { data: clubs = [] } = useQuery({
+    queryKey: ['clubs'],
+    queryFn: clubService.getClubs,
+  });
+
+  const { data: tournaments = [] } = useQuery({
+    queryKey: ['tournaments'],
+    queryFn: tournamentService.getTournaments,
+  });
+
+  const { data: expenses = [] } = useQuery({
+    queryKey: ['expenses'],
+    queryFn: expenseService.getExpenses,
+  });
+
+  // Calculate total expenses
+  const totalExpenses = expenses.reduce((sum: number, expense: any) => sum + Number(expense.amount), 0);
+  const formattedTotal = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(totalExpenses);
+
+  const menuItems = [
+    {
+      title: "Lista de Clubes",
+      icon: <List className="h-6 w-6" />,
+      description: "Gerencie seus clubes",
+      link: "/clubs",
+      color: "bg-blue-100",
+      textColor: "text-blue-600"
+    },
+    {
+      title: "Lista de Torneios",
+      icon: <List className="h-6 w-6" />,
+      description: "Gerencie seus torneios",
+      link: "/tournaments",
+      color: "bg-amber-100",
+      textColor: "text-amber-600"
+    },
+    {
+      title: "Lista de Despesas",
+      icon: <List className="h-6 w-6" />,
+      description: "Gerencie suas despesas",
+      link: "/expenses",
+      color: "bg-green-100",
+      textColor: "text-green-600"
+    },
+    {
+      title: "Cadastrar Clube",
+      icon: <Building2 className="h-6 w-6" />,
+      description: "Adicione um novo clube",
+      link: "/register-club",
+      color: "bg-blue-100",
+      textColor: "text-blue-600"
+    },
+    {
+      title: "Cadastrar Torneio",
+      icon: <Trophy className="h-6 w-6" />,
+      description: "Adicione um novo torneio",
+      link: "/register-tournament",
+      color: "bg-amber-100",
+      textColor: "text-amber-600"
+    },
+    {
+      title: "Cadastrar Despesa",
+      icon: <Wallet className="h-6 w-6" />,
+      description: "Adicione uma nova despesa",
+      link: "/register-expense",
+      color: "bg-green-100",
+      textColor: "text-green-600"
+    },
+    {
+      title: "Relatórios",
+      icon: <BarChart3 className="h-6 w-6" />,
+      description: "Visualize relatórios",
+      link: "/report",
+      color: "bg-purple-100",
+      textColor: "text-purple-600"
     }
-  };
+  ];
 
-  const handleRegister = () => {
-    navigate('/register-club');
-  };
-  
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Background Carousel */}
-      <div className="absolute inset-0 z-0">
-        <Carousel autoplay={true} interval={6000} loop={true} className="w-full h-full">
-          <CarouselContent className="h-screen">
-            <CarouselItem className="h-full">
-              <div className="relative w-full h-full">
-                <img 
-                  src="/lovable-uploads/bc2d854d-b1fb-4321-ab88-f11760fd0850.png" 
-                  alt="Poker table with cards" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80"></div>
-              </div>
-            </CarouselItem>
-            <CarouselItem className="h-full">
-              <div className="relative w-full h-full">
-                <img 
-                  src="/lovable-uploads/77a82eaa-be06-4f0d-b570-77e7d2fee8c6.png" 
-                  alt="Poker chips on table" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80"></div>
-              </div>
-            </CarouselItem>
-            <CarouselItem className="h-full">
-              <div className="relative w-full h-full">
-                <img 
-                  src="/lovable-uploads/abccd166-aa10-4419-be2b-f38e178e2b38.png" 
-                  alt="Poker cards close up" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/80"></div>
-              </div>
-            </CarouselItem>
-          </CarouselContent>
-        </Carousel>
-      </div>
-
-      {/* Poker Theme Elements */}
-      <div className="absolute top-8 left-8 z-10">
-        <CircleDollarSign size={32} className="text-poker-gold animate-pulse" />
-      </div>
-      <div className="absolute bottom-8 right-8 z-10">
-        <Diamond size={40} className="text-poker-gold animate-pulse" />
-      </div>
+    <div className="min-h-screen bg-poker-background">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
       
-      {/* Login Form */}
-      <div className="relative z-20 flex items-center justify-center min-h-screen px-4">
-        <Card className="w-full max-w-md bg-black/80 border border-poker-gold/30 backdrop-blur-sm">
-          <div className="pt-8 px-6 text-center">
-            <h1 className="text-4xl font-bold text-poker-gold mb-2">BEM VINDO</h1>
-            <p className="text-gray-300 mb-6">FAÇA LOGIN</p>
+      <main className="container mx-auto p-6">
+        <div className="mb-8">
+          <div className="flex items-center gap-2 mb-2">
+            <Home className="h-6 w-6 text-poker-gold" />
+            <h1 className="text-2xl font-bold text-poker-text-dark">Dashboard</h1>
           </div>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-200">Email</Label>
-                <div className="relative">
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Seu email"
-                    className="bg-black/40 border-gray-700 text-white pl-10"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                  <Key className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-gray-200">Senha</Label>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Sua senha"
-                    className="bg-black/40 border-gray-700 text-white pl-10"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                  <LogIn className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                </div>
-              </div>
-              
-              <Button
-                type="submit"
-                className="w-full bg-poker-gold hover:bg-poker-gold/90 text-black font-bold transition-all"
-                disabled={isLoading}
-              >
-                {isLoading ? 'Entrando...' : 'Entrar'}
-              </Button>
-              
-              <div className="pt-4 text-center">
-                <Button
-                  variant="link"
-                  className="text-poker-gold hover:text-poker-gold/80"
-                  onClick={handleRegister}
-                >
-                  Novo Login
-                </Button>
-              </div>
-            </form>
+          <p className="text-[#5a5a5a]">Bem-vindo ao seu sistema de gestão de poker</p>
+        </div>
+        
+        {/* Summary cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <SummaryCard 
+            title="Clubes"
+            value={clubs.length}
+            icon={<Building2 className="h-8 w-8" />}
+            color="bg-blue-100"
+            textColor="text-blue-600"
+          />
+          <SummaryCard 
+            title="Torneios"
+            value={tournaments.length}
+            icon={<Trophy className="h-8 w-8" />}
+            color="bg-amber-100"
+            textColor="text-amber-600"
+          />
+          <SummaryCard 
+            title="Total de Despesas"
+            value={formattedTotal}
+            icon={<Wallet className="h-8 w-8" />}
+            color="bg-green-100"
+            textColor="text-green-600"
+          />
+        </div>
+        
+        {/* Menu Cards */}
+        <Card>
+          <CardContent className="p-6">
+            <h2 className="text-xl font-semibold mb-4">Menu Rápido</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {menuItems.map((item, index) => (
+                <Link to={item.link} key={index}>
+                  <div className="flex items-center p-4 rounded-lg border border-gray-200 hover:border-poker-gold transition-all cursor-pointer">
+                    <div className={`${item.color} ${item.textColor} p-3 rounded-full mr-4`}>
+                      {item.icon}
+                    </div>
+                    <div>
+                      <h3 className="font-medium">{item.title}</h3>
+                      <p className="text-sm text-gray-500">{item.description}</p>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </CardContent>
         </Card>
-      </div>
+      </main>
     </div>
   );
 };

@@ -12,6 +12,7 @@ import RegisterExpense from "./pages/RegisterExpense";
 import ClubList from "./pages/ClubList";
 import TournamentList from "./pages/TournamentList";
 import ExpenseList from "./pages/ExpenseList";
+import Report from "./pages/Report";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/clubs" element={<ClubList />} />
           <Route path="/tournaments" element={<TournamentList />} />
           <Route path="/expenses" element={<ExpenseList />} />
+          <Route path="/report" element={<Report />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
