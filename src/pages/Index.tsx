@@ -114,24 +114,18 @@ const Index = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <SummaryCard 
             title="Clubes"
-            value={clubs.length}
-            icon={<Building2 className="h-8 w-8" />}
-            color="bg-blue-100"
-            textColor="text-blue-600"
+            value={clubs.length.toString()}
+            icon={<Building2 size={24} />}
           />
           <SummaryCard 
             title="Torneios"
-            value={tournaments.length}
-            icon={<Trophy className="h-8 w-8" />}
-            color="bg-amber-100"
-            textColor="text-amber-600"
+            value={tournaments.length.toString()}
+            icon={<Trophy size={24} />}
           />
           <SummaryCard 
             title="Total de Despesas"
             value={formattedTotal}
-            icon={<Wallet className="h-8 w-8" />}
-            color="bg-green-100"
-            textColor="text-green-600"
+            icon={<Wallet size={24} />}
           />
         </div>
         

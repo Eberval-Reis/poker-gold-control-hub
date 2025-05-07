@@ -1,19 +1,18 @@
 
 import React from 'react';
-import { LucideIcon } from 'lucide-react';
 
 type SummaryCardProps = {
   title: string;
   value: string;
   subtitle?: string;
-  icon: LucideIcon;
+  icon: React.ReactNode;
 };
 
-const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, subtitle, icon: Icon }) => {
+const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, subtitle, icon }) => {
   return (
     <div className="card-poker flex items-center gap-4">
       <div className="rounded-full bg-poker-gold bg-opacity-10 p-3">
-        <Icon size={24} className="text-poker-gold" />
+        {icon}
       </div>
       <div>
         <h3 className="text-sm text-gray-500 font-medium">{title}</h3>
