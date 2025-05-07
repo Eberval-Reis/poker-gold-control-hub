@@ -1,14 +1,24 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
+import ClubForm from '@/components/club/ClubForm';
+import { clubService } from '@/services/club.service';
 
 const RegisterClub = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  const { data: clubData, isLoading } = useQuery({
+    queryKey: ['club', id],
+    queryFn: () => (id ? clubService.getClubById(id) : null),
+    enabled: !!id,
+  });
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -25,24 +35,24 @@ const RegisterClub = () => {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/clubs')}
               className="text-poker-gold hover:text-poker-gold/80"
             >
               <ArrowLeft className="h-6 w-6" />
             </Button>
             <h1 className="text-2xl font-bold text-poker-text-dark">
-              Cadastrar Clube
+              {id ? 'Editar Clube' : 'Cadastrar Clube'}
             </h1>
           </div>
-          <p className="text-[#5a5a5a]">
-            Supabase foi desconectado. Este formulário não está funcional.
-          </p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-6">
           <div className="bg-white rounded-lg p-6 shadow-sm md:w-1/2">
-            <p>A integração com o Supabase foi removida.</p>
-            <p className="mt-4">Para restaurar a funcionalidade, você precisará reconectar o Supabase.</p>
+            <ClubForm 
+              clubId={id} 
+              clubData={clubData}
+              isLoading={isLoading} 
+            />
           </div>
           
           <div className="md:w-1/2">

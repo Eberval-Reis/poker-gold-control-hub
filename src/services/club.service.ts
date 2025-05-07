@@ -32,7 +32,15 @@ export const getClubById = async (id: string): Promise<Club | null> => {
   return data;
 };
 
-export const createClub = async (clubData: Partial<Club>): Promise<Club> => {
+export const createClub = async (clubData: { 
+  name: string;
+  location: string;
+  phone?: string;
+  contact_person?: string;
+  reference?: string;
+  address_link?: string;
+  observations?: string;
+}): Promise<Club> => {
   const { data, error } = await supabase
     .from('clubs')
     .insert(clubData)
@@ -47,7 +55,15 @@ export const createClub = async (clubData: Partial<Club>): Promise<Club> => {
   return data;
 };
 
-export const updateClub = async (id: string, clubData: Partial<Club>): Promise<Club> => {
+export const updateClub = async (id: string, clubData: {
+  name?: string;
+  location?: string;
+  phone?: string;
+  contact_person?: string;
+  reference?: string;
+  address_link?: string;
+  observations?: string;
+}): Promise<Club> => {
   const { data, error } = await supabase
     .from('clubs')
     .update(clubData)
