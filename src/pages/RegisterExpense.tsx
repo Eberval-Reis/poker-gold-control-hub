@@ -1,14 +1,16 @@
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
+import ExpenseForm from '@/components/expense/ExpenseForm';
 
 const RegisterExpense = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const toggleSidebar = () => {
@@ -27,23 +29,19 @@ const RegisterExpense = () => {
               variant="ghost" 
               size="icon" 
               className="text-poker-gold hover:text-poker-gold hover:bg-gray-100" 
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/expenses')}
             >
               <ArrowLeft size={24} />
             </Button>
-            <h1 className="text-2xl font-bold">Cadastrar Despesa</h1>
+            <h1 className="text-2xl font-bold">
+              {id ? 'Editar Despesa' : 'Cadastrar Despesa'}
+            </h1>
           </div>
-          <p className="text-[#5a5a5a]">
-            Supabase foi desconectado. Este formulário não está funcional.
-          </p>
         </div>
         
-        <Card>
-          <CardContent className="pt-6 mx-0 px-0">
-            <div className="p-4">
-              <p>A integração com o Supabase foi removida.</p>
-              <p className="mt-4">Para restaurar a funcionalidade, você precisará reconectar o Supabase.</p>
-            </div>
+        <Card className="mx-auto max-w-2xl">
+          <CardContent className="pt-6">
+            <ExpenseForm />
           </CardContent>
         </Card>
       </div>

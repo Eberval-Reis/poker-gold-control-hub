@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { PaperclipIcon } from 'lucide-react';
+import { PaperclipIcon, X } from 'lucide-react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +24,14 @@ const ReceiptField = ({ form, receiptFileName, setReceiptFileName, isEditing }: 
     }
   };
 
+  const handleRemoveFile = (onChange: (file: null) => void) => {
+    setReceiptFileName(null);
+    onChange(null);
+    // Reset the file input
+    const fileInput = document.getElementById('receipt-upload') as HTMLInputElement;
+    if (fileInput) fileInput.value = '';
+  };
+
   return (
     <FormField
       control={form.control}
@@ -35,7 +43,7 @@ const ReceiptField = ({ form, receiptFileName, setReceiptFileName, isEditing }: 
             Comprovante (opcional)
           </FormLabel>
           <FormControl>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Button
                 type="button"
                 variant="outline"
@@ -44,11 +52,24 @@ const ReceiptField = ({ form, receiptFileName, setReceiptFileName, isEditing }: 
               >
                 {isEditing && receiptFileName ? 'Trocar comprovante' : 'Anexar Foto/PDF'}
               </Button>
+              
               {receiptFileName && (
-                <span className="text-sm text-muted-foreground">
-                  {receiptFileName}
-                </span>
+                <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                  <span className="text-sm text-muted-foreground max-w-[200px] truncate">
+                    {receiptFileName}
+                  </span>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-5 w-5 p-0" 
+                    onClick={() => handleRemoveFile(onChange)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
               )}
+              
               <Input
                 id="receipt-upload"
                 type="file"

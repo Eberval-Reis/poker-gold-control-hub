@@ -1,14 +1,24 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
+import TournamentForm from '@/components/tournament/TournamentForm';
+import { tournamentService } from '@/services/tournament.service';
 
 const RegisterTournament = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  const { data: tournamentData, isLoading } = useQuery({
+    queryKey: ['tournament', id],
+    queryFn: () => (id ? tournamentService.getTournamentById(id) : null),
+    enabled: !!id,
+  });
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -19,29 +29,29 @@ const RegisterTournament = () => {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <Header onMenuClick={toggleSidebar} />
 
-      <div className="max-w-2xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-6">
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-2">
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/tournaments')}
               className="text-poker-gold hover:text-poker-gold/80"
             >
               <ArrowLeft className="h-6 w-6" />
             </Button>
             <h1 className="text-2xl font-bold text-poker-text-dark">
-              Cadastrar Torneio
+              {id ? 'Editar Torneio' : 'Cadastrar Torneio'}
             </h1>
           </div>
-          <p className="text-[#5a5a5a]">
-            Supabase foi desconectado. Este formulário não está funcional.
-          </p>
         </div>
 
-        <div className="bg-white rounded-lg p-6 shadow-sm">
-          <p>A integração com o Supabase foi removida.</p>
-          <p className="mt-4">Para restaurar a funcionalidade, você precisará reconectar o Supabase.</p>
+        <div className="bg-white rounded-lg p-6 shadow-sm mx-auto max-w-2xl">
+          <TournamentForm 
+            tournamentId={id} 
+            tournamentData={tournamentData}
+            isLoading={isLoading} 
+          />
         </div>
       </div>
     </div>

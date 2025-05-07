@@ -46,41 +46,12 @@ const RegisterClub = () => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="bg-white rounded-lg p-6 shadow-sm md:w-1/2">
-            <ClubForm 
-              clubId={id} 
-              clubData={clubData}
-              isLoading={isLoading} 
-            />
-          </div>
-          
-          <div className="md:w-1/2">
-            {/* Poker player image with light effect */}
-            <div className="relative w-full h-auto rounded-lg overflow-hidden">
-              {/* Light radial effect in background */}
-              <div className="absolute inset-0 bg-gradient-to-br from-poker-gold/30 to-transparent opacity-70 z-0"></div>
-              
-              {/* Overlay with glow */}
-              <div className="absolute inset-0 bg-black/40 z-10"></div>
-              
-              {/* Image */}
-              <img 
-                src="/lovable-uploads/e4834ff0-8ff6-44e6-96f0-162d3201790d.png" 
-                alt="Poker Player" 
-                className="relative w-full h-auto object-cover z-20"
-              />
-              
-              {/* Light rays from behind */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-full bg-poker-gold/20 blur-3xl rounded-full z-0"></div>
-              
-              {/* Bottom text */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent z-30">
-                <p className="text-white font-medium text-lg">Clube de Poker Profissional</p>
-                <p className="text-poker-gold text-sm">Cadastre seu clube agora</p>
-              </div>
-            </div>
-          </div>
+        <div className="bg-white rounded-lg p-6 shadow-sm mx-auto max-w-2xl">
+          <ClubForm 
+            clubId={id} 
+            clubData={clubData}
+            isLoading={isLoading} 
+          />
         </div>
       </div>
     </div>
