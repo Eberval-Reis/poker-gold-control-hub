@@ -35,6 +35,11 @@ export const getExpenseById = async (id: string): Promise<Expense | null> => {
 };
 
 export const createExpense = async (expenseData: Partial<Expense>, receipt?: File): Promise<Expense> => {
+  // Make sure required fields are present
+  if (!expenseData.type || !expenseData.amount || !expenseData.date) {
+    throw new Error('Missing required expense fields');
+  }
+  
   // Upload receipt if provided
   if (receipt) {
     const fileName = `${Date.now()}-${receipt.name}`;
@@ -60,7 +65,14 @@ export const createExpense = async (expenseData: Partial<Expense>, receipt?: Fil
   // Insert expense record
   const { data, error } = await supabase
     .from('expenses')
-    .insert(expenseData)
+    .insert({
+      type: expenseData.type,
+      amount: expenseData.amount,
+      date: expenseData.date,
+      tournament_id: expenseData.tournament_id,
+      description: expenseData.description,
+      receipt_url: expenseData.receipt_url
+    })
     .select()
     .single();
   
@@ -95,10 +107,18 @@ export const updateExpense = async (id: string, expenseData: Partial<Expense>, r
     expenseData.receipt_url = urlData?.publicUrl;
   }
   
-  // Update expense record
+  // Update expense record - only include properties that are present in expenseData
+  const updateData: Record<string, any> = {};
+  if (expenseData.type !== undefined) updateData.type = expenseData.type;
+  if (expenseData.amount !== undefined) updateData.amount = expenseData.amount;
+  if (expenseData.date !== undefined) updateData.date = expenseData.date;
+  if (expenseData.tournament_id !== undefined) updateData.tournament_id = expenseData.tournament_id;
+  if (expenseData.description !== undefined) updateData.description = expenseData.description;
+  if (expenseData.receipt_url !== undefined) updateData.receipt_url = expenseData.receipt_url;
+  
   const { data, error } = await supabase
     .from('expenses')
-    .update(expenseData)
+    .update(updateData)
     .eq('id', id)
     .select()
     .single();

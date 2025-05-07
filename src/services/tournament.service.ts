@@ -35,9 +35,25 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
 };
 
 export const createTournament = async (tournamentData: Partial<Tournament>): Promise<Tournament> => {
+  // Make sure required fields are present
+  if (!tournamentData.name || !tournamentData.club_id || !tournamentData.date || 
+      !tournamentData.time || !tournamentData.type) {
+    throw new Error('Missing required tournament fields');
+  }
+  
   const { data, error } = await supabase
     .from('tournaments')
-    .insert(tournamentData)
+    .insert({
+      name: tournamentData.name,
+      club_id: tournamentData.club_id,
+      date: tournamentData.date,
+      time: tournamentData.time,
+      type: tournamentData.type,
+      initial_stack: tournamentData.initial_stack,
+      blind_structure: tournamentData.blind_structure,
+      prizes: tournamentData.prizes,
+      notes: tournamentData.notes
+    })
     .select()
     .single();
   
@@ -50,9 +66,21 @@ export const createTournament = async (tournamentData: Partial<Tournament>): Pro
 };
 
 export const updateTournament = async (id: string, tournamentData: Partial<Tournament>): Promise<Tournament> => {
+  // Create an object with only the properties that are present
+  const updateData: Record<string, any> = {};
+  if (tournamentData.name !== undefined) updateData.name = tournamentData.name;
+  if (tournamentData.club_id !== undefined) updateData.club_id = tournamentData.club_id;
+  if (tournamentData.date !== undefined) updateData.date = tournamentData.date;
+  if (tournamentData.time !== undefined) updateData.time = tournamentData.time;
+  if (tournamentData.type !== undefined) updateData.type = tournamentData.type;
+  if (tournamentData.initial_stack !== undefined) updateData.initial_stack = tournamentData.initial_stack;
+  if (tournamentData.blind_structure !== undefined) updateData.blind_structure = tournamentData.blind_structure;
+  if (tournamentData.prizes !== undefined) updateData.prizes = tournamentData.prizes;
+  if (tournamentData.notes !== undefined) updateData.notes = tournamentData.notes;
+  
   const { data, error } = await supabase
     .from('tournaments')
-    .update(tournamentData)
+    .update(updateData)
     .eq('id', id)
     .select()
     .single();
