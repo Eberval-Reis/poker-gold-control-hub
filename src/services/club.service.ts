@@ -1,29 +1,79 @@
 
+import { supabase } from "@/integrations/supabase/client";
 import { Club } from '@/lib/supabase';
 
 // Individual functions for club operations
 export const getClubs = async (): Promise<Club[]> => {
-  console.log('Mock getClubs called');
-  return [];
+  const { data, error } = await supabase.from('clubs').select('*');
+  
+  if (error) {
+    console.error('Error fetching clubs:', error);
+    throw error;
+  }
+  
+  return data || [];
 };
 
 export const getClubById = async (id: string): Promise<Club | null> => {
-  console.log('Mock getClubById called with:', id);
-  return null;
+  const { data, error } = await supabase
+    .from('clubs')
+    .select('*')
+    .eq('id', id)
+    .single();
+  
+  if (error) {
+    if (error.code === 'PGRST116') { // Record not found
+      return null;
+    }
+    console.error('Error fetching club:', error);
+    throw error;
+  }
+  
+  return data;
 };
 
 export const createClub = async (clubData: Partial<Club>): Promise<Club> => {
-  console.log('Mock createClub called with:', clubData);
-  return { id: 'mock-id', name: '', location: '', ...clubData };
+  const { data, error } = await supabase
+    .from('clubs')
+    .insert(clubData)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error creating club:', error);
+    throw error;
+  }
+  
+  return data;
 };
 
 export const updateClub = async (id: string, clubData: Partial<Club>): Promise<Club> => {
-  console.log('Mock updateClub called with:', id, clubData);
-  return { id, name: '', location: '', ...clubData };
+  const { data, error } = await supabase
+    .from('clubs')
+    .update(clubData)
+    .eq('id', id)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error updating club:', error);
+    throw error;
+  }
+  
+  return data;
 };
 
 export const deleteClub = async (id: string): Promise<{ success: boolean }> => {
-  console.log('Mock deleteClub called with:', id);
+  const { error } = await supabase
+    .from('clubs')
+    .delete()
+    .eq('id', id);
+  
+  if (error) {
+    console.error('Error deleting club:', error);
+    throw error;
+  }
+  
   return { success: true };
 };
 

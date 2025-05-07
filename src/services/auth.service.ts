@@ -1,6 +1,7 @@
 
 // Authentication service to manage user login, registration and session
 
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from '@/hooks/use-toast';
 
 interface LoginCredentials {
@@ -19,14 +20,16 @@ export const login = async (credentials: LoginCredentials): Promise<{ success: b
   console.log('Attempting login with:', credentials.email);
   
   try {
-    // For now, we're using a mock implementation
-    // In a real app, this would connect to Supabase or another auth provider
-    if (credentials.email && credentials.password) {
-      // Mock successful login for testing
-      return { success: true };
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: credentials.email,
+      password: credentials.password,
+    });
+    
+    if (error) {
+      return { success: false, error: error.message };
     }
     
-    return { success: false, error: 'Email ou senha inválidos' };
+    return { success: true };
   } catch (error) {
     console.error('Login error:', error);
     return { 
@@ -41,12 +44,21 @@ export const register = async (data: RegisterData): Promise<{ success: boolean; 
   console.log('Attempting registration with:', data.email);
   
   try {
-    // For now, we're using a mock implementation
-    if (data.email && data.password) {
-      return { success: true };
+    const { error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        data: {
+          name: data.name || '',
+        },
+      }
+    });
+    
+    if (error) {
+      return { success: false, error: error.message };
     }
     
-    return { success: false, error: 'Dados de registro inválidos' };
+    return { success: true };
   } catch (error) {
     console.error('Registration error:', error);
     return { 
@@ -61,7 +73,17 @@ export const logout = async (): Promise<{ success: boolean }> => {
   console.log('Logging out user');
   
   try {
-    // For now, we're using a mock implementation
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao sair",
+        description: error.message,
+      });
+      return { success: false };
+    }
+    
     return { success: true };
   } catch (error) {
     console.error('Logout error:', error);
@@ -76,9 +98,8 @@ export const logout = async (): Promise<{ success: boolean }> => {
 
 // Check if user is authenticated
 export const checkAuth = async (): Promise<boolean> => {
-  // For now, return a mock value
-  // This would typically check for a token or session
-  return false;
+  const { data } = await supabase.auth.getSession();
+  return !!data.session;
 };
 
 // Export authService object for components that expect it

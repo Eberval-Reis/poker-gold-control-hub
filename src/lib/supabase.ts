@@ -1,5 +1,5 @@
 
-// Type definitions
+// Type definitions based on our Supabase database schema
 export interface Club {
   id: string;
   name: string;
@@ -9,6 +9,8 @@ export interface Club {
   reference?: string;
   address_link?: string;
   observations?: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Tournament {
@@ -22,6 +24,9 @@ export interface Tournament {
   blind_structure?: string;
   prizes?: string;
   notes?: string;
+  created_at?: string;
+  updated_at?: string;
+  // Join fields
   clubs?: {
     name: string;
   };
@@ -35,31 +40,13 @@ export interface Expense {
   tournament_id?: string;
   description?: string;
   receipt_url?: string;
+  created_at?: string;
+  updated_at?: string;
+  // Join fields
   tournaments?: {
     name: string;
   };
 }
 
-// Mock replacement for Supabase client
-export const supabase = {
-  from: (table: string) => ({
-    select: () => ({
-      eq: () => ({
-        single: async () => null,
-        data: [],
-        error: null
-      }),
-      data: [],
-      error: null
-    }),
-    insert: async () => ({ data: { id: 'mock-id' }, error: null }),
-    update: async () => ({ data: {}, error: null }),
-    delete: async () => ({ data: {}, error: null })
-  }),
-  storage: {
-    from: (bucket: string) => ({
-      upload: async () => ({ data: { path: 'mock-path' }, error: null }),
-      getPublicUrl: (path: string) => ({ data: { publicUrl: path } })
-    })
-  }
-};
+// Export the Supabase client from the integrations directory
+export { supabase } from '@/integrations/supabase/client';

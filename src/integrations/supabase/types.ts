@@ -9,7 +9,142 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      clubs: {
+        Row: {
+          address_link: string | null
+          contact_person: string | null
+          created_at: string
+          id: string
+          location: string
+          name: string
+          observations: string | null
+          phone: string | null
+          reference: string | null
+          updated_at: string
+        }
+        Insert: {
+          address_link?: string | null
+          contact_person?: string | null
+          created_at?: string
+          id?: string
+          location: string
+          name: string
+          observations?: string | null
+          phone?: string | null
+          reference?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address_link?: string | null
+          contact_person?: string | null
+          created_at?: string
+          id?: string
+          location?: string
+          name?: string
+          observations?: string | null
+          phone?: string | null
+          reference?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          created_at: string
+          date: string
+          description: string | null
+          id: string
+          receipt_url: string | null
+          tournament_id: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          date: string
+          description?: string | null
+          id?: string
+          receipt_url?: string | null
+          tournament_id?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          date?: string
+          description?: string | null
+          id?: string
+          receipt_url?: string | null
+          tournament_id?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tournaments: {
+        Row: {
+          blind_structure: string | null
+          club_id: string
+          created_at: string
+          date: string
+          id: string
+          initial_stack: string | null
+          name: string
+          notes: string | null
+          prizes: string | null
+          time: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          blind_structure?: string | null
+          club_id: string
+          created_at?: string
+          date: string
+          id?: string
+          initial_stack?: string | null
+          name: string
+          notes?: string | null
+          prizes?: string | null
+          time: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          blind_structure?: string | null
+          club_id?: string
+          created_at?: string
+          date?: string
+          id?: string
+          initial_stack?: string | null
+          name?: string
+          notes?: string | null
+          prizes?: string | null
+          time?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournaments_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
