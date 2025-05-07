@@ -1,7 +1,8 @@
 
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { Home, Club, Calendar, FileText, FileMinus, FilePlus } from 'lucide-react';
+import { Home, Building2, Trophy, FileText, Wallet, BarChart3 } from 'lucide-react';
 
 type SidebarProps = {
   isOpen: boolean;
@@ -9,15 +10,24 @@ type SidebarProps = {
 }
 
 const menuItems = [
-  { name: 'Home', icon: Home },
-  { name: 'Clube', icon: Club },
-  { name: 'Torneio', icon: Calendar },
-  { name: 'Cadastro das Despesas', icon: FileText },
-  { name: 'Movimento Torneio', icon: FilePlus },
-  { name: 'Movimento Despesas', icon: FileMinus },
+  { name: 'Home', icon: Home, path: '/' },
+  { name: 'Clubes', icon: Building2, path: '/clubs' },
+  { name: 'Torneios', icon: Trophy, path: '/tournaments' },
+  { name: 'Despesas', icon: Wallet, path: '/expenses' },
+  { name: 'Cadastrar Clube', icon: Building2, path: '/register-club' },
+  { name: 'Cadastrar Torneio', icon: Trophy, path: '/register-tournament' },
+  { name: 'Cadastrar Despesa', icon: FileText, path: '/register-expense' },
+  { name: 'Relatórios', icon: BarChart3, path: '/report' },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
+  
+  const handleNavigation = (path: string) => {
+    navigate(path);
+    onClose();
+  };
+  
   return (
     <>
       {/* Overlay */}
@@ -44,8 +54,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               key={item.name}
               variant="ghost"
               className="w-full justify-start menu-item text-poker-text-dark"
+              onClick={() => handleNavigation(item.path)}
             >
-              <item.icon size={20} className="text-poker-gold" />
+              <item.icon size={20} className="text-poker-gold mr-2" />
               <span>{item.name}</span>
             </Button>
           ))}
