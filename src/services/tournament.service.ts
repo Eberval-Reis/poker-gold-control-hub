@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Tournament } from '@/lib/supabase';
 
@@ -13,7 +12,22 @@ export const getTournaments = async (): Promise<Tournament[]> => {
     throw error;
   }
   
-  return data as Tournament[] || [];
+  // Make sure we convert and ensure the data has all required fields
+  return (data as any[] || []).map(item => ({
+    id: item.id,
+    name: item.name,
+    club_id: item.club_id,
+    date: item.date,
+    time: item.time,
+    type: item.type,
+    initial_stack: item.initial_stack,
+    blind_structure: item.blind_structure,
+    prizes: item.prizes,
+    notes: item.notes,
+    created_at: item.created_at,
+    updated_at: item.updated_at,
+    clubs: item.club_id
+  })) as Tournament[];
 };
 
 export const getTournamentById = async (id: string): Promise<Tournament | null> => {
@@ -31,7 +45,22 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     throw error;
   }
   
-  return data as Tournament;
+  // Convert to the required Tournament type with all required fields
+  return data ? {
+    id: data.id,
+    name: data.name,
+    club_id: data.club_id,
+    date: data.date,
+    time: data.time,
+    type: data.type,
+    initial_stack: data.initial_stack,
+    blind_structure: data.blind_structure,
+    prizes: data.prizes,
+    notes: data.notes,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+    clubs: data.club_id
+  } as Tournament : null;
 };
 
 export const createTournament = async (tournamentData: Partial<Tournament>): Promise<Tournament> => {

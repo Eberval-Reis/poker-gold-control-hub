@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import useEmblaCarousel from "embla-carousel-react";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/autoplay-carousel";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,26 +15,7 @@ const Login = () => {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const navigate = useNavigate();
   
-  // Configuração do carrossel
-  const [emblaRef] = useEmblaCarousel({ loop: true });
-  
-  // Autoreproducir el carrusel
-  useEffect(() => {
-    let interval: ReturnType<typeof setInterval>;
-    
-    const autoplay = () => {
-      interval = setInterval(() => {
-        if (emblaRef && emblaRef.scrollNext) {
-          emblaRef.scrollNext();
-        }
-      }, 5000);
-    };
-
-    autoplay();
-    return () => clearInterval(interval);
-  }, [emblaRef]);
-
-  // Verificar si el usuario ya está autenticado
+  // Check if the user is already authenticated
   useEffect(() => {
     const checkAuth = async () => {
       const { data } = await supabase.auth.getSession();
@@ -91,9 +72,9 @@ const Login = () => {
     <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden">
       {/* Carrossel de fundo */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="embla h-full" ref={emblaRef}>
-          <div className="embla__container h-full">
-            <div className="embla__slide w-full h-full flex-[0_0_100%]">
+        <Carousel autoplay={true} interval={5000} loop={true}>
+          <CarouselContent>
+            <CarouselItem>
               <div className="w-full h-full relative">
                 <img 
                   src="/public/lovable-uploads/5977c8a7-abd6-44a2-b609-eb4fb3108657.png" 
@@ -102,8 +83,8 @@ const Login = () => {
                 />
                 <div className="absolute inset-0 bg-black/60" />
               </div>
-            </div>
-            <div className="embla__slide w-full h-full flex-[0_0_100%]">
+            </CarouselItem>
+            <CarouselItem>
               <div className="w-full h-full relative">
                 <img 
                   src="/public/lovable-uploads/36882bf8-82e3-4711-b761-c37b11e7fccc.png" 
@@ -112,8 +93,8 @@ const Login = () => {
                 />
                 <div className="absolute inset-0 bg-black/60" />
               </div>
-            </div>
-            <div className="embla__slide w-full h-full flex-[0_0_100%]">
+            </CarouselItem>
+            <CarouselItem>
               <div className="w-full h-full relative">
                 <img 
                   src="/public/lovable-uploads/52e3489b-85b5-4709-9069-a7aa802f7a00.png" 
@@ -122,9 +103,9 @@ const Login = () => {
                 />
                 <div className="absolute inset-0 bg-black/60" />
               </div>
-            </div>
-          </div>
-        </div>
+            </CarouselItem>
+          </CarouselContent>
+        </Carousel>
       </div>
       
       {/* Formulário de Login */}
