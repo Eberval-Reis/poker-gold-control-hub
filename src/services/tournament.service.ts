@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Tournament } from '@/lib/supabase';
 
@@ -17,10 +18,11 @@ export const getTournaments = async (): Promise<Tournament[]> => {
     id: item.id,
     name: item.name,
     club_id: item.club_id,
-    date: item.date,
-    time: item.time,
+    // Ensure these fields exist or provide default values
+    date: item.date || '',
+    time: item.time || '',
     type: item.type,
-    initial_stack: item.initial_stack,
+    initial_stack: item.initial_stack || '',
     blind_structure: item.blind_structure,
     prizes: item.prizes,
     notes: item.notes,
@@ -50,10 +52,11 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     id: data.id,
     name: data.name,
     club_id: data.club_id,
-    date: data.date,
-    time: data.time,
+    // Ensure these fields exist or provide default values
+    date: data.date || '',
+    time: data.time || '',
     type: data.type,
-    initial_stack: data.initial_stack,
+    initial_stack: data.initial_stack || '',
     blind_structure: data.blind_structure,
     prizes: data.prizes,
     notes: data.notes,

@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,7 +11,7 @@ import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/autopla
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const navigate = useNavigate();
   
@@ -28,7 +28,7 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setLoading(true);
     
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -43,13 +43,13 @@ const Login = () => {
     } catch (error: any) {
       toast.error(error.message || "Erro ao fazer login");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
+    setLoading(true);
     
     try {
       const { data, error } = await supabase.auth.signUp({
@@ -64,42 +64,42 @@ const Login = () => {
     } catch (error: any) {
       toast.error(error.message || "Erro ao criar conta");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden">
-      {/* Carrossel de fundo */}
+      {/* Background carousel */}
       <div className="absolute inset-0 overflow-hidden">
-        <Carousel autoplay={true} interval={5000} loop={true}>
-          <CarouselContent>
-            <CarouselItem>
+        <Carousel autoplay={true} interval={5000} loop={true} className="h-full">
+          <CarouselContent className="h-full">
+            <CarouselItem className="h-full">
               <div className="w-full h-full relative">
                 <img 
-                  src="/public/lovable-uploads/5977c8a7-abd6-44a2-b609-eb4fb3108657.png" 
-                  alt="Poker Cards" 
-                  className="w-full h-full object-cover"
+                  src="/lovable-uploads/5977c8a7-abd6-44a2-b609-eb4fb3108657.png" 
+                  alt="Poker background 1" 
+                  className="w-full h-full object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-black/60" />
               </div>
             </CarouselItem>
-            <CarouselItem>
+            <CarouselItem className="h-full">
               <div className="w-full h-full relative">
                 <img 
-                  src="/public/lovable-uploads/36882bf8-82e3-4711-b761-c37b11e7fccc.png" 
-                  alt="Casino" 
-                  className="w-full h-full object-cover"
+                  src="/lovable-uploads/36882bf8-82e3-4711-b761-c37b11e7fccc.png" 
+                  alt="Poker background 2" 
+                  className="w-full h-full object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-black/60" />
               </div>
             </CarouselItem>
-            <CarouselItem>
+            <CarouselItem className="h-full">
               <div className="w-full h-full relative">
                 <img 
-                  src="/public/lovable-uploads/52e3489b-85b5-4709-9069-a7aa802f7a00.png" 
-                  alt="Poker Player" 
-                  className="w-full h-full object-cover"
+                  src="/lovable-uploads/52e3489b-85b5-4709-9069-a7aa802f7a00.png" 
+                  alt="Poker background 3" 
+                  className="w-full h-full object-cover object-center max-h-screen"
                 />
                 <div className="absolute inset-0 bg-black/60" />
               </div>
@@ -108,8 +108,8 @@ const Login = () => {
         </Carousel>
       </div>
       
-      {/* Formulário de Login */}
-      <Card className="w-[350px] z-10 bg-white/90 backdrop-blur-md border-poker-gold">
+      {/* Login Form */}
+      <Card className="w-[350px] z-10 bg-white/95 shadow-xl">
         <CardContent className="pt-6">
           <div className="mb-6 text-center">
             <h1 className="text-2xl font-bold text-poker-gold mb-2">
@@ -122,9 +122,9 @@ const Login = () => {
           
           <form onSubmit={isSigningUp ? handleSignUp : handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium">
+              <Label htmlFor="email" className="text-sm font-medium">
                 Email
-              </label>
+              </Label>
               <Input
                 id="email"
                 type="email"
@@ -136,9 +136,9 @@ const Login = () => {
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium">
+              <Label htmlFor="password" className="text-sm font-medium">
                 Senha
-              </label>
+              </Label>
               <Input
                 id="password"
                 type="password"
@@ -152,9 +152,9 @@ const Login = () => {
             <Button
               type="submit"
               className="w-full bg-poker-gold hover:bg-poker-gold/80 text-white"
-              disabled={isLoading}
+              disabled={loading}
             >
-              {isLoading ? "Processando..." : isSigningUp ? "Cadastrar" : "Entrar"}
+              {loading ? "Processando..." : isSigningUp ? "Cadastrar" : "Entrar"}
             </Button>
           </form>
           
