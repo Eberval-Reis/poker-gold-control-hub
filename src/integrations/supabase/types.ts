@@ -97,10 +97,13 @@ export type Database = {
           blind_structure: string | null
           club_id: string
           created_at: string
+          date: string
           id: string
+          initial_stack: string | null
           name: string
           notes: string | null
           prizes: string | null
+          time: string
           type: string
           updated_at: string
         }
@@ -108,10 +111,13 @@ export type Database = {
           blind_structure?: string | null
           club_id: string
           created_at?: string
+          date?: string
           id?: string
+          initial_stack?: string | null
           name: string
           notes?: string | null
           prizes?: string | null
+          time?: string
           type: string
           updated_at?: string
         }
@@ -119,10 +125,13 @@ export type Database = {
           blind_structure?: string | null
           club_id?: string
           created_at?: string
+          date?: string
           id?: string
+          initial_stack?: string | null
           name?: string
           notes?: string | null
           prizes?: string | null
+          time?: string
           type?: string
           updated_at?: string
         }
