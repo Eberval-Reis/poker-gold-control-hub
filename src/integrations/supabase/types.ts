@@ -9,7 +9,7 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      clubs: {
+      "Cadastro Clube": {
         Row: {
           address_link: string | null
           contact_person: string | null
@@ -97,13 +97,10 @@ export type Database = {
           blind_structure: string | null
           club_id: string
           created_at: string
-          date: string
           id: string
-          initial_stack: string | null
           name: string
           notes: string | null
           prizes: string | null
-          time: string
           type: string
           updated_at: string
         }
@@ -111,13 +108,10 @@ export type Database = {
           blind_structure?: string | null
           club_id: string
           created_at?: string
-          date: string
           id?: string
-          initial_stack?: string | null
           name: string
           notes?: string | null
           prizes?: string | null
-          time: string
           type: string
           updated_at?: string
         }
@@ -125,13 +119,10 @@ export type Database = {
           blind_structure?: string | null
           club_id?: string
           created_at?: string
-          date?: string
           id?: string
-          initial_stack?: string | null
           name?: string
           notes?: string | null
           prizes?: string | null
-          time?: string
           type?: string
           updated_at?: string
         }
@@ -140,7 +131,7 @@ export type Database = {
             foreignKeyName: "tournaments_club_id_fkey"
             columns: ["club_id"]
             isOneToOne: false
-            referencedRelation: "clubs"
+            referencedRelation: "Cadastro Clube"
             referencedColumns: ["id"]
           },
         ]
