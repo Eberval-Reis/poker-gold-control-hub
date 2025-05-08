@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import useEmblaCarousel from "embla-carousel-react";
-import { useEffect } from "react";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -25,9 +24,8 @@ const Login = () => {
     
     const autoplay = () => {
       interval = setInterval(() => {
-        if (emblaRef && emblaRef.current) {
-          const api = emblaRef.current.emblaApi;
-          if (api) api.scrollNext();
+        if (emblaRef && emblaRef.scrollNext) {
+          emblaRef.scrollNext();
         }
       }, 5000);
     };

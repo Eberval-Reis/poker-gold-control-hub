@@ -6,20 +6,20 @@ import { Tournament } from '@/lib/supabase';
 export const getTournaments = async (): Promise<Tournament[]> => {
   const { data, error } = await supabase
     .from('tournaments')
-    .select('*, clubs(name)');
+    .select('*, club_id (name)');
   
   if (error) {
     console.error('Error fetching tournaments:', error);
     throw error;
   }
   
-  return data || [];
+  return data as Tournament[] || [];
 };
 
 export const getTournamentById = async (id: string): Promise<Tournament | null> => {
   const { data, error } = await supabase
     .from('tournaments')
-    .select('*, clubs(name)')
+    .select('*, club_id (name)')
     .eq('id', id)
     .single();
   
@@ -31,7 +31,7 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     throw error;
   }
   
-  return data;
+  return data as Tournament;
 };
 
 export const createTournament = async (tournamentData: Partial<Tournament>): Promise<Tournament> => {
@@ -62,7 +62,7 @@ export const createTournament = async (tournamentData: Partial<Tournament>): Pro
     throw error;
   }
   
-  return data;
+  return data as Tournament;
 };
 
 export const updateTournament = async (id: string, tournamentData: Partial<Tournament>): Promise<Tournament> => {
@@ -90,7 +90,7 @@ export const updateTournament = async (id: string, tournamentData: Partial<Tourn
     throw error;
   }
   
-  return data;
+  return data as Tournament;
 };
 
 export const deleteTournament = async (id: string): Promise<{ success: boolean }> => {

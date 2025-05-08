@@ -4,19 +4,19 @@ import { Club } from '@/lib/supabase';
 
 // Individual functions for club operations
 export const getClubs = async (): Promise<Club[]> => {
-  const { data, error } = await supabase.from('clubs').select('*');
+  const { data, error } = await supabase.from('Cadastro Clube').select('*');
   
   if (error) {
     console.error('Error fetching clubs:', error);
     throw error;
   }
   
-  return data || [];
+  return data as Club[] || [];
 };
 
 export const getClubById = async (id: string): Promise<Club | null> => {
   const { data, error } = await supabase
-    .from('clubs')
+    .from('Cadastro Clube')
     .select('*')
     .eq('id', id)
     .single();
@@ -29,7 +29,7 @@ export const getClubById = async (id: string): Promise<Club | null> => {
     throw error;
   }
   
-  return data;
+  return data as Club;
 };
 
 export const createClub = async (clubData: { 
@@ -42,7 +42,7 @@ export const createClub = async (clubData: {
   observations?: string;
 }): Promise<Club> => {
   const { data, error } = await supabase
-    .from('clubs')
+    .from('Cadastro Clube')
     .insert(clubData)
     .select()
     .single();
@@ -52,7 +52,7 @@ export const createClub = async (clubData: {
     throw error;
   }
   
-  return data;
+  return data as Club;
 };
 
 export const updateClub = async (id: string, clubData: {
@@ -65,7 +65,7 @@ export const updateClub = async (id: string, clubData: {
   observations?: string;
 }): Promise<Club> => {
   const { data, error } = await supabase
-    .from('clubs')
+    .from('Cadastro Clube')
     .update(clubData)
     .eq('id', id)
     .select()
@@ -76,12 +76,12 @@ export const updateClub = async (id: string, clubData: {
     throw error;
   }
   
-  return data;
+  return data as Club;
 };
 
 export const deleteClub = async (id: string): Promise<{ success: boolean }> => {
   const { error } = await supabase
-    .from('clubs')
+    .from('Cadastro Clube')
     .delete()
     .eq('id', id);
   
