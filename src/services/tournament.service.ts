@@ -6,7 +6,7 @@ import { Tournament } from '@/lib/supabase';
 export const getTournaments = async (): Promise<Tournament[]> => {
   const { data, error } = await supabase
     .from('tournaments')
-    .select('*, club_id (name)');
+    .select('*, club_id (name), date, time, initial_stack');
   
   if (error) {
     console.error('Error fetching tournaments:', error);
@@ -35,7 +35,7 @@ export const getTournaments = async (): Promise<Tournament[]> => {
 export const getTournamentById = async (id: string): Promise<Tournament | null> => {
   const { data, error } = await supabase
     .from('tournaments')
-    .select('*, club_id (name)')
+    .select('*, club_id (name), date, time, initial_stack')
     .eq('id', id)
     .single();
   
