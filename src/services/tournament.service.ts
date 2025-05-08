@@ -52,7 +52,7 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     id: data.id,
     name: data.name,
     club_id: data.club_id,
-    // Ensure these fields exist or provide default values
+    // Add default values for potentially missing properties
     date: data.date || '',
     time: data.time || '',
     type: data.type,

@@ -38,10 +38,17 @@ const Login = () => {
       
       if (error) throw error;
       
-      toast.success("Login realizado com sucesso!");
+      toast({
+        title: "Login realizado com sucesso!",
+        variant: "default",
+      });
       navigate("/");
     } catch (error: any) {
-      toast.error(error.message || "Erro ao fazer login");
+      toast({
+        title: "Erro ao fazer login",
+        description: error.message,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -59,10 +66,18 @@ const Login = () => {
       
       if (error) throw error;
       
-      toast.success("Cadastro realizado com sucesso! Verifique seu email.");
+      toast({
+        title: "Cadastro realizado com sucesso!",
+        description: "Verifique seu email.",
+        variant: "default",
+      });
       setIsSigningUp(false);
     } catch (error: any) {
-      toast.error(error.message || "Erro ao criar conta");
+      toast({
+        title: "Erro ao criar conta",
+        description: error.message,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
