@@ -34,6 +34,9 @@ export const getTournamentPerformanceById = async (id: string): Promise<Tourname
   return data as TournamentPerformance;
 };
 
+// Define a type that ensures buyin_amount is present, matching Supabase's requirements
+type TournamentPerformanceInsert = Omit<Partial<TournamentPerformance>, 'buyin_amount'> & { buyin_amount: number };
+
 export const createTournamentPerformance = async (
   performanceData: Partial<TournamentPerformance>
 ): Promise<TournamentPerformance> => {
@@ -42,9 +45,12 @@ export const createTournamentPerformance = async (
     throw new Error('Buy-in amount is required');
   }
   
+  // Cast to the correct type with buyin_amount guaranteed to be present
+  const dataToInsert = performanceData as TournamentPerformanceInsert;
+  
   const { data, error } = await supabase
     .from('tournament_performance')
-    .insert(performanceData)
+    .insert(dataToInsert)
     .select()
     .single();
   
