@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { Trophy, Building, Calendar, Clock, BarChart } from 'lucide-react';
-import { format } from 'date-fns';
+import { Trophy, Building, BarChart } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { UseFormReturn } from 'react-hook-form';
 import {
@@ -19,13 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { TournamentFormData, tournamentTypes } from './TournamentFormSchema';
 import { clubService } from '@/services/club.service';
@@ -93,72 +86,6 @@ const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form 
           </FormItem>
         )}
       />
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormField
-          control={form.control}
-          name="date"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-poker-gold" />
-                Data*
-              </FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "dd/MM/yyyy")
-                      ) : (
-                        <span>Selecione uma data</span>
-                      )}
-                      <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <CalendarComponent
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    initialFocus
-                    className="p-3 pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage className="text-[#8b0000]" />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="time"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="flex items-center gap-2">
-                <Clock className="h-4 w-4 text-poker-gold" />
-                Hora*
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="time"
-                  {...field}
-                  placeholder="HH:mm"
-                />
-              </FormControl>
-              <FormMessage className="text-[#8b0000]" />
-            </FormItem>
-          )}
-        />
-      </div>
 
       <FormField
         control={form.control}

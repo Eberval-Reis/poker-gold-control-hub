@@ -35,7 +35,6 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     defaultValues: {
       name: '',
       club_id: '',
-      time: '',
       type: '',
       initial_stack: '',
       blind_structure: '',
@@ -50,8 +49,6 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
       form.reset({
         name: tournamentData.name,
         club_id: tournamentData.club_id,
-        date: tournamentData.date ? new Date(tournamentData.date) : new Date(),
-        time: tournamentData.time,
         type: tournamentData.type,
         initial_stack: tournamentData.initial_stack || '',
         blind_structure: tournamentData.blind_structure || '',
@@ -64,13 +61,11 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   // Create or update tournament mutation
   const mutation = useMutation({
     mutationFn: (data: TournamentFormData) => {
-      // Format date for database storage
+      // Format data for database storage
       const formattedData = {
         ...data,
         name: data.name,
         club_id: data.club_id,
-        date: data.date.toISOString().split('T')[0],
-        time: data.time,
         type: data.type,
         initial_stack: data.initial_stack,
         blind_structure: data.blind_structure,

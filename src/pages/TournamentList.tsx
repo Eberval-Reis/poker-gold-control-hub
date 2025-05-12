@@ -2,8 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, TrendingUp, Plus, Pencil, Trash2, Search, Calendar } from 'lucide-react';
-import { format } from 'date-fns';
+import { ArrowLeft, TrendingUp, Plus, Pencil, Trash2, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -154,7 +153,6 @@ const TournamentList = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Nome</TableHead>
-                  <TableHead>Data</TableHead>
                   <TableHead>Clube</TableHead>
                   <TableHead>Tipo</TableHead>
                   <TableHead className="w-[100px] text-right">Ações</TableHead>
@@ -164,14 +162,6 @@ const TournamentList = () => {
                 {filteredTournaments.map((tournament: any) => (
                   <TableRow key={tournament.id}>
                     <TableCell className="font-medium">{tournament.name}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-poker-gold" />
-                        <span>
-                          {format(new Date(tournament.date), 'dd/MM/yyyy')} às {tournament.time}
-                        </span>
-                      </div>
-                    </TableCell>
                     <TableCell>{tournament.clubs?.name || '-'}</TableCell>
                     <TableCell>
                       <Badge variant="outline" className="bg-poker-gold/10 text-poker-gold border-poker-gold/30">
