@@ -5,15 +5,15 @@ export const tournamentPerformanceFormSchema = z.object({
   tournament_id: z.string({
     required_error: "Torneio é obrigatório",
   }),
-  buyin_amount: z.string().min(1, "Valor do buy-in é obrigatório").transform(val => parseFloat(val)),
-  rebuy_amount: z.string().optional().transform(val => val ? parseFloat(val) : undefined),
-  rebuy_quantity: z.string().optional().transform(val => val ? parseInt(val) : 0),
+  buyin_amount: z.string().min(1, "Valor do buy-in é obrigatório"),
+  rebuy_amount: z.string().optional(),
+  rebuy_quantity: z.string().optional(),
   addon_enabled: z.boolean().default(false),
-  addon_amount: z.string().optional().transform(val => val ? parseFloat(val) : undefined),
+  addon_amount: z.string().optional(),
   itm_achieved: z.boolean().default(false),
   final_table_achieved: z.boolean().default(false),
-  position: z.string().optional().transform(val => val ? parseInt(val) : undefined),
-  prize_amount: z.string().optional().transform(val => val ? parseFloat(val) : 0),
+  position: z.string().optional(),
+  prize_amount: z.string().optional(),
 });
 
 // Type for the form data

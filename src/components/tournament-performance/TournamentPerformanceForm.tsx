@@ -69,10 +69,10 @@ const TournamentPerformanceForm = () => {
     
     const totalInvested = calculateTotalInvested(
       buyinNum,
-      rebuyAmount ? rebuyAmountNum : undefined,
-      rebuyQuantity ? rebuyQtyNum : undefined,
+      rebuyAmountNum || undefined,
+      rebuyQtyNum || undefined,
       addonEnabled,
-      addonAmount ? addonAmountNum : undefined
+      addonAmountNum || undefined
     );
     
     const profitLoss = calculateProfitLoss(prizeAmountNum || 0, totalInvested);
@@ -136,15 +136,15 @@ const TournamentPerformanceForm = () => {
       // Convert form data to database format
       const performanceData: Partial<TournamentPerformance> = {
         tournament_id: data.tournament_id,
-        buyin_amount: parseFloat(data.buyin_amount as unknown as string),
-        rebuy_amount: data.rebuy_amount !== '' ? parseFloat(data.rebuy_amount as unknown as string) : null,
-        rebuy_quantity: data.rebuy_quantity !== '' ? parseInt(data.rebuy_quantity as unknown as string) : 0,
+        buyin_amount: parseFloat(data.buyin_amount),
+        rebuy_amount: data.rebuy_amount ? parseFloat(data.rebuy_amount) : null,
+        rebuy_quantity: data.rebuy_quantity ? parseInt(data.rebuy_quantity) : 0,
         addon_enabled: data.addon_enabled,
-        addon_amount: data.addon_amount !== '' ? parseFloat(data.addon_amount as unknown as string) : null,
+        addon_amount: data.addon_amount ? parseFloat(data.addon_amount) : null,
         itm_achieved: data.itm_achieved,
         final_table_achieved: data.final_table_achieved,
-        position: data.position !== '' ? parseInt(data.position as unknown as string) : null,
-        prize_amount: data.prize_amount !== '' ? parseFloat(data.prize_amount as unknown as string) : 0,
+        position: data.position ? parseInt(data.position) : null,
+        prize_amount: data.prize_amount ? parseFloat(data.prize_amount) : 0,
       };
       
       return isEditing

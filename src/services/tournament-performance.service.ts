@@ -37,6 +37,11 @@ export const getTournamentPerformanceById = async (id: string): Promise<Tourname
 export const createTournamentPerformance = async (
   performanceData: Partial<TournamentPerformance>
 ): Promise<TournamentPerformance> => {
+  // Ensure buyin_amount is present
+  if (!performanceData.buyin_amount && performanceData.buyin_amount !== 0) {
+    throw new Error('Buy-in amount is required');
+  }
+  
   const { data, error } = await supabase
     .from('tournament_performance')
     .insert(performanceData)
