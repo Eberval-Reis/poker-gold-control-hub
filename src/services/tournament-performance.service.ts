@@ -36,7 +36,7 @@ export const getTournamentPerformanceById = async (id: string): Promise<Tourname
 
 export const createTournamentPerformance = async (
   performanceData: Partial<TournamentPerformance>
-): Promise<TournamentPerformance> {
+): Promise<TournamentPerformance> => {
   const { data, error } = await supabase
     .from('tournament_performance')
     .insert(performanceData)
@@ -54,7 +54,7 @@ export const createTournamentPerformance = async (
 export const updateTournamentPerformance = async (
   id: string, 
   performanceData: Partial<TournamentPerformance>
-): Promise<TournamentPerformance> {
+): Promise<TournamentPerformance> => {
   const { data, error } = await supabase
     .from('tournament_performance')
     .update(performanceData)
