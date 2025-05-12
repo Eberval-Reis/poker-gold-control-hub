@@ -17,8 +17,8 @@ export interface Tournament {
   id: string;
   name: string;
   club_id: string;
-  date: string;
-  time: string;
+  date?: string;
+  time?: string;
   type: string;
   initial_stack?: string;
   blind_structure?: string;
