@@ -92,6 +92,62 @@ export type Database = {
           },
         ]
       }
+      tournament_performance: {
+        Row: {
+          addon_amount: number | null
+          addon_enabled: boolean | null
+          buyin_amount: number
+          created_at: string
+          final_table_achieved: boolean | null
+          id: string
+          itm_achieved: boolean | null
+          position: number | null
+          prize_amount: number | null
+          rebuy_amount: number | null
+          rebuy_quantity: number | null
+          tournament_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          addon_amount?: number | null
+          addon_enabled?: boolean | null
+          buyin_amount: number
+          created_at?: string
+          final_table_achieved?: boolean | null
+          id?: string
+          itm_achieved?: boolean | null
+          position?: number | null
+          prize_amount?: number | null
+          rebuy_amount?: number | null
+          rebuy_quantity?: number | null
+          tournament_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          addon_amount?: number | null
+          addon_enabled?: boolean | null
+          buyin_amount?: number
+          created_at?: string
+          final_table_achieved?: boolean | null
+          id?: string
+          itm_achieved?: boolean | null
+          position?: number | null
+          prize_amount?: number | null
+          rebuy_amount?: number | null
+          rebuy_quantity?: number | null
+          tournament_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_performance_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tournaments: {
         Row: {
           blind_structure: string | null

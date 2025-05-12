@@ -9,9 +9,11 @@ import NotFound from "./pages/NotFound";
 import RegisterClub from "./pages/RegisterClub";
 import RegisterTournament from "./pages/RegisterTournament";
 import RegisterExpense from "./pages/RegisterExpense";
+import RegisterTournamentPerformance from "./pages/RegisterTournamentPerformance";
 import ClubList from "./pages/ClubList";
 import TournamentList from "./pages/TournamentList";
 import ExpenseList from "./pages/ExpenseList";
+import TournamentPerformanceList from "./pages/TournamentPerformanceList";
 import Report from "./pages/Report";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -35,9 +37,12 @@ const App = () => (
             <Route path="/register-tournament/:id" element={<RegisterTournament />} />
             <Route path="/register-expense" element={<RegisterExpense />} />
             <Route path="/register-expense/:id" element={<RegisterExpense />} />
+            <Route path="/register-tournament-performance" element={<RegisterTournamentPerformance />} />
+            <Route path="/register-tournament-performance/:id" element={<RegisterTournamentPerformance />} />
             <Route path="/clubs" element={<ClubList />} />
             <Route path="/tournaments" element={<TournamentList />} />
             <Route path="/expenses" element={<ExpenseList />} />
+            <Route path="/tournament-performances" element={<TournamentPerformanceList />} />
             <Route path="/report" element={<Report />} />
           </Route>
           

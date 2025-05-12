@@ -1,0 +1,94 @@
+
+import { supabase } from "@/integrations/supabase/client";
+import { TournamentPerformance } from '@/lib/supabase';
+
+// Individual functions for tournament performance operations
+export const getTournamentPerformances = async (): Promise<TournamentPerformance[]> => {
+  const { data, error } = await supabase
+    .from('tournament_performance')
+    .select('*, tournament_id (name, club_id (name))');
+  
+  if (error) {
+    console.error('Error fetching tournament performances:', error);
+    throw error;
+  }
+  
+  return (data || []) as TournamentPerformance[];
+};
+
+export const getTournamentPerformanceById = async (id: string): Promise<TournamentPerformance | null> => {
+  const { data, error } = await supabase
+    .from('tournament_performance')
+    .select('*, tournament_id (name, club_id (name))')
+    .eq('id', id)
+    .single();
+  
+  if (error) {
+    if (error.code === 'PGRST116') { // Record not found
+      return null;
+    }
+    console.error('Error fetching tournament performance:', error);
+    throw error;
+  }
+  
+  return data as TournamentPerformance;
+};
+
+export const createTournamentPerformance = async (
+  performanceData: Partial<TournamentPerformance>
+): Promise<TournamentPerformance> {
+  const { data, error } = await supabase
+    .from('tournament_performance')
+    .insert(performanceData)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error creating tournament performance:', error);
+    throw error;
+  }
+  
+  return data as TournamentPerformance;
+};
+
+export const updateTournamentPerformance = async (
+  id: string, 
+  performanceData: Partial<TournamentPerformance>
+): Promise<TournamentPerformance> {
+  const { data, error } = await supabase
+    .from('tournament_performance')
+    .update(performanceData)
+    .eq('id', id)
+    .select()
+    .single();
+  
+  if (error) {
+    console.error('Error updating tournament performance:', error);
+    throw error;
+  }
+  
+  return data as TournamentPerformance;
+};
+
+export const deleteTournamentPerformance = async (id: string): Promise<{ success: boolean }> => {
+  const { error } = await supabase
+    .from('tournament_performance')
+    .delete()
+    .eq('id', id);
+  
+  if (error) {
+    console.error('Error deleting tournament performance:', error);
+    throw error;
+  }
+  
+  return { success: true };
+};
+
+// Export tournamentPerformanceService object
+export const tournamentPerformanceService = {
+  getTournamentPerformances,
+  getTournamentPerformanceById,
+  createTournamentPerformance,
+  updateTournamentPerformance,
+  deleteTournamentPerformance
+};

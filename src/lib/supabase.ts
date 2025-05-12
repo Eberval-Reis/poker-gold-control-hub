@@ -32,6 +32,29 @@ export interface Tournament {
   };
 }
 
+export interface TournamentPerformance {
+  id: string;
+  tournament_id: string;
+  buyin_amount: number;
+  rebuy_amount?: number;
+  rebuy_quantity?: number;
+  addon_enabled?: boolean;
+  addon_amount?: number;
+  itm_achieved?: boolean;
+  final_table_achieved?: boolean;
+  position?: number;
+  prize_amount?: number;
+  created_at?: string;
+  updated_at?: string;
+  // Join fields
+  tournaments?: {
+    name: string;
+    clubs?: {
+      name: string;
+    }
+  };
+}
+
 export interface Expense {
   id: string;
   type: string;
