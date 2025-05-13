@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { format } from 'date-fns';
+import { format, isValid } from 'date-fns';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UseFormReturn } from 'react-hook-form';
@@ -12,6 +12,12 @@ interface TournamentFieldProps {
 }
 
 const TournamentField = ({ form, tournaments }: TournamentFieldProps) => {
+  // Helper function to safely format dates
+  const safeFormatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return isValid(date) ? format(date, 'dd/MM/yyyy') : 'Data inválida';
+  };
+
   return (
     <FormField
       control={form.control}
@@ -28,7 +34,7 @@ const TournamentField = ({ form, tournaments }: TournamentFieldProps) => {
             <SelectContent>
               {tournaments.map((tournament: any) => (
                 <SelectItem key={tournament.id} value={tournament.id}>
-                  {tournament.name} - {format(new Date(tournament.date), 'dd/MM/yyyy')}
+                  {tournament.name} - {safeFormatDate(tournament.date)}
                 </SelectItem>
               ))}
             </SelectContent>
