@@ -16,8 +16,9 @@ const TournamentBarChart = ({ performances, tournaments }: TournamentBarChartPro
       .slice(0, 5);
 
     return recentPerformances.map(performance => {
-      const tournament = tournaments.find(t => t.id === performance.tournament_id);
-      const tournamentName = tournament ? tournament.name : 'Torneio desconhecido';
+      // Access the tournament name directly from the nested structure
+      // In Supabase join queries, tournament_id contains the joined tournament data
+      const tournamentName = performance.tournament_id?.name || 'Torneio desconhecido';
       
       const buyinAmount = Number(performance.buyin_amount || 0);
       const rebuyAmount = Number(performance.rebuy_amount || 0);
