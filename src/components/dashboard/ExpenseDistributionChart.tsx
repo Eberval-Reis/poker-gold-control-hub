@@ -1,6 +1,6 @@
 
 import { useMemo } from 'react';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { expenseTypes } from '@/components/expense/ExpenseFormSchema';
 
 interface ExpenseDistributionChartProps {
@@ -29,14 +29,14 @@ const ExpenseDistributionChart = ({ expenses }: ExpenseDistributionChartProps) =
         name: typeInfo.name,
         value: amount
       };
-    });
+    }).sort((a, b) => (b.value as number) - (a.value as number)); // Sort by value in descending order
   }, [expenses]);
   
-  // Colors for the pie chart
+  // Colors for the bar chart
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#d4af37'];
 
   // Custom tooltip formatter
-  const CustomTooltip = ({ active, payload }) => {
+  const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: any[] }) => {
     if (active && payload && payload.length) {
       const data = payload[0];
       return (
@@ -54,28 +54,32 @@ const ExpenseDistributionChart = ({ expenses }: ExpenseDistributionChartProps) =
     return null;
   };
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      notation: 'compact'
+    }).format(value);
+  };
+
   return (
     <div className="h-[300px] w-full">
       {chartData.length > 0 ? (
         <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={chartData}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              outerRadius={80}
-              fill="#8884d8"
-              dataKey="value"
-              label={({name, percent}) => `${name} ${(percent * 100).toFixed(0)}%`}
-            >
+          <BarChart
+            data={chartData}
+            layout="vertical"
+            margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
+          >
+            <XAxis type="number" tickFormatter={formatCurrency} />
+            <YAxis dataKey="name" type="category" scale="band" width={80} />
+            <Tooltip content={<CustomTooltip />} />
+            <Bar dataKey="value" fill="#8884d8">
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-            <Legend />
-          </PieChart>
+            </Bar>
+          </BarChart>
         </ResponsiveContainer>
       ) : (
         <div className="h-full flex items-center justify-center">
