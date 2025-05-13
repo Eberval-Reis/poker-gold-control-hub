@@ -20,13 +20,13 @@ const ExpenseDistributionChart = ({ expenses }: ExpenseDistributionChartProps) =
       expensesByType[type] += Number(amount);
     });
     
-    // Convert to array for chart
-    return Object.entries(expensesByType).map(([type, amount]) => {
+    // Convert to array for chart and map type IDs to display names
+    return Object.entries(expensesByType).map(([typeId, amount]) => {
       // Find expense type info from the defined types
-      const typeInfo = expenseTypes.find(t => t.id === type) || { name: type };
+      const typeInfo = expenseTypes.find(t => t.id === typeId);
       
       return {
-        name: typeInfo.name,
+        name: typeInfo ? typeInfo.name : typeId, // Use the display name if found, otherwise use the ID
         value: amount
       };
     }).sort((a, b) => (b.value as number) - (a.value as number)); // Sort by value in descending order
