@@ -15,8 +15,8 @@ const RecentTournamentsTable = ({ performances, tournaments }: RecentTournaments
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 5)
       .map(performance => {
-        const tournament = tournaments.find(t => t.id === performance.tournament_id);
-        const tournamentName = tournament ? tournament.name : 'Torneio desconhecido';
+        // Access the tournament name directly from the nested structure
+        const tournamentName = performance.tournament_id?.name || 'Torneio desconhecido';
         
         const buyinAmount = Number(performance.buyin_amount || 0);
         const rebuyAmount = Number(performance.rebuy_amount || 0);

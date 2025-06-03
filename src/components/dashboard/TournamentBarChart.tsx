@@ -10,14 +10,18 @@ interface TournamentBarChartProps {
 
 const TournamentBarChart = ({ performances, tournaments }: TournamentBarChartProps) => {
   const chartData = useMemo(() => {
-    // Get the 5 most recent performances
-    const recentPerformances = [...performances]
+    // Filter performances that have prize amount > 0
+    const performancesWithPrizes = performances.filter(performance => 
+      Number(performance.prize_amount || 0) > 0
+    );
+
+    // Get the 5 most recent performances with prizes
+    const recentPerformances = [...performancesWithPrizes]
       .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 5);
 
     return recentPerformances.map(performance => {
       // Access the tournament name directly from the nested structure
-      // In Supabase join queries, tournament_id contains the joined tournament data
       const tournamentName = performance.tournament_id?.name || 'Torneio desconhecido';
       
       const buyinAmount = Number(performance.buyin_amount || 0);
@@ -46,6 +50,9 @@ const TournamentBarChart = ({ performances, tournaments }: TournamentBarChartPro
     }).reverse(); // Reverse to show oldest first
   }, [performances, tournaments]);
 
+  // Array of colors for different tournaments
+  const colors = ['#006400', '#d4af37', '#0088FE', '#00C49F', '#FF8042'];
+
   return (
     <div className="h-[300px] w-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -72,7 +79,7 @@ const TournamentBarChart = ({ performances, tournaments }: TournamentBarChartPro
             {chartData.map((entry, index) => (
               <Cell 
                 key={`cell-${index}`} 
-                fill={entry.value >= 0 ? "#006400" : "#8b0000"} 
+                fill={colors[index % colors.length]}
               />
             ))}
           </Bar>
