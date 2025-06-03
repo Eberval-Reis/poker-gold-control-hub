@@ -9,36 +9,58 @@ interface ExpenseDistributionChartProps {
 
 const ExpenseDistributionChart = ({ expenses }: ExpenseDistributionChartProps) => {
   const chartData = useMemo(() => {
-    console.log('Expenses data:', expenses); // Debug log
+    console.log('All expenses received:', expenses);
+    console.log('Available expense types from schema:', expenseTypes);
+    
+    if (!expenses || expenses.length === 0) {
+      console.log('No expenses data available');
+      return [];
+    }
     
     // Group expenses by type
     const expensesByType = {};
     
-    expenses.forEach(expense => {
+    expenses.forEach((expense, index) => {
+      console.log(`Processing expense ${index}:`, expense);
       const { type, amount } = expense;
-      console.log('Processing expense:', { type, amount }); // Debug log
+      
+      if (!type) {
+        console.warn('Expense without type found:', expense);
+        return;
+      }
       
       if (!expensesByType[type]) {
         expensesByType[type] = 0;
       }
-      expensesByType[type] += Number(amount);
+      const numericAmount = Number(amount) || 0;
+      expensesByType[type] += numericAmount;
+      
+      console.log(`Added ${numericAmount} to type '${type}'. New total:`, expensesByType[type]);
     });
     
-    console.log('Expenses by type:', expensesByType); // Debug log
+    console.log('Final expenses grouped by type:', expensesByType);
     
     // Convert to array for chart and map type IDs to display names
-    const chartData = Object.entries(expensesByType).map(([typeId, amount]) => {
-      // Find expense type info from the defined types
-      const typeInfo = expenseTypes.find(t => t.id === typeId);
-      console.log('Type mapping:', { typeId, typeInfo }); // Debug log
-      
-      return {
-        name: typeInfo ? typeInfo.name : typeId, // Use the display name if found, otherwise use the ID
-        value: amount
-      };
-    }).sort((a, b) => (b.value as number) - (a.value as number)); // Sort by value in descending order
+    const chartData = Object.entries(expensesByType)
+      .filter(([typeId, amount]) => Number(amount) > 0) // Only include types with positive amounts
+      .map(([typeId, amount]) => {
+        // Find expense type info from the defined types
+        const typeInfo = expenseTypes.find(t => t.id === typeId);
+        console.log(`Mapping type '${typeId}' to display name. Found:`, typeInfo);
+        
+        const displayName = typeInfo ? typeInfo.name : typeId;
+        const result = {
+          name: displayName,
+          value: Number(amount),
+          originalType: typeId // Keep original type for debugging
+        };
+        
+        console.log('Created chart entry:', result);
+        return result;
+      })
+      .sort((a, b) => b.value - a.value); // Sort by value in descending order
     
-    console.log('Final chart data:', chartData); // Debug log
+    console.log('Final chart data for rendering:', chartData);
     return chartData;
   }, [expenses]);
   
