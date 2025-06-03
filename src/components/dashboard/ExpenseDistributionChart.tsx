@@ -9,27 +9,37 @@ interface ExpenseDistributionChartProps {
 
 const ExpenseDistributionChart = ({ expenses }: ExpenseDistributionChartProps) => {
   const chartData = useMemo(() => {
+    console.log('Expenses data:', expenses); // Debug log
+    
     // Group expenses by type
     const expensesByType = {};
     
     expenses.forEach(expense => {
       const { type, amount } = expense;
+      console.log('Processing expense:', { type, amount }); // Debug log
+      
       if (!expensesByType[type]) {
         expensesByType[type] = 0;
       }
       expensesByType[type] += Number(amount);
     });
     
+    console.log('Expenses by type:', expensesByType); // Debug log
+    
     // Convert to array for chart and map type IDs to display names
-    return Object.entries(expensesByType).map(([typeId, amount]) => {
+    const chartData = Object.entries(expensesByType).map(([typeId, amount]) => {
       // Find expense type info from the defined types
       const typeInfo = expenseTypes.find(t => t.id === typeId);
+      console.log('Type mapping:', { typeId, typeInfo }); // Debug log
       
       return {
         name: typeInfo ? typeInfo.name : typeId, // Use the display name if found, otherwise use the ID
         value: amount
       };
     }).sort((a, b) => (b.value as number) - (a.value as number)); // Sort by value in descending order
+    
+    console.log('Final chart data:', chartData); // Debug log
+    return chartData;
   }, [expenses]);
   
   // Colors for the bar chart
