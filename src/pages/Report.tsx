@@ -1,10 +1,11 @@
-import { useState } from 'react';
+
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CalendarDays, DollarSign, TrendingUp, BarChart3 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
-import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import { DatePickerWithRange } from '@/components/ui/date-picker';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -47,33 +48,32 @@ const Report = () => {
 
   const { data: tournamentPerformances, isLoading: isLoadingTournamentPerformances } = useQuery({
     queryKey: ['tournamentPerformances', date?.from, date?.to],
-    queryFn: () => tournamentPerformanceService.getTournamentPerformances({
-      startDate: date?.from ? format(date.from, 'yyyy-MM-dd') : undefined,
-      endDate: date?.to ? format(date.to, 'yyyy-MM-dd') : undefined,
-    }),
+    queryFn: () => tournamentPerformanceService.getTournamentPerformances(),
   });
 
   const { data: expenses, isLoading: isLoadingExpenses } = useQuery({
     queryKey: ['expenses', date?.from, date?.to],
-    queryFn: () => expenseService.getExpenses({
-      startDate: date?.from ? format(date.from, 'yyyy-MM-dd') : undefined,
-      endDate: date?.to ? format(date.to, 'yyyy-MM-dd') : undefined,
-    }),
+    queryFn: () => expenseService.getExpenses(),
   });
 
   const totalInvested = useMemo(() => {
     if (!tournamentPerformances) return 0;
-    return tournamentPerformances.reduce((acc, item) => acc + item.buyIn + item.reBuy + item.addOn + item.tx, 0);
+    return tournamentPerformances.reduce((acc, item) => {
+      const buyin = Number(item.buyin_amount || 0);
+      const rebuy = Number(item.rebuy_amount || 0) * Number(item.rebuy_quantity || 0);
+      const addon = item.addon_enabled ? Number(item.addon_amount || 0) : 0;
+      return acc + buyin + rebuy + addon;
+    }, 0);
   }, [tournamentPerformances]);
 
   const totalCashout = useMemo(() => {
     if (!tournamentPerformances) return 0;
-    return tournamentPerformances.reduce((acc, item) => acc + item.cashout, 0);
+    return tournamentPerformances.reduce((acc, item) => acc + Number(item.prize_amount || 0), 0);
   }, [tournamentPerformances]);
 
   const totalExpenses = useMemo(() => {
     if (!expenses) return 0;
-    return expenses.reduce((acc, item) => acc + item.value, 0);
+    return expenses.reduce((acc, item) => acc + Number(item.amount), 0);
   }, [expenses]);
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
@@ -84,10 +84,8 @@ const Report = () => {
     const categoryTotals: { [key: string]: number } = {};
 
     expenses.forEach(expense => {
-      if (expense.category) {
-        const categoryName = expense.category.name;
-        categoryTotals[categoryName] = (categoryTotals[categoryName] || 0) + expense.value;
-      }
+      const categoryName = expense.type || 'Outros';
+      categoryTotals[categoryName] = (categoryTotals[categoryName] || 0) + Number(expense.amount);
     });
 
     const data = Object.keys(categoryTotals).map(key => ({
@@ -104,10 +102,14 @@ const Report = () => {
     const monthlyTotals: { [key: string]: number } = {};
 
     tournamentPerformances.forEach(performance => {
-      if (performance.date) {
-        const monthYear = format(new Date(performance.date), 'MMM yyyy', { locale: ptBR });
-        monthlyTotals[monthYear] = (monthlyTotals[monthYear] || 0) + (performance.cashout - performance.buyIn - performance.reBuy - performance.addOn - performance.tx);
-      }
+      const monthYear = format(new Date(performance.created_at), 'MMM yyyy', { locale: ptBR });
+      const buyin = Number(performance.buyin_amount || 0);
+      const rebuy = Number(performance.rebuy_amount || 0) * Number(performance.rebuy_quantity || 0);
+      const addon = performance.addon_enabled ? Number(performance.addon_amount || 0) : 0;
+      const prize = Number(performance.prize_amount || 0);
+      const profit = prize - buyin - rebuy - addon;
+      
+      monthlyTotals[monthYear] = (monthlyTotals[monthYear] || 0) + profit;
     });
 
     const data = Object.keys(monthlyTotals).map(key => ({
@@ -121,10 +123,18 @@ const Report = () => {
   const tournamentPerformanceData = useMemo(() => {
     if (!tournamentPerformances) return [];
 
-    return tournamentPerformances.map(performance => ({
-      name: performance.tournament?.name || 'Torneio Desconhecido',
-      profit: performance.cashout - performance.buyIn - performance.reBuy - performance.addOn - performance.tx
-    }));
+    return tournamentPerformances.map(performance => {
+      const buyin = Number(performance.buyin_amount || 0);
+      const rebuy = Number(performance.rebuy_amount || 0) * Number(performance.rebuy_quantity || 0);
+      const addon = performance.addon_enabled ? Number(performance.addon_amount || 0) : 0;
+      const prize = Number(performance.prize_amount || 0);
+      const profit = prize - buyin - rebuy - addon;
+
+      return {
+        name: performance.tournament_id?.name || 'Torneio Desconhecido',
+        profit
+      };
+    });
   }, [tournamentPerformances]);
 
   const toggleSidebar = () => {
@@ -156,7 +166,7 @@ const Report = () => {
             <CardContent>
               <div className="text-2xl font-bold">
                 {isLoadingTournamentPerformances ? (
-                  <Skeleton width={80} />
+                  <Skeleton className="h-8 w-24" />
                 ) : (
                   `R$ ${totalInvested.toFixed(2)}`
                 )}
@@ -176,7 +186,7 @@ const Report = () => {
             <CardContent>
               <div className="text-2xl font-bold">
                 {isLoadingTournamentPerformances ? (
-                  <Skeleton width={80} />
+                  <Skeleton className="h-8 w-24" />
                 ) : (
                   `R$ ${totalCashout.toFixed(2)}`
                 )}
@@ -196,7 +206,7 @@ const Report = () => {
             <CardContent>
               <div className="text-2xl font-bold">
                 {isLoadingExpenses ? (
-                  <Skeleton width={80} />
+                  <Skeleton className="h-8 w-24" />
                 ) : (
                   `R$ ${totalExpenses.toFixed(2)}`
                 )}
@@ -216,7 +226,7 @@ const Report = () => {
             <CardContent>
               <div className="text-2xl font-bold">
                 {isLoadingTournamentPerformances || isLoadingExpenses ? (
-                  <Skeleton width={80} />
+                  <Skeleton className="h-8 w-24" />
                 ) : (
                   `R$ ${(totalCashout - totalInvested - totalExpenses).toFixed(2)}`
                 )}

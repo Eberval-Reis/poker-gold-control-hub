@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+
 import { useState, useMemo } from 'react';
 import { Home, CalendarDays, DollarSign, TrendingUp, TrendingDown, Medal, Trophy, PieChart, BarChart } from 'lucide-react';
 import Header from '@/components/Header';
@@ -8,12 +8,12 @@ import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { DashboardFilters } from '@/components/dashboard/DashboardFilters';
-import { MetricCard } from '@/components/dashboard/MetricCard';
-import { RecentTournamentsTable } from '@/components/dashboard/RecentTournamentsTable';
-import { MonthlyPerformanceChart } from '@/components/dashboard/MonthlyPerformanceChart';
-import { ExpenseDistributionChart } from '@/components/dashboard/ExpenseDistributionChart';
-import { TournamentBarChart } from '@/components/dashboard/TournamentBarChart';
+import DashboardFilters from '@/components/dashboard/DashboardFilters';
+import MetricCard from '@/components/dashboard/MetricCard';
+import RecentTournamentsTable from '@/components/dashboard/RecentTournamentsTable';
+import MonthlyPerformanceChart from '@/components/dashboard/MonthlyPerformanceChart';
+import ExpenseDistributionChart from '@/components/dashboard/ExpenseDistributionChart';
+import TournamentBarChart from '@/components/dashboard/TournamentBarChart';
 import { tournamentPerformanceService } from '@/services/tournament-performance.service';
 import { expenseService } from '@/services/expense.service';
 import { DateRange } from 'react-day-picker';
@@ -28,22 +28,27 @@ const Index = () => {
 
   const { data: tournamentPerformances, isLoading: isLoadingTournamentPerformances } = useQuery({
     queryKey: ['tournamentPerformances', dateRange?.from, dateRange?.to],
-    queryFn: () => tournamentPerformanceService.getTournamentPerformances(dateRange?.from, dateRange?.to),
+    queryFn: () => tournamentPerformanceService.getTournamentPerformances(),
   });
 
   const { data: expenses, isLoading: isLoadingExpenses } = useQuery({
     queryKey: ['expenses', dateRange?.from, dateRange?.to],
-    queryFn: () => expenseService.getExpenses(dateRange?.from, dateRange?.to),
+    queryFn: () => expenseService.getExpenses(),
   });
 
   const totalInvested = useMemo(() => {
     if (!tournamentPerformances) return 0;
-    return tournamentPerformances.reduce((acc, performance) => acc + (performance.buy_in || 0) + (performance.re_buy || 0) + (performance.add_on || 0) + (performance.others || 0), 0);
+    return tournamentPerformances.reduce((acc, performance) => {
+      const buyin = Number(performance.buyin_amount || 0);
+      const rebuy = Number(performance.rebuy_amount || 0) * Number(performance.rebuy_quantity || 0);
+      const addon = performance.addon_enabled ? Number(performance.addon_amount || 0) : 0;
+      return acc + buyin + rebuy + addon;
+    }, 0);
   }, [tournamentPerformances]);
 
   const totalCashout = useMemo(() => {
     if (!tournamentPerformances) return 0;
-    return tournamentPerformances.reduce((acc, performance) => acc + (performance.cash_out || 0), 0);
+    return tournamentPerformances.reduce((acc, performance) => acc + Number(performance.prize_amount || 0), 0);
   }, [tournamentPerformances]);
 
   const totalProfit = useMemo(() => {
@@ -57,18 +62,8 @@ const Index = () => {
 
   const totalExpenses = useMemo(() => {
     if (!expenses) return 0;
-    return expenses.reduce((acc, expense) => acc + expense.value, 0);
+    return expenses.reduce((acc, expense) => acc + Number(expense.amount), 0);
   }, [expenses]);
-
-  const bestResult = useMemo(() => {
-    if (!tournamentPerformances || tournamentPerformances.length === 0) return null;
-    return tournamentPerformances.reduce((prev, current) => (prev.cash_out! - (prev.buy_in! + prev.re_buy! + prev.add_on! + prev.others!) > current.cash_out! - (current.buy_in! + current.re_buy! + current.add_on! + current.others!) ? prev : current));
-  }, [tournamentPerformances]);
-
-  const worstResult = useMemo(() => {
-    if (!tournamentPerformances || tournamentPerformances.length === 0) return null;
-    return tournamentPerformances.reduce((prev, current) => (prev.cash_out! - (prev.buy_in! + prev.re_buy! + prev.add_on! + prev.others!) < current.cash_out! - (current.buy_in! + current.re_buy! + current.add_on! + current.others!) ? prev : current));
-  }, [tournamentPerformances]);
 
   return (
     <div className="min-h-screen bg-poker-background">
@@ -81,34 +76,31 @@ const Index = () => {
           <p className="text-gray-600">Acompanhe seus resultados e estatísticas no poker</p>
         </div>
 
-        <DashboardFilters dateRange={dateRange} setDateRange={setDateRange} />
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <MetricCard
             title="Total Investido"
-            value={totalInvested}
-            isLoading={isLoadingTournamentPerformances}
-            icon={DollarSign}
+            value={`R$ ${totalInvested.toFixed(2)}`}
+            icon={<DollarSign className="h-4 w-4" />}
+            loading={isLoadingTournamentPerformances}
           />
           <MetricCard
             title="Total Cashout"
-            value={totalCashout}
-            isLoading={isLoadingTournamentPerformances}
-            icon={TrendingUp}
+            value={`R$ ${totalCashout.toFixed(2)}`}
+            icon={<TrendingUp className="h-4 w-4" />}
+            loading={isLoadingTournamentPerformances}
           />
           <MetricCard
             title="Lucro Total"
-            value={totalProfit}
-            isLoading={isLoadingTournamentPerformances}
-            icon={totalProfit >= 0 ? TrendingUp : TrendingDown}
-            isPositive={totalProfit >= 0}
+            value={`R$ ${totalProfit.toFixed(2)}`}
+            icon={totalProfit >= 0 ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+            colorClass={totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}
+            loading={isLoadingTournamentPerformances}
           />
           <MetricCard
             title="ROI"
-            value={profitPercentage}
-            isLoading={isLoadingTournamentPerformances}
-            icon={BarChart}
-            isPercentage
+            value={`${profitPercentage.toFixed(1)}%`}
+            icon={<BarChart className="h-4 w-4" />}
+            loading={isLoadingTournamentPerformances}
           />
         </div>
 
@@ -118,7 +110,7 @@ const Index = () => {
               <CardTitle>Desempenho Mensal</CardTitle>
             </CardHeader>
             <CardContent>
-              <MonthlyPerformanceChart dateRange={dateRange} />
+              <MonthlyPerformanceChart performances={tournamentPerformances || []} />
             </CardContent>
           </Card>
 
@@ -127,7 +119,7 @@ const Index = () => {
               <CardTitle>Distribuição de Despesas</CardTitle>
             </CardHeader>
             <CardContent>
-              <ExpenseDistributionChart dateRange={dateRange} />
+              <ExpenseDistributionChart expenses={expenses || []} />
             </CardContent>
           </Card>
         </div>
@@ -138,7 +130,7 @@ const Index = () => {
               <CardTitle>Resultados por Torneio</CardTitle>
             </CardHeader>
             <CardContent>
-              <TournamentBarChart dateRange={dateRange} />
+              <TournamentBarChart performances={tournamentPerformances || []} tournaments={[]} />
             </CardContent>
           </Card>
         </div>
@@ -149,7 +141,7 @@ const Index = () => {
               <CardTitle>Torneios Recentes</CardTitle>
             </CardHeader>
             <CardContent>
-              <RecentTournamentsTable dateRange={dateRange} />
+              <RecentTournamentsTable performances={tournamentPerformances || []} tournaments={[]} />
             </CardContent>
           </Card>
         </div>

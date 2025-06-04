@@ -3,10 +3,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { TournamentPerformance } from '@/lib/supabase';
 
 // Individual functions for tournament performance operations
-export const getTournamentPerformances = async (): Promise<TournamentPerformance[]> => {
-  const { data, error } = await supabase
+export const getTournamentPerformances = async (startDate?: Date, endDate?: Date): Promise<TournamentPerformance[]> => {
+  let query = supabase
     .from('tournament_performance')
     .select('*, tournament_id (name, club_id (name))');
+  
+  if (startDate) {
+    query = query.gte('created_at', startDate.toISOString());
+  }
+  
+  if (endDate) {
+    query = query.lte('created_at', endDate.toISOString());
+  }
+  
+  const { data, error } = await query;
   
   if (error) {
     console.error('Error fetching tournament performances:', error);

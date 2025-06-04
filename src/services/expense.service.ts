@@ -1,12 +1,18 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Expense } from '@/lib/supabase';
 
-// Individual functions for expense operations
-export const getExpenses = async (): Promise<Expense[]> => {
-  const { data, error } = await supabase
-    .from('expenses')
-    .select('*, tournaments(name)');
+export const getExpenses = async (startDate?: Date, endDate?: Date) => {
+  let query = supabase.from('expenses').select('*');
+  
+  if (startDate) {
+    query = query.gte('created_at', startDate.toISOString());
+  }
+  
+  if (endDate) {
+    query = query.lte('created_at', endDate.toISOString());
+  }
+  
+  const { data, error } = await query;
   
   if (error) {
     console.error('Error fetching expenses:', error);
@@ -16,15 +22,15 @@ export const getExpenses = async (): Promise<Expense[]> => {
   return data || [];
 };
 
-export const getExpenseById = async (id: string): Promise<Expense | null> => {
+export const getExpenseById = async (id: string) => {
   const { data, error } = await supabase
     .from('expenses')
-    .select('*, tournaments(name)')
+    .select('*')
     .eq('id', id)
     .single();
   
   if (error) {
-    if (error.code === 'PGRST116') { // Record not found
+    if (error.code === 'PGRST116') {
       return null;
     }
     console.error('Error fetching expense:', error);
@@ -34,45 +40,10 @@ export const getExpenseById = async (id: string): Promise<Expense | null> => {
   return data;
 };
 
-export const createExpense = async (expenseData: Partial<Expense>, receipt?: File): Promise<Expense> => {
-  // Make sure required fields are present
-  if (!expenseData.type || !expenseData.amount || !expenseData.date) {
-    throw new Error('Missing required expense fields');
-  }
-  
-  // Upload receipt if provided
-  if (receipt) {
-    const fileName = `${Date.now()}-${receipt.name}`;
-    const { data: fileData, error: uploadError } = await supabase
-      .storage
-      .from('receipts')
-      .upload(fileName, receipt);
-    
-    if (uploadError) {
-      console.error('Error uploading receipt:', uploadError);
-      throw uploadError;
-    }
-    
-    // Get public URL for the uploaded file
-    const { data: urlData } = supabase
-      .storage
-      .from('receipts')
-      .getPublicUrl(fileName);
-    
-    expenseData.receipt_url = urlData?.publicUrl;
-  }
-  
-  // Insert expense record
+export const createExpense = async (expenseData: any) => {
   const { data, error } = await supabase
     .from('expenses')
-    .insert({
-      type: expenseData.type,
-      amount: expenseData.amount,
-      date: expenseData.date,
-      tournament_id: expenseData.tournament_id,
-      description: expenseData.description,
-      receipt_url: expenseData.receipt_url
-    })
+    .insert(expenseData)
     .select()
     .single();
   
@@ -84,41 +55,10 @@ export const createExpense = async (expenseData: Partial<Expense>, receipt?: Fil
   return data;
 };
 
-export const updateExpense = async (id: string, expenseData: Partial<Expense>, receipt?: File): Promise<Expense> => {
-  // Upload new receipt if provided
-  if (receipt) {
-    const fileName = `${Date.now()}-${receipt.name}`;
-    const { data: fileData, error: uploadError } = await supabase
-      .storage
-      .from('receipts')
-      .upload(fileName, receipt);
-    
-    if (uploadError) {
-      console.error('Error uploading receipt:', uploadError);
-      throw uploadError;
-    }
-    
-    // Get public URL for the uploaded file
-    const { data: urlData } = supabase
-      .storage
-      .from('receipts')
-      .getPublicUrl(fileName);
-    
-    expenseData.receipt_url = urlData?.publicUrl;
-  }
-  
-  // Update expense record - only include properties that are present in expenseData
-  const updateData: Record<string, any> = {};
-  if (expenseData.type !== undefined) updateData.type = expenseData.type;
-  if (expenseData.amount !== undefined) updateData.amount = expenseData.amount;
-  if (expenseData.date !== undefined) updateData.date = expenseData.date;
-  if (expenseData.tournament_id !== undefined) updateData.tournament_id = expenseData.tournament_id;
-  if (expenseData.description !== undefined) updateData.description = expenseData.description;
-  if (expenseData.receipt_url !== undefined) updateData.receipt_url = expenseData.receipt_url;
-  
+export const updateExpense = async (id: string, expenseData: any) => {
   const { data, error } = await supabase
     .from('expenses')
-    .update(updateData)
+    .update(expenseData)
     .eq('id', id)
     .select()
     .single();
@@ -131,15 +71,7 @@ export const updateExpense = async (id: string, expenseData: Partial<Expense>, r
   return data;
 };
 
-export const deleteExpense = async (id: string): Promise<{ success: boolean }> => {
-  // First get the expense to check if it has a receipt
-  const { data: expense } = await supabase
-    .from('expenses')
-    .select('receipt_url')
-    .eq('id', id)
-    .single();
-  
-  // Delete the expense record
+export const deleteExpense = async (id: string) => {
   const { error } = await supabase
     .from('expenses')
     .delete()
@@ -150,23 +82,9 @@ export const deleteExpense = async (id: string): Promise<{ success: boolean }> =
     throw error;
   }
   
-  // If there was a receipt, try to delete it from storage
-  // Note: This isn't critical, so we won't throw an error if it fails
-  if (expense?.receipt_url) {
-    try {
-      const filePath = expense.receipt_url.split('/').pop() || '';
-      if (filePath) {
-        await supabase.storage.from('receipts').remove([filePath]);
-      }
-    } catch (storageError) {
-      console.warn('Could not delete receipt file:', storageError);
-    }
-  }
-  
   return { success: true };
 };
 
-// Export expenseService object for components that expect it
 export const expenseService = {
   getExpenses,
   getExpenseById,
