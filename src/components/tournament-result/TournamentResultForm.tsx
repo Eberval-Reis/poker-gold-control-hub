@@ -39,7 +39,11 @@ export const TournamentResultForm = () => {
     
     try {
       const submitData = {
-        ...data,
+        club_id: data.club_id,
+        tournament_id: data.tournament_id,
+        date: data.date,
+        itm_achieved: data.itm_achieved,
+        ft_achieved: data.ft_achieved,
         // Convert empty strings to null for optional fields
         position: data.position || null,
         prize_amount: data.prize_amount || null,
@@ -49,7 +53,7 @@ export const TournamentResultForm = () => {
 
       const { error } = await supabase
         .from('tournament_results')
-        .insert([submitData]);
+        .insert(submitData);
 
       if (error) {
         throw error;

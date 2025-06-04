@@ -1,3 +1,4 @@
+
 import {
   Sheet,
   SheetContent,
@@ -7,15 +8,14 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Plus, List, BarChart3, Users, Calendar, Receipt, TrendingUp, Trophy } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-export const Sidebar = () => {
+const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { data: session } = useSession();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -25,6 +25,10 @@ export const Sidebar = () => {
   if (!isMounted) {
     return null;
   }
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
 
   const menuItems = [
     {
@@ -110,15 +114,15 @@ export const Sidebar = () => {
           ))}
         </div>
         <Separator className="my-4" />
-        {session ? (
-          <button
-            onClick={() => signOut()}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background px-4 py-2 hover:bg-accent hover:text-accent-foreground"
-          >
-            Sair
-          </button>
-        ) : null}
+        <button
+          onClick={handleSignOut}
+          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background px-4 py-2 hover:bg-accent hover:text-accent-foreground"
+        >
+          Sair
+        </button>
       </SheetContent>
     </Sheet>
   );
 };
+
+export { Sidebar };
