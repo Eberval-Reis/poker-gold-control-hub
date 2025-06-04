@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
-import { TournamentResultFormData, tournamentResultFormSchema } from './TournamentResultFormSchema';
+import { TournamentResultFormData, tournamentResultSchema } from './TournamentResultFormSchema';
 import { ClubField } from './fields/ClubField';
 import { TournamentField } from './fields/TournamentField';
 import { DateField } from './fields/DateField';
@@ -20,7 +20,7 @@ export const TournamentResultForm = () => {
   const { toast } = useToast();
 
   const form = useForm<TournamentResultFormData>({
-    resolver: zodResolver(tournamentResultFormSchema),
+    resolver: zodResolver(tournamentResultSchema),
     defaultValues: {
       club_id: '',
       tournament_id: '',
