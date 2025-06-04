@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import TournamentPerformanceTabs from '@/components/tournament-performance/list/TournamentPerformanceTabs';
 import { useNavigate } from 'react-router-dom';
 import { useTournamentPerformanceList } from '@/hooks/useTournamentPerformanceList';
-import { DeleteTournamentDialog } from '@/components/tournament-performance/list/DeleteTournamentDialog';
+import DeleteTournamentDialog from '@/components/tournament-performance/list/DeleteTournamentDialog';
 
 const TournamentPerformanceList = () => {
   const navigate = useNavigate();
