@@ -1,3 +1,4 @@
+
 import {
   Sheet,
   SheetContent,
@@ -7,15 +8,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LayoutDashboard, Plus, List, BarChart3, Users, Calendar, Receipt, TrendingUp, Trophy } from "lucide-react";
 
-export const Sidebar = () => {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { data: session } = useSession();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -60,6 +64,66 @@ export const Sidebar = () => {
     },
   ];
 
+  if (isOpen !== undefined) {
+    // Controlled sidebar (used with isOpen prop)
+    return (
+      <Sheet open={isOpen} onOpenChange={onClose}>
+        <SheetContent className="w-full sm:w-64">
+          <SheetHeader>
+            <SheetTitle>Menu</SheetTitle>
+            <SheetDescription>
+              Navegue pelas opções do sistema.
+            </SheetDescription>
+          </SheetHeader>
+          <Separator className="my-4" />
+          <div className="flex flex-col space-y-2">
+            {menuItems.map((item, index) => (
+              item.items ? (
+                <div key={index} className="space-y-1">
+                  <div className="flex items-center space-x-2 px-4 py-2 font-medium">
+                    <item.icon className="h-4 w-4" />
+                    <span>{item.title}</span>
+                  </div>
+                  <div className="flex flex-col pl-4 space-y-1">
+                    {item.items.map((subItem, subIndex) => (
+                      <button
+                        key={subIndex}
+                        onClick={() => {
+                          navigate(subItem.href);
+                          onClose?.();
+                        }}
+                        className={`flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-secondary hover:text-secondary-foreground ${
+                          location.pathname === subItem.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
+                        }`}
+                      >
+                        <span>{subItem.title}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <button
+                  key={index}
+                  onClick={() => {
+                    navigate(item.href);
+                    onClose?.();
+                  }}
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-secondary hover:text-secondary-foreground ${
+                    location.pathname === item.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
+                  }`}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.title}</span>
+                </button>
+              )
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  // Uncontrolled sidebar (original behavior)
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -88,8 +152,9 @@ export const Sidebar = () => {
                     <button
                       key={subIndex}
                       onClick={() => navigate(subItem.href)}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-secondary hover:text-secondary-foreground ${location.pathname === subItem.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
-                        }`}
+                      className={`flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-secondary hover:text-secondary-foreground ${
+                        location.pathname === subItem.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
+                      }`}
                     >
                       <span>{subItem.title}</span>
                     </button>
@@ -100,8 +165,9 @@ export const Sidebar = () => {
               <button
                 key={index}
                 onClick={() => navigate(item.href)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-secondary hover:text-secondary-foreground ${location.pathname === item.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
-                  }`}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-secondary hover:text-secondary-foreground ${
+                  location.pathname === item.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
+                }`}
               >
                 <item.icon className="h-4 w-4" />
                 <span>{item.title}</span>
@@ -109,15 +175,6 @@ export const Sidebar = () => {
             )
           ))}
         </div>
-        <Separator className="my-4" />
-        {session ? (
-          <button
-            onClick={() => signOut()}
-            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background px-4 py-2 hover:bg-accent hover:text-accent-foreground"
-          >
-            Sair
-          </button>
-        ) : null}
       </SheetContent>
     </Sheet>
   );

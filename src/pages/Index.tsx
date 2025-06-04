@@ -1,25 +1,24 @@
-
 import { useState, useMemo } from 'react';
 import { Home, CalendarDays, DollarSign, TrendingUp, TrendingDown, Medal, Trophy, PieChart, BarChart } from 'lucide-react';
 import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
+import { Sidebar } from '@/components/Sidebar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import MetricCard from '@/components/dashboard/MetricCard';
-import DashboardFilters from '@/components/dashboard/DashboardFilters';
-import TournamentBarChart from '@/components/dashboard/TournamentBarChart';
-import MonthlyPerformanceChart from '@/components/dashboard/MonthlyPerformanceChart';
-import ExpenseDistributionChart from '@/components/dashboard/ExpenseDistributionChart';
-import RecentTournamentsTable from '@/components/dashboard/RecentTournamentsTable';
+import { DashboardFilters } from '@/components/dashboard/DashboardFilters';
+import { MetricCard } from '@/components/dashboard/MetricCard';
+import { RecentTournamentsTable } from '@/components/dashboard/RecentTournamentsTable';
+import { MonthlyPerformanceChart } from '@/components/dashboard/MonthlyPerformanceChart';
+import { ExpenseDistributionChart } from '@/components/dashboard/ExpenseDistributionChart';
+import { TournamentBarChart } from '@/components/dashboard/TournamentBarChart';
 import { tournamentPerformanceService } from '@/services/tournament-performance.service';
-import { tournamentService } from '@/services/tournament.service';
 import { expenseService } from '@/services/expense.service';
-import { format } from 'date-fns';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DateRange } from 'react-day-picker';
+import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
 
 // Time period filter options
 const timePeriods = [

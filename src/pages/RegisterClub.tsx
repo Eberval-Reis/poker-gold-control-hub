@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
+import { Sidebar } from '@/components/Sidebar';
 import ClubForm from '@/components/club/ClubForm';
 import { clubService } from '@/services/club.service';
 

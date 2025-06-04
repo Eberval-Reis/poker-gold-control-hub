@@ -1,6 +1,6 @@
-
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DollarSign, TrendingUp, BarChart3 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Edit, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,9 @@ import { tournamentService } from '@/services/tournament.service';
 import { expenseService } from '@/services/expense.service';
 import { expenseTypes } from '@/components/expense/ExpenseFormSchema';
 import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
+import { tournamentPerformanceService } from '@/services/tournament-performance.service';
 
 const Report = () => {
   const navigate = useNavigate();

@@ -27,7 +27,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
+import { Sidebar } from '@/components/Sidebar';
 import { tournamentService } from '@/services/tournament.service';
 import { Tournament } from '@/lib/supabase';
 
