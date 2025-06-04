@@ -1,104 +1,87 @@
-import { useState, useEffect, useMemo } from 'react';
+
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit, Trash2, MoreHorizontal, FileText } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FileText, Plus, Search, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
 import { Sidebar } from '@/components/Sidebar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { DatePicker } from "@/components/ui/date-picker"
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { expenseService } from '@/services/expense.service';
 
 const ExpenseList = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [expenses, setExpenses] = useState<any[] | null>(null);
-  const [selectedType, setSelectedType] = useState<string | null>(null);
-  const [dateRange, setDateRange] = useState<{ from?: Date; to?: Date } | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
-  const [expenseToDelete, setExpenseToDelete] = useState<any | null>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  useEffect(() => {
-    const fetchExpenses = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/expenses');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setExpenses(data);
-      } catch (error) {
-        console.error("Could not fetch expenses:", error);
-      }
-    };
+  const { data: expenses = [], isLoading, error } = useQuery({
+    queryKey: ['expenses'],
+    queryFn: expenseService.getExpenses
+  });
 
-    fetchExpenses();
-  }, []);
-
-  const confirmDeleteExpense = async () => {
-    if (!expenseToDelete) return;
-  
-    try {
-      const response = await fetch(`http://localhost:3000/expenses/${expenseToDelete.id}`, {
-        method: 'DELETE',
+  const deleteMutation = useMutation({
+    mutationFn: expenseService.deleteExpense,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      toast({
+        title: "Sucesso",
+        description: "Despesa excluída com sucesso.",
       });
-  
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-  
-      setExpenses(expenses ? expenses.filter(expense => expense.id !== expenseToDelete.id) : []);
-      setExpenseToDelete(null);
-    } catch (error) {
-      console.error("Could not delete expense:", error);
+    },
+    onError: (error) => {
+      console.error('Delete error:', error);
+      toast({
+        title: "Erro",
+        description: "Erro ao excluir despesa.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDelete = (id: string) => {
+    if (window.confirm('Tem certeza que deseja excluir esta despesa?')) {
+      deleteMutation.mutate(id);
     }
   };
 
-  const filteredExpenses = useMemo(() => {
-    if (!expenses) return [];
-    
-    return expenses.filter(expense => {
-      const matchesType = !selectedType || expense.type === selectedType;
-      const matchesDateRange = !dateRange?.from || !dateRange?.to || 
-        (new Date(expense.date) >= dateRange.from && new Date(expense.date) <= dateRange.to);
-      const matchesSearch = !searchTerm || 
-        expense.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        expense.type.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      return matchesType && matchesDateRange && matchesSearch;
-    });
-  }, [expenses, selectedType, dateRange, searchTerm]);
+  const expenseTypes = [
+    { id: 'transport', name: 'Transporte' },
+    { id: 'food', name: 'Alimentação' },
+    { id: 'accommodation', name: 'Hospedagem' },
+    { id: 'other', name: 'Outros' },
+  ];
 
-  const expensesByType = useMemo(() => {
-    if (!filteredExpenses) return {};
-    
-    return filteredExpenses.reduce((acc, expense) => {
-      const type = expense.type;
-      if (!acc[type]) acc[type] = [];
-      acc[type].push(expense);
-      return acc;
-    }, {} as Record<string, typeof filteredExpenses>);
-  }, [filteredExpenses]);
+  const getExpenseTypeName = (typeId: string) => {
+    return expenseTypes.find(type => type.id === typeId)?.name || typeId;
+  };
 
-  const expenseTypes = useMemo(() => {
-    if (!expenses) return [];
-    return [...new Set(expenses.map(expense => expense.type))];
-  }, [expenses]);
+  const filteredExpenses = Array.isArray(expenses) ? expenses.filter(expense =>
+    expense.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    getExpenseTypeName(expense.type).toLowerCase().includes(searchTerm.toLowerCase())
+  ) : [];
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-poker-background">
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Header onMenuClick={toggleSidebar} />
+        <div className="container mx-auto p-6">
+          <div className="text-center py-8">
+            <p className="text-red-600">Erro ao carregar despesas: {error.message}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-poker-background">
@@ -111,189 +94,106 @@ const ExpenseList = () => {
             <FileText className="h-6 w-6 text-[#d4af37]" />
             <h1 className="text-2xl font-bold text-poker-text-dark">Lista de Despesas</h1>
           </div>
-          <p className="text-gray-600">Visualize e gerencie suas despesas de poker</p>
+          <p className="text-gray-600">Gerencie suas despesas relacionadas aos torneios</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
-          <Card className="col-span-1 lg:col-span-1">
-            <CardHeader>
-              <CardTitle>Filtros</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="type">Tipo de Despesa</Label>
-                <Select onValueChange={(value) => setSelectedType(value === 'all' ? null : value)} defaultValue={selectedType || 'all'}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Todos os Tipos" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos os Tipos</SelectItem>
-                    {expenseTypes.map(type => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label>Período</Label>
-                <DatePicker
-                  date={dateRange?.from}
-                  onDateChange={(date) => setDateRange({ from: date, to: dateRange?.to })}
-                  placeholder="Data Inicial"
-                  className="mb-2"
-                />
-                <DatePicker
-                  date={dateRange?.to}
-                  onDateChange={(date) => setDateRange({ from: dateRange?.from, to: date })}
-                  placeholder="Data Final"
-                />
-              </div>
-            </CardContent>
-          </Card>
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Buscar despesas..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button onClick={() => navigate('/register-expense')} className="shrink-0">
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Despesa
+          </Button>
+        </div>
 
-          <Card className="col-span-1 lg:col-span-3">
-            <CardHeader className="flex justify-between items-center">
-              <CardTitle>Despesas</CardTitle>
-              <div className="flex gap-2">
-                <Input
-                  type="search"
-                  placeholder="Buscar..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <Button onClick={() => navigate('/register-expense')}>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Adicionar Despesa
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {expenses === null ? (
-                <p>Carregando despesas...</p>
-              ) : filteredExpenses.length === 0 ? (
-                <p>Nenhuma despesa encontrada.</p>
-              ) : (
-                <div className="grid gap-4">
-                  {filteredExpenses?.map((expense) => (
-                    <Card key={expense.id} className="hover:shadow-md transition-shadow">
-                      <CardContent className="p-4">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-medium text-lg">{expense.description}</h3>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="secondary">
-                              {expense.type}
-                            </Badge>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent>
-                                <DropdownMenuItem onClick={() => navigate(`/register-expense/${expense.id}`)}>
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  Editar
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  onClick={() => setExpenseToDelete(expense)}
-                                  className="text-red-600"
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Excluir
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {format(new Date(expense.date), 'dd/MM/yyyy', { locale: ptBR })}
-                        </div>
-                        <p className="text-right font-medium">
-                          {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(expense.amount)}
+        {isLoading ? (
+          <div className="text-center py-8">
+            <p>Carregando despesas...</p>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {filteredExpenses.length === 0 ? (
+              <Card>
+                <CardContent className="text-center py-8">
+                  <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <p className="text-gray-600">
+                    {searchTerm ? 'Nenhuma despesa encontrada para sua busca.' : 'Nenhuma despesa cadastrada ainda.'}
+                  </p>
+                  {!searchTerm && (
+                    <Button 
+                      onClick={() => navigate('/register-expense')} 
+                      className="mt-4"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Cadastrar primeira despesa
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              filteredExpenses.map((expense) => (
+                <Card key={expense.id} className="hover:shadow-md transition-shadow">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-lg">
+                      {getExpenseTypeName(expense.type)}
+                    </CardTitle>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/register-expense/${expense.id}`)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(expense.id)}
+                        disabled={deleteMutation.isPending}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Valor</p>
+                        <p className="text-lg font-semibold text-green-600">
+                          R$ {Number(expense.amount).toFixed(2)}
                         </p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {expenses && Object.keys(expensesByType).length > 0 && (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-4">Despesas por Tipo</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {Object.entries(expensesByType).map(([type, typeExpenses]) => (
-                <div key={type} className="space-y-2">
-                  <h4 className="font-medium text-sm text-gray-600 uppercase tracking-wide">
-                    {type} ({typeExpenses.length})
-                  </h4>
-                  {typeExpenses.map((expense) => (
-                    <Card key={expense.id} className="hover:shadow-sm transition-shadow">
-                      <CardContent className="p-3">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <h5 className="font-medium">{expense.description}</h5>
-                            <p className="text-sm text-gray-500">
-                              {format(new Date(expense.date), 'dd/MM/yyyy', { locale: ptBR })}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-medium">
-                              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(expense.amount)}
-                            </p>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-6 w-6">
-                                  <MoreHorizontal className="h-3 w-3" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent>
-                                <DropdownMenuItem onClick={() => navigate(`/register-expense/${expense.id}`)}>
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  Editar
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                  onClick={() => setExpenseToDelete(expense)}
-                                  className="text-red-600"
-                                >
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Excluir
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ))}
-            </div>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Data</p>
+                        <p className="text-sm">{expense.date}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Torneio</p>
+                        <p className="text-sm">
+                          {expense.tournaments?.name || 'Não associado'}
+                        </p>
+                      </div>
+                    </div>
+                    {expense.description && (
+                      <div className="mt-3">
+                        <p className="text-sm font-medium text-gray-600">Descrição</p>
+                        <p className="text-sm text-gray-800">{expense.description}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))
+            )}
           </div>
         )}
       </div>
-
-      <AlertDialog open={!!expenseToDelete} onOpenChange={(open) => {
-        if (!open) setExpenseToDelete(null);
-      }}>
-        <AlertDialogTrigger asChild>
-          <Button variant="outline">Mostrar Alerta</Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Tem certeza?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta ação irá excluir a despesa permanentemente. Tem certeza que deseja continuar?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setExpenseToDelete(null)}>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDeleteExpense}>Excluir</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 };
