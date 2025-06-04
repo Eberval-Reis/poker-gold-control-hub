@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
+import { Sidebar } from '@/components/Sidebar';
 import ExpenseForm from '@/components/expense/ExpenseForm';
 
 const RegisterExpense = () => {
