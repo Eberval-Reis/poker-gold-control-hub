@@ -148,6 +148,66 @@ export type Database = {
           },
         ]
       }
+      tournament_results: {
+        Row: {
+          club_id: string
+          created_at: string
+          date: string
+          ft_achieved: boolean | null
+          ft_photo_url: string | null
+          id: string
+          itm_achieved: boolean | null
+          news_link: string | null
+          position: number | null
+          prize_amount: number | null
+          tournament_id: string
+          updated_at: string
+        }
+        Insert: {
+          club_id: string
+          created_at?: string
+          date: string
+          ft_achieved?: boolean | null
+          ft_photo_url?: string | null
+          id?: string
+          itm_achieved?: boolean | null
+          news_link?: string | null
+          position?: number | null
+          prize_amount?: number | null
+          tournament_id: string
+          updated_at?: string
+        }
+        Update: {
+          club_id?: string
+          created_at?: string
+          date?: string
+          ft_achieved?: boolean | null
+          ft_photo_url?: string | null
+          id?: string
+          itm_achieved?: boolean | null
+          news_link?: string | null
+          position?: number | null
+          prize_amount?: number | null
+          tournament_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_results_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "Cadastro Clube"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_results_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tournaments: {
         Row: {
           blind_structure: string | null

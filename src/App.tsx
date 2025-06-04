@@ -16,6 +16,7 @@ import ExpenseList from "./pages/ExpenseList";
 import TournamentPerformanceList from "./pages/TournamentPerformanceList";
 import Report from "./pages/Report";
 import Login from "./pages/Login";
+import TournamentResults from "./pages/TournamentResults";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/tournaments" element={<TournamentList />} />
             <Route path="/expenses" element={<ExpenseList />} />
             <Route path="/tournament-performances" element={<TournamentPerformanceList />} />
+            <Route path="/tournament-results" element={<TournamentResults />} />
             <Route path="/report" element={<Report />} />
           </Route>
           
