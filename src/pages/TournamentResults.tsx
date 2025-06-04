@@ -11,7 +11,7 @@ const TournamentResults = () => {
 
   return (
     <div className="min-h-screen bg-poker-background">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar />
       <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
       <div className="max-w-4xl mx-auto p-6">

@@ -20,7 +20,7 @@ const RegisterExpense = () => {
   return (
     <div className="min-h-screen bg-poker-background flex flex-col">
       <Header onMenuClick={toggleSidebar} />
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar />
       
       <div className="container mx-auto py-6 px-4 flex-1">
         <div className="mb-6">

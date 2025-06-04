@@ -1,62 +1,42 @@
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
-import TournamentPerformanceTabs from '@/components/tournament-performance/list/TournamentPerformanceTabs';
-import DeleteTournamentDialog from '@/components/tournament-performance/list/DeleteTournamentDialog';
-import { useTournamentPerformanceList } from '@/hooks/useTournamentPerformanceList';
+import { Sidebar } from '@/components/Sidebar';
+import { Button } from '@/components/ui/button';
+import { TournamentPerformanceTabs } from '@/components/tournament-performance/list/TournamentPerformanceTabs';
+import { useNavigate } from 'react-router-dom';
 
 const TournamentPerformanceList = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { 
-    performances, 
-    isLoading, 
-    deleteId, 
-    setDeleteId, 
-    handleDeleteClick, 
-    handleDelete 
-  } = useTournamentPerformanceList();
-  
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
   return (
     <div className="min-h-screen bg-poker-background">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar />
       <Header onMenuClick={toggleSidebar} />
 
-      <div className="container mx-auto p-6">
-        <div className="flex justify-between items-center mb-6">
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-poker-text-dark">Desempenho em Torneios</h1>
-            <p className="text-gray-600">Gerencie seus registros de desempenho em torneios</p>
+            <h1 className="text-2xl font-bold text-poker-text-dark">Performances dos Torneios</h1>
+            <p className="text-gray-600">Acompanhe todas as suas participações em torneios</p>
           </div>
-          <Button
+          <Button 
             onClick={() => navigate('/register-tournament-performance')}
-            className="bg-[#d4af37] text-white hover:bg-[#d4af37]/90"
+            className="bg-poker-gold hover:bg-poker-gold/90 text-white"
           >
-            <Plus className="mr-2 h-4 w-4" />
-            Novo Registro
+            <Plus className="h-4 w-4 mr-2" />
+            Nova Performance
           </Button>
         </div>
 
-        <TournamentPerformanceTabs 
-          performances={performances}
-          isLoading={isLoading}
-          onDeleteClick={handleDeleteClick}
-        />
+        <TournamentPerformanceTabs />
       </div>
-
-      <DeleteTournamentDialog 
-        open={!!deleteId}
-        onOpenChange={() => setDeleteId(null)}
-        onConfirm={handleDelete}
-      />
     </div>
   );
 };
