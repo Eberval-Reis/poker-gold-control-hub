@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { Home, CalendarDays, DollarSign, TrendingUp, TrendingDown, Medal, Trophy, PieChart, BarChart } from 'lucide-react';
 import Header from '@/components/Header';
@@ -9,13 +10,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { DashboardFilters } from '@/components/dashboard/DashboardFilters';
-import { MetricCard } from '@/components/dashboard/MetricCard';
-import { RecentTournamentsTable } from '@/components/dashboard/RecentTournamentsTable';
-import { MonthlyPerformanceChart } from '@/components/dashboard/MonthlyPerformanceChart';
-import { ExpenseDistributionChart } from '@/components/dashboard/ExpenseDistributionChart';
-import { TournamentBarChart } from '@/components/dashboard/TournamentBarChart';
+import DashboardFilters from '@/components/dashboard/DashboardFilters';
+import MetricCard from '@/components/dashboard/MetricCard';
+import RecentTournamentsTable from '@/components/dashboard/RecentTournamentsTable';
+import MonthlyPerformanceChart from '@/components/dashboard/MonthlyPerformanceChart';
+import ExpenseDistributionChart from '@/components/dashboard/ExpenseDistributionChart';
+import TournamentBarChart from '@/components/dashboard/TournamentBarChart';
 import { tournamentPerformanceService } from '@/services/tournament-performance.service';
+import { tournamentService } from '@/services/tournament.service';
 import { expenseService } from '@/services/expense.service';
 import { DateRange } from 'react-day-picker';
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns';

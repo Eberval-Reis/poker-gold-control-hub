@@ -1,24 +1,16 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
+import { Sidebar } from '@/components/Sidebar';
 import TournamentForm from '@/components/tournament/TournamentForm';
-import { tournamentService } from '@/services/tournament.service';
 
 const RegisterTournament = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
-  const { data: tournamentData, isLoading } = useQuery({
-    queryKey: ['tournament', id],
-    queryFn: () => (id ? tournamentService.getTournamentById(id) : null),
-    enabled: !!id,
-  });
   
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -44,14 +36,11 @@ const RegisterTournament = () => {
               {id ? 'Editar Torneio' : 'Cadastrar Torneio'}
             </h1>
           </div>
+          <p className="text-gray-600">Cadastre um novo torneio no sistema</p>
         </div>
 
-        <div className="bg-white rounded-lg p-6 shadow-sm mx-auto max-w-2xl">
-          <TournamentForm 
-            tournamentId={id} 
-            tournamentData={tournamentData}
-            isLoading={isLoading} 
-          />
+        <div className="bg-white rounded-lg p-6 shadow-sm">
+          <TournamentForm tournamentId={id} />
         </div>
       </div>
     </div>
