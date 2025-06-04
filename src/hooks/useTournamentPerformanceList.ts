@@ -9,7 +9,7 @@ export const useTournamentPerformanceList = () => {
   
   const { data: performances = [], isLoading, refetch } = useQuery({
     queryKey: ['tournament-performances'],
-    queryFn: tournamentPerformanceService.getTournamentPerformances,
+    queryFn: () => tournamentPerformanceService.getTournamentPerformances(),
   });
 
   const handleDeleteClick = (id: string) => {
