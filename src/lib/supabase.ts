@@ -44,6 +44,8 @@ export interface TournamentPerformance {
   final_table_achieved?: boolean;
   position?: number;
   prize_amount?: number;
+  ft_photo_url?: string;
+  news_link?: string;
   created_at?: string;
   updated_at?: string;
   // Join fields

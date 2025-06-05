@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -37,6 +36,8 @@ export function useTournamentPerformanceForm() {
       final_table_achieved: false,
       position: '',
       prize_amount: '',
+      ft_photo_url: '',
+      news_link: '',
     },
   });
 
@@ -106,6 +107,8 @@ export function useTournamentPerformanceForm() {
             final_table_achieved: data.final_table_achieved || false,
             position: data.position?.toString() || '',
             prize_amount: data.prize_amount?.toString() || '',
+            ft_photo_url: data.ft_photo_url || '',
+            news_link: data.news_link || '',
           });
         }
       },
@@ -135,6 +138,8 @@ export function useTournamentPerformanceForm() {
         final_table_achieved: data.final_table_achieved,
         position: data.position ? parseInt(data.position) : null,
         prize_amount: data.prize_amount ? parseFloat(data.prize_amount) : 0,
+        ft_photo_url: data.ft_photo_url || null,
+        news_link: data.news_link || null,
       };
       
       return isEditing

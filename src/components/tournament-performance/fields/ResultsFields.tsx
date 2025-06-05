@@ -16,7 +16,7 @@ interface ResultsFieldsProps {
 }
 
 const ResultsFields = ({ form }: ResultsFieldsProps) => {
-  const itmAchieved = form.watch('itm_achieved');
+  const finalTableAchieved = form.watch('final_table_achieved');
 
   return (
     <div className="space-y-4">
@@ -58,20 +58,86 @@ const ResultsFields = ({ form }: ResultsFieldsProps) => {
         />
       </div>
 
-      {itmAchieved && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="position"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Colocação</FormLabel>
-                <FormControl>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="position"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Colocação</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="number"
+                  min="1"
+                  placeholder="Posição final"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="prize_amount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Prêmio Ganho (R$)</FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    R$
+                  </div>
                   <Input
                     {...field}
                     type="number"
-                    min="1"
-                    placeholder="Posição final"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    className="pl-9"
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      {finalTableAchieved && (
+        <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+          <h3 className="text-sm font-medium text-gray-700">Informações da Final Table</h3>
+          
+          <FormField
+            control={form.control}
+            name="ft_photo_url"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>URL da Foto da Final Table</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="url"
+                    placeholder="https://exemplo.com/foto-ft.jpg"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="news_link"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>URL da Reportagem</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="url"
+                    placeholder="https://exemplo.com/reportagem"
                   />
                 </FormControl>
                 <FormMessage />
@@ -80,32 +146,6 @@ const ResultsFields = ({ form }: ResultsFieldsProps) => {
           />
         </div>
       )}
-
-      <FormField
-        control={form.control}
-        name="prize_amount"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Prêmio Ganho (R$)</FormLabel>
-            <FormControl>
-              <div className="relative">
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                  R$
-                </div>
-                <Input
-                  {...field}
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="0.00"
-                  className="pl-9"
-                />
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
     </div>
   );
 };

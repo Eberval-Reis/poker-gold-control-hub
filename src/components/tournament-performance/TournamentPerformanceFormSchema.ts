@@ -14,6 +14,8 @@ export const tournamentPerformanceFormSchema = z.object({
   final_table_achieved: z.boolean().default(false),
   position: z.string().optional(),
   prize_amount: z.string().optional(),
+  ft_photo_url: z.string().optional(),
+  news_link: z.string().optional(),
 });
 
 // Type for the form data
