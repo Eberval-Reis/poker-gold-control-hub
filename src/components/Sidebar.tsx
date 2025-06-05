@@ -10,7 +10,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Plus, List, BarChart3, Users, Calendar, Receipt, TrendingUp, Trophy } from "lucide-react";
+import { Home, Users, Trophy, Receipt, BarChart3, FileText } from "lucide-react";
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -32,35 +32,34 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
 
   const menuItems = [
     {
-      title: "Dashboard",
-      icon: LayoutDashboard,
+      title: "Home",
+      icon: Home,
       href: "/",
     },
     {
-      title: "Cadastros",
-      icon: Plus,
-      items: [
-        { title: "Clube", href: "/register-club" },
-        { title: "Torneio", href: "/register-tournament" },
-        { title: "Performance", href: "/register-tournament-performance" },
-        { title: "Resultado Torneios", href: "/tournament-results" },
-        { title: "Despesa", href: "/register-expense" },
-      ],
+      title: "Clube",
+      icon: Users,
+      href: "/clubs",
     },
     {
-      title: "Listagens",
-      icon: List,
-      items: [
-        { title: "Clubes", href: "/clubs" },
-        { title: "Torneios", href: "/tournaments" },
-        { title: "Performances", href: "/tournament-performances" },
-        { title: "Despesas", href: "/expenses" },
-      ],
+      title: "Torneio",
+      icon: Trophy,
+      href: "/tournaments",
     },
     {
-      title: "Relatórios",
+      title: "Cadastro das Despesas",
+      icon: Receipt,
+      href: "/register-expense",
+    },
+    {
+      title: "Movimento Torneio",
       icon: BarChart3,
-      href: "/report",
+      href: "/tournament-performances",
+    },
+    {
+      title: "Movimento Despesas",
+      icon: FileText,
+      href: "/expenses",
     },
   ];
 
@@ -70,7 +69,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent className="w-full sm:w-64">
           <SheetHeader>
-            <SheetTitle>Menu</SheetTitle>
+            <SheetTitle className="text-[#d4af37]">Menu</SheetTitle>
             <SheetDescription>
               Navegue pelas opções do sistema.
             </SheetDescription>
@@ -78,44 +77,19 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           <Separator className="my-4" />
           <div className="flex flex-col space-y-2">
             {menuItems.map((item, index) => (
-              item.items ? (
-                <div key={index} className="space-y-1">
-                  <div className="flex items-center space-x-2 px-4 py-2 font-medium">
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
-                  </div>
-                  <div className="flex flex-col pl-4 space-y-1">
-                    {item.items.map((subItem, subIndex) => (
-                      <button
-                        key={subIndex}
-                        onClick={() => {
-                          navigate(subItem.href);
-                          onClose?.();
-                        }}
-                        className={`flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-secondary hover:text-secondary-foreground ${
-                          location.pathname === subItem.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
-                        }`}
-                      >
-                        <span>{subItem.title}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <button
-                  key={index}
-                  onClick={() => {
-                    navigate(item.href);
-                    onClose?.();
-                  }}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-secondary hover:text-secondary-foreground ${
-                    location.pathname === item.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
-                  }`}
-                >
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.title}</span>
-                </button>
-              )
+              <button
+                key={index}
+                onClick={() => {
+                  navigate(item.href);
+                  onClose?.();
+                }}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-md hover:bg-secondary hover:text-secondary-foreground transition-colors ${
+                  location.pathname === item.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
+                }`}
+              >
+                <item.icon className="h-5 w-5 text-[#d4af37]" />
+                <span className="text-sm font-medium">{item.title}</span>
+              </button>
             ))}
           </div>
         </SheetContent>
@@ -133,7 +107,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       </SheetTrigger>
       <SheetContent className="w-full sm:w-64">
         <SheetHeader>
-          <SheetTitle>Menu</SheetTitle>
+          <SheetTitle className="text-[#d4af37]">Menu</SheetTitle>
           <SheetDescription>
             Navegue pelas opções do sistema.
           </SheetDescription>
@@ -141,38 +115,16 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         <Separator className="my-4" />
         <div className="flex flex-col space-y-2">
           {menuItems.map((item, index) => (
-            item.items ? (
-              <div key={index} className="space-y-1">
-                <div className="flex items-center space-x-2 px-4 py-2 font-medium">
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.title}</span>
-                </div>
-                <div className="flex flex-col pl-4 space-y-1">
-                  {item.items.map((subItem, subIndex) => (
-                    <button
-                      key={subIndex}
-                      onClick={() => navigate(subItem.href)}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-secondary hover:text-secondary-foreground ${
-                        location.pathname === subItem.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
-                      }`}
-                    >
-                      <span>{subItem.title}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <button
-                key={index}
-                onClick={() => navigate(item.href)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-md hover:bg-secondary hover:text-secondary-foreground ${
-                  location.pathname === item.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
-                }`}
-              >
-                <item.icon className="h-4 w-4" />
-                <span>{item.title}</span>
-              </button>
-            )
+            <button
+              key={index}
+              onClick={() => navigate(item.href)}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-md hover:bg-secondary hover:text-secondary-foreground transition-colors ${
+                location.pathname === item.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
+              }`}
+            >
+              <item.icon className="h-5 w-5 text-[#d4af37]" />
+              <span className="text-sm font-medium">{item.title}</span>
+            </button>
           ))}
         </div>
       </SheetContent>
