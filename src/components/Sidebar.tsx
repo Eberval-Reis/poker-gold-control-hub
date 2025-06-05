@@ -75,7 +75,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
             </SheetDescription>
           </SheetHeader>
           <Separator className="my-4" />
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-1">
             {menuItems.map((item, index) => (
               <button
                 key={index}
@@ -83,12 +83,12 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                   navigate(item.href);
                   onClose?.();
                 }}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-md hover:bg-secondary hover:text-secondary-foreground transition-colors ${
+                className={`flex items-center justify-start space-x-3 px-3 py-3 rounded-md text-left hover:bg-secondary hover:text-secondary-foreground transition-colors w-full ${
                   location.pathname === item.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
                 }`}
               >
-                <item.icon className="h-5 w-5 text-[#d4af37]" />
-                <span className="text-sm font-medium">{item.title}</span>
+                <item.icon className="h-5 w-5 text-[#d4af37] flex-shrink-0" />
+                <span className="text-sm font-medium leading-none">{item.title}</span>
               </button>
             ))}
           </div>
@@ -113,17 +113,17 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           </SheetDescription>
         </SheetHeader>
         <Separator className="my-4" />
-        <div className="flex flex-col space-y-2">
+        <div className="flex flex-col space-y-1">
           {menuItems.map((item, index) => (
             <button
               key={index}
               onClick={() => navigate(item.href)}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-md hover:bg-secondary hover:text-secondary-foreground transition-colors ${
+              className={`flex items-center justify-start space-x-3 px-3 py-3 rounded-md text-left hover:bg-secondary hover:text-secondary-foreground transition-colors w-full ${
                 location.pathname === item.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
               }`}
             >
-              <item.icon className="h-5 w-5 text-[#d4af37]" />
-              <span className="text-sm font-medium">{item.title}</span>
+              <item.icon className="h-5 w-5 text-[#d4af37] flex-shrink-0" />
+              <span className="text-sm font-medium leading-none">{item.title}</span>
             </button>
           ))}
         </div>
