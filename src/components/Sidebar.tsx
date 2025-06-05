@@ -67,7 +67,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     // Controlled sidebar (used with isOpen prop)
     return (
       <Sheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent className="w-full sm:w-64">
+        <SheetContent side="left" className="w-full sm:w-64">
           <SheetHeader>
             <SheetTitle className="text-[#d4af37]">Menu</SheetTitle>
             <SheetDescription>
@@ -105,7 +105,7 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           Menu
         </button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:w-64">
+      <SheetContent side="left" className="w-full sm:w-64">
         <SheetHeader>
           <SheetTitle className="text-[#d4af37]">Menu</SheetTitle>
           <SheetDescription>
