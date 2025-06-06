@@ -10,7 +10,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Home, Users, Trophy, Receipt, BarChart3, FileText } from "lucide-react";
+import { Home, Users, Trophy, Receipt, BarChart3, FileText, Star } from "lucide-react";
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -55,6 +55,11 @@ export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       title: "Movimento Torneio",
       icon: BarChart3,
       href: "/tournament-performances",
+    },
+    {
+      title: "Final Tables",
+      icon: Star,
+      href: "/final-tables",
     },
     {
       title: "Movimento Despesas",

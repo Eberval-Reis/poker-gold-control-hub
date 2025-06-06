@@ -14,6 +14,7 @@ import ClubList from "./pages/ClubList";
 import TournamentList from "./pages/TournamentList";
 import ExpenseList from "./pages/ExpenseList";
 import TournamentPerformanceList from "./pages/TournamentPerformanceList";
+import FinalTableList from "./pages/FinalTableList";
 import Report from "./pages/Report";
 import Login from "./pages/Login";
 import TournamentResults from "./pages/TournamentResults";
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/tournaments" element={<TournamentList />} />
             <Route path="/expenses" element={<ExpenseList />} />
             <Route path="/tournament-performances" element={<TournamentPerformanceList />} />
+            <Route path="/final-tables" element={<FinalTableList />} />
             <Route path="/tournament-results" element={<TournamentResults />} />
             <Route path="/report" element={<Report />} />
           </Route>
