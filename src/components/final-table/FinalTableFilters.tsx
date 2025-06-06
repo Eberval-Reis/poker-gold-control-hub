@@ -47,7 +47,7 @@ const FinalTableFilters = ({
               <SelectValue placeholder="Selecione um torneio" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos os torneios</SelectItem>
+              <SelectItem value="all">Todos os torneios</SelectItem>
               {uniqueTournaments.map((tournament) => (
                 <SelectItem key={tournament} value={tournament || ''}>
                   {tournament}
@@ -66,7 +66,7 @@ const FinalTableFilters = ({
               <SelectValue placeholder="Selecione buy-in" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos os buy-ins</SelectItem>
+              <SelectItem value="all">Todos os buy-ins</SelectItem>
               {uniqueBuyins.map((buyin) => (
                 <SelectItem key={buyin} value={buyin.toString()}>
                   R$ {buyin.toFixed(2)}
@@ -85,7 +85,7 @@ const FinalTableFilters = ({
               <SelectValue placeholder="Colocação" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todas</SelectItem>
+              <SelectItem value="all">Todas</SelectItem>
               {uniquePositions.map((position) => (
                 <SelectItem key={position} value={position.toString()}>
                   {position}º lugar

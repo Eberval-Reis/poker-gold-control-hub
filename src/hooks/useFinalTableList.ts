@@ -5,9 +5,9 @@ import { finalTableService, FinalTablePerformance } from '@/services/final-table
 
 export const useFinalTableList = () => {
   const [filters, setFilters] = useState({
-    tournament: '',
-    buyin: '',
-    position: ''
+    tournament: 'all',
+    buyin: 'all',
+    position: 'all'
   });
 
   const { data: performances = [], isLoading, error } = useQuery({
@@ -18,17 +18,17 @@ export const useFinalTableList = () => {
   const filteredPerformances = useMemo(() => {
     return performances.filter((performance) => {
       // Filtro por torneio
-      if (filters.tournament && !performance.tournaments?.name?.toLowerCase().includes(filters.tournament.toLowerCase())) {
+      if (filters.tournament !== 'all' && !performance.tournaments?.name?.toLowerCase().includes(filters.tournament.toLowerCase())) {
         return false;
       }
 
       // Filtro por buy-in
-      if (filters.buyin && performance.buyin_amount !== parseFloat(filters.buyin)) {
+      if (filters.buyin !== 'all' && performance.buyin_amount !== parseFloat(filters.buyin)) {
         return false;
       }
 
       // Filtro por colocação
-      if (filters.position && performance.position !== parseInt(filters.position)) {
+      if (filters.position !== 'all' && performance.position !== parseInt(filters.position)) {
         return false;
       }
 
@@ -45,9 +45,9 @@ export const useFinalTableList = () => {
 
   const clearFilters = () => {
     setFilters({
-      tournament: '',
-      buyin: '',
-      position: ''
+      tournament: 'all',
+      buyin: 'all',
+      position: 'all'
     });
   };
 
