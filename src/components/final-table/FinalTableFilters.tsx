@@ -2,7 +2,7 @@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { TournamentPerformance } from '@/lib/supabase';
+import { FinalTablePerformance } from '@/services/final-table.service';
 import { X } from 'lucide-react';
 
 interface FinalTableFiltersProps {
@@ -13,7 +13,7 @@ interface FinalTableFiltersProps {
   };
   onFilterChange: (key: string, value: string) => void;
   onClearFilters: () => void;
-  allPerformances: TournamentPerformance[];
+  allPerformances: FinalTablePerformance[];
 }
 
 const FinalTableFilters = ({ 

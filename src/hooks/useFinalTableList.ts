@@ -1,7 +1,7 @@
 
 import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { finalTableService } from '@/services/final-table.service';
+import { finalTableService, FinalTablePerformance } from '@/services/final-table.service';
 
 export const useFinalTableList = () => {
   const [filters, setFilters] = useState({

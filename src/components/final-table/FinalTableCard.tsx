@@ -1,11 +1,11 @@
 
-import { TournamentPerformance } from '@/lib/supabase';
+import { FinalTablePerformance } from '@/services/final-table.service';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CalendarDays, Trophy, DollarSign, MapPin } from 'lucide-react';
 
 interface FinalTableCardProps {
-  performance: TournamentPerformance;
+  performance: FinalTablePerformance;
 }
 
 const FinalTableCard = ({ performance }: FinalTableCardProps) => {
