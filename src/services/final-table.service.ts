@@ -22,8 +22,8 @@ export interface FinalTablePerformance {
     date: string;
     clubs?: {
       name: string;
-    };
-  };
+    } | null;
+  } | null;
 }
 
 export const getFinalTablePerformances = async (): Promise<FinalTablePerformance[]> => {
