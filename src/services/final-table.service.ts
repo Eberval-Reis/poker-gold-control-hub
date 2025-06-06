@@ -47,7 +47,8 @@ export const getFinalTablePerformances = async (): Promise<FinalTablePerformance
     throw error;
   }
   
-  return data || [];
+  // Type assertion to ensure the data matches our interface
+  return (data || []) as FinalTablePerformance[];
 };
 
 export const finalTableService = {
