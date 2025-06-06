@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -87,39 +88,37 @@ export function useTournamentPerformanceForm() {
     queryKey: ['tournament-performance', id],
     queryFn: () => tournamentPerformanceService.getTournamentPerformanceById(id as string),
     enabled: !!id,
-    meta: {
-      onSuccess: (data: TournamentPerformance | null) => {
-        if (data) {
-          // Find the full tournament object from the tournaments list
-          const tournament = tournaments.find(t => t.id === data.tournament_id);
-          if (tournament) {
-            setSelectedTournament(tournament);
-          }
-          
-          form.reset({
-            tournament_id: data.tournament_id,
-            buyin_amount: data.buyin_amount?.toString() || '',
-            rebuy_amount: data.rebuy_amount?.toString() || '',
-            rebuy_quantity: data.rebuy_quantity?.toString() || '',
-            addon_enabled: data.addon_enabled || false,
-            addon_amount: data.addon_amount?.toString() || '',
-            itm_achieved: data.itm_achieved || false,
-            final_table_achieved: data.final_table_achieved || false,
-            position: data.position?.toString() || '',
-            prize_amount: data.prize_amount?.toString() || '',
-            ft_photo_url: data.ft_photo_url || '',
-            news_link: data.news_link || '',
-          });
+    onSuccess: (data: TournamentPerformance | null) => {
+      if (data) {
+        // Find the full tournament object from the tournaments list
+        const tournament = tournaments.find(t => t.id === data.tournament_id);
+        if (tournament) {
+          setSelectedTournament(tournament);
         }
-      },
-      onError: (error: Error) => {
-        toast({
-          variant: "destructive",
-          title: "Erro ao carregar dados do desempenho",
-          description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
+        
+        form.reset({
+          tournament_id: data.tournament_id,
+          buyin_amount: data.buyin_amount?.toString() || '',
+          rebuy_amount: data.rebuy_amount?.toString() || '',
+          rebuy_quantity: data.rebuy_quantity?.toString() || '',
+          addon_enabled: data.addon_enabled || false,
+          addon_amount: data.addon_amount?.toString() || '',
+          itm_achieved: data.itm_achieved || false,
+          final_table_achieved: data.final_table_achieved || false,
+          position: data.position?.toString() || '',
+          prize_amount: data.prize_amount?.toString() || '',
+          ft_photo_url: data.ft_photo_url || '',
+          news_link: data.news_link || '',
         });
-        navigate('/tournament-performances');
       }
+    },
+    onError: (error: Error) => {
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar dados do desempenho",
+        description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
+      });
+      navigate('/tournament-performances');
     }
   });
 
@@ -152,9 +151,11 @@ export function useTournamentPerformanceForm() {
         description: "Os dados foram salvos.",
       });
       queryClient.invalidateQueries({ queryKey: ['tournament-performances'] });
+      queryClient.invalidateQueries({ queryKey: ['final-table-performances'] });
       navigate('/tournament-performances');
     },
     onError: (error) => {
+      console.error('Erro na mutação:', error);
       toast({
         variant: "destructive",
         title: `Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} desempenho`,
@@ -173,6 +174,7 @@ export function useTournamentPerformanceForm() {
       return;
     }
     
+    console.log('Submitting data:', data);
     mutation.mutate(data);
   };
 

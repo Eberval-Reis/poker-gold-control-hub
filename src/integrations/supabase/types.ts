@@ -99,8 +99,10 @@ export type Database = {
           buyin_amount: number
           created_at: string
           final_table_achieved: boolean | null
+          ft_photo_url: string | null
           id: string
           itm_achieved: boolean | null
+          news_link: string | null
           position: number | null
           prize_amount: number | null
           rebuy_amount: number | null
@@ -114,8 +116,10 @@ export type Database = {
           buyin_amount: number
           created_at?: string
           final_table_achieved?: boolean | null
+          ft_photo_url?: string | null
           id?: string
           itm_achieved?: boolean | null
+          news_link?: string | null
           position?: number | null
           prize_amount?: number | null
           rebuy_amount?: number | null
@@ -129,8 +133,10 @@ export type Database = {
           buyin_amount?: number
           created_at?: string
           final_table_achieved?: boolean | null
+          ft_photo_url?: string | null
           id?: string
           itm_achieved?: boolean | null
+          news_link?: string | null
           position?: number | null
           prize_amount?: number | null
           rebuy_amount?: number | null

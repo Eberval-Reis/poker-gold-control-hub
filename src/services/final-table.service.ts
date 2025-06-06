@@ -31,10 +31,10 @@ export const getFinalTablePerformances = async (): Promise<FinalTablePerformance
     .from('tournament_performance')
     .select(`
       *,
-      tournaments!tournament_id (
+      tournaments (
         name,
         date,
-        clubs!club_id (
+        clubs:club_id (
           name
         )
       )
@@ -47,8 +47,7 @@ export const getFinalTablePerformances = async (): Promise<FinalTablePerformance
     throw error;
   }
   
-  // Use double type assertion to resolve TypeScript type mismatch
-  return (data || []) as unknown as FinalTablePerformance[];
+  return (data || []) as FinalTablePerformance[];
 };
 
 export const finalTableService = {
