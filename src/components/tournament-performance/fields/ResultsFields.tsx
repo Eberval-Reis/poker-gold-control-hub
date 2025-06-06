@@ -10,6 +10,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { TournamentPerformanceFormData } from '../TournamentPerformanceFormSchema';
+import ImageUploadField from './ImageUploadField';
 
 interface ResultsFieldsProps {
   form: UseFormReturn<TournamentPerformanceFormData>;
@@ -109,23 +110,7 @@ const ResultsFields = ({ form }: ResultsFieldsProps) => {
         <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
           <h3 className="text-sm font-medium text-gray-700">Informações da Final Table</h3>
           
-          <FormField
-            control={form.control}
-            name="ft_photo_url"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>URL da Foto da Final Table</FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    type="url"
-                    placeholder="https://exemplo.com/foto-ft.jpg"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <ImageUploadField form={form} />
 
           <FormField
             control={form.control}
