@@ -84,47 +84,58 @@ export function useTournamentPerformanceForm() {
   });
   
   // Get performance data if editing
-  const { isLoading: isLoadingPerformance } = useQuery({
+  const { data: performanceData, isLoading: isLoadingPerformance, error: performanceError } = useQuery({
     queryKey: ['tournament-performance', id],
     queryFn: () => tournamentPerformanceService.getTournamentPerformanceById(id as string),
     enabled: !!id,
-    onSuccess: (data: TournamentPerformance | null) => {
-      if (data) {
-        // Find the full tournament object from the tournaments list
-        const tournament = tournaments.find(t => t.id === data.tournament_id);
-        if (tournament) {
-          setSelectedTournament(tournament);
-        }
-        
-        form.reset({
-          tournament_id: data.tournament_id,
-          buyin_amount: data.buyin_amount?.toString() || '',
-          rebuy_amount: data.rebuy_amount?.toString() || '',
-          rebuy_quantity: data.rebuy_quantity?.toString() || '',
-          addon_enabled: data.addon_enabled || false,
-          addon_amount: data.addon_amount?.toString() || '',
-          itm_achieved: data.itm_achieved || false,
-          final_table_achieved: data.final_table_achieved || false,
-          position: data.position?.toString() || '',
-          prize_amount: data.prize_amount?.toString() || '',
-          ft_photo_url: data.ft_photo_url || '',
-          news_link: data.news_link || '',
-        });
+  });
+
+  // Effect to handle performance data loading
+  useEffect(() => {
+    if (performanceData && tournaments.length > 0) {
+      console.log('Loading performance data:', performanceData);
+      
+      // Find the full tournament object from the tournaments list
+      const tournament = tournaments.find(t => t.id === performanceData.tournament_id);
+      if (tournament) {
+        setSelectedTournament(tournament);
       }
-    },
-    onError: (error: Error) => {
+      
+      form.reset({
+        tournament_id: performanceData.tournament_id,
+        buyin_amount: performanceData.buyin_amount?.toString() || '',
+        rebuy_amount: performanceData.rebuy_amount?.toString() || '',
+        rebuy_quantity: performanceData.rebuy_quantity?.toString() || '',
+        addon_enabled: performanceData.addon_enabled || false,
+        addon_amount: performanceData.addon_amount?.toString() || '',
+        itm_achieved: performanceData.itm_achieved || false,
+        final_table_achieved: performanceData.final_table_achieved || false,
+        position: performanceData.position?.toString() || '',
+        prize_amount: performanceData.prize_amount?.toString() || '',
+        ft_photo_url: performanceData.ft_photo_url || '',
+        news_link: performanceData.news_link || '',
+      });
+    }
+  }, [performanceData, tournaments, form]);
+
+  // Effect to handle performance loading errors
+  useEffect(() => {
+    if (performanceError) {
+      console.error('Error loading performance data:', performanceError);
       toast({
         variant: "destructive",
         title: "Erro ao carregar dados do desempenho",
-        description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
+        description: performanceError instanceof Error ? performanceError.message : "Ocorreu um erro desconhecido.",
       });
       navigate('/tournament-performances');
     }
-  });
+  }, [performanceError, navigate]);
 
   // Create or update performance mutation
   const mutation = useMutation({
     mutationFn: (data: TournamentPerformanceFormData) => {
+      console.log('Submitting performance data:', data);
+      
       // Convert form data to database format
       const performanceData: Partial<TournamentPerformance> = {
         tournament_id: data.tournament_id,
@@ -146,6 +157,7 @@ export function useTournamentPerformanceForm() {
         : tournamentPerformanceService.createTournamentPerformance(performanceData);
     },
     onSuccess: () => {
+      console.log('Performance saved successfully');
       toast({
         title: `Desempenho ${isEditing ? 'atualizado' : 'cadastrado'} com sucesso!`,
         description: "Os dados foram salvos.",
@@ -155,7 +167,7 @@ export function useTournamentPerformanceForm() {
       navigate('/tournament-performances');
     },
     onError: (error) => {
-      console.error('Erro na mutação:', error);
+      console.error('Error saving performance:', error);
       toast({
         variant: "destructive",
         title: `Erro ao ${isEditing ? 'atualizar' : 'cadastrar'} desempenho`,
