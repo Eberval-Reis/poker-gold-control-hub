@@ -2,13 +2,17 @@
 import { FinalTablePerformance } from '@/services/final-table.service';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CalendarDays, Trophy, DollarSign, MapPin } from 'lucide-react';
+import { CalendarDays, Trophy, DollarSign, MapPin, Image as ImageIcon } from 'lucide-react';
+import { useState } from 'react';
 
 interface FinalTableCardProps {
   performance: FinalTablePerformance;
 }
 
 const FinalTableCard = ({ performance }: FinalTableCardProps) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
   const formatDate = (dateString: string) => {
     try {
       return new Date(dateString).toLocaleDateString('pt-BR');
@@ -25,27 +29,58 @@ const FinalTableCard = ({ performance }: FinalTableCardProps) => {
     return 'bg-blue-500';
   };
 
+  const handleImageLoad = () => {
+    console.log('Image loaded successfully for performance:', performance.id);
+    setImageLoading(false);
+  };
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    console.error('Error loading image for performance:', performance.id, 'URL:', performance.ft_photo_url);
+    setImageError(true);
+    setImageLoading(false);
+    (e.target as HTMLImageElement).style.display = 'none';
+  };
+
+  const hasValidImage = performance.ft_photo_url && !imageError;
+
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
       <CardContent className="p-0">
-        {/* Foto da FT */}
-        {performance.ft_photo_url && (
-          <div className="relative h-48 overflow-hidden">
-            <img
-              src={performance.ft_photo_url}
-              alt="Foto da Final Table"
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-            <div className="absolute top-2 right-2">
-              <Badge className={`${getPositionColor(performance.position)} text-white`}>
-                {performance.position}º lugar
-              </Badge>
+        {/* Seção da foto da FT */}
+        <div className="relative h-48 overflow-hidden bg-gray-100">
+          {hasValidImage ? (
+            <>
+              {imageLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                  <div className="animate-pulse text-gray-400">Carregando foto...</div>
+                </div>
+              )}
+              <img
+                src={performance.ft_photo_url}
+                alt="Foto da Final Table"
+                className="w-full h-full object-cover"
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+              />
+            </>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <div className="text-center text-gray-400">
+                <ImageIcon className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                <p className="text-sm">
+                  {performance.ft_photo_url ? 'Erro ao carregar foto' : 'Sem foto disponível'}
+                </p>
+              </div>
             </div>
+          )}
+          
+          {/* Badge da posição */}
+          <div className="absolute top-2 right-2">
+            <Badge className={`${getPositionColor(performance.position)} text-white`}>
+              {performance.position}º lugar
+            </Badge>
           </div>
-        )}
+        </div>
 
         <div className="p-4 space-y-3">
           {/* Título do torneio */}
