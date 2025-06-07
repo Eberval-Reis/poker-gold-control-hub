@@ -27,6 +27,8 @@ export interface FinalTablePerformance {
 }
 
 export const getFinalTablePerformances = async (): Promise<FinalTablePerformance[]> => {
+  console.log('Fetching final table performances...');
+  
   const { data, error } = await supabase
     .from('tournament_performance')
     .select(`
@@ -46,6 +48,8 @@ export const getFinalTablePerformances = async (): Promise<FinalTablePerformance
     console.error('Error fetching final table performances:', error);
     throw error;
   }
+  
+  console.log('Fetched final table performances:', data);
   
   return (data || []) as FinalTablePerformance[];
 };

@@ -3,7 +3,7 @@ import { FinalTablePerformance } from '@/services/final-table.service';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CalendarDays, Trophy, DollarSign, MapPin, Image as ImageIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface FinalTableCardProps {
   performance: FinalTablePerformance;
@@ -12,6 +12,12 @@ interface FinalTableCardProps {
 const FinalTableCard = ({ performance }: FinalTableCardProps) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
+
+  useEffect(() => {
+    console.log('Performance data in FinalTableCard:', performance);
+    console.log('Tournament data:', performance.tournaments);
+    console.log('Club data:', performance.tournaments?.clubs);
+  }, [performance]);
 
   const formatDate = (dateString: string) => {
     try {
@@ -42,6 +48,14 @@ const FinalTableCard = ({ performance }: FinalTableCardProps) => {
   };
 
   const hasValidImage = performance.ft_photo_url && !imageError;
+
+  // Extrair nome do torneio e clube de forma segura
+  const tournamentName = performance.tournaments?.name || 'Torneio sem nome';
+  const clubName = performance.tournaments?.clubs?.name || 'Clube não informado';
+  const tournamentDate = performance.tournaments?.date || '';
+
+  console.log('Extracted tournament name:', tournamentName);
+  console.log('Extracted club name:', clubName);
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow">
@@ -86,11 +100,11 @@ const FinalTableCard = ({ performance }: FinalTableCardProps) => {
           {/* Título do torneio */}
           <div>
             <h3 className="font-semibold text-lg text-gray-900 line-clamp-2">
-              {performance.tournaments?.name || 'Torneio sem nome'}
+              {tournamentName}
             </h3>
             <div className="flex items-center gap-1 text-sm text-gray-600 mt-1">
               <MapPin className="h-4 w-4" />
-              {performance.tournaments?.clubs?.name || 'Clube não informado'}
+              {clubName}
             </div>
           </div>
 
@@ -98,7 +112,7 @@ const FinalTableCard = ({ performance }: FinalTableCardProps) => {
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div className="flex items-center gap-2">
               <CalendarDays className="h-4 w-4 text-gray-500" />
-              <span>{formatDate(performance.tournaments?.date || '')}</span>
+              <span>{formatDate(tournamentDate)}</span>
             </div>
 
             <div className="flex items-center gap-2">
