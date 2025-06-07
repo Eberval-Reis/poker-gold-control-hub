@@ -77,7 +77,7 @@ export function useTournamentPerformanceForm() {
     });
   }, [buyinAmount, rebuyAmount, rebuyQuantity, addonEnabled, addonAmount, prizeAmount]);
   
-  // Fetch tournaments for dropdown
+  // Fetch tournaments for dropdown with club information
   const { data: tournaments = [] } = useQuery({
     queryKey: ['tournaments'],
     queryFn: tournamentService.getTournaments,
