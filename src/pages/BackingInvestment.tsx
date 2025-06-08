@@ -46,7 +46,17 @@ const BackingInvestment = () => {
   const handleSubmit = async (data: Partial<BackingInvestmentType>) => {
     try {
       setIsLoading(true);
-      await createBackingInvestment(data);
+      
+      // Ensure required fields are present
+      const investmentData = {
+        backing_offer_id: offerId!,
+        backer_name: data.backer_name!,
+        percentage_bought: data.percentage_bought!,
+        amount_paid: data.amount_paid!,
+        payment_status: data.payment_status || 'pending'
+      };
+      
+      await createBackingInvestment(investmentData);
       
       toast({
         title: 'Sucesso',

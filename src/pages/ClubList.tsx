@@ -26,7 +26,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast } from '@/hooks/use-toast';
 import Header from '@/components/Header';
-import { Sidebar } from '@/components/Sidebar';
+import Sidebar from '@/components/Sidebar';
 import { clubService } from '@/services/club.service';
 import { Club } from '@/lib/supabase';
 

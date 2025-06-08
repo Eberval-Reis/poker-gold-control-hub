@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
-import { Sidebar } from '@/components/Sidebar';
+import Sidebar from '@/components/Sidebar';
 import TournamentPerformanceTabs from '@/components/tournament-performance/list/TournamentPerformanceTabs';
 import DeleteTournamentDialog from '@/components/tournament-performance/list/DeleteTournamentDialog';
 import { useTournamentPerformanceList } from '@/hooks/useTournamentPerformanceList';
