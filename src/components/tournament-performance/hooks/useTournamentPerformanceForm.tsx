@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -94,11 +93,27 @@ export function useTournamentPerformanceForm() {
   useEffect(() => {
     if (performanceData && tournaments.length > 0) {
       console.log('Loading performance data:', performanceData);
+      console.log('Available tournaments:', tournaments);
       
-      // Find the full tournament object from the tournaments list
+      // Find the tournament in the tournaments list using the tournament_id
       const tournament = tournaments.find(t => t.id === performanceData.tournament_id);
+      console.log('Found tournament:', tournament);
+      
       if (tournament) {
         setSelectedTournament(tournament);
+      } else {
+        // If tournament not found in the list, create a temporary one from the performance data
+        if (performanceData.tournaments) {
+          const tempTournament: Tournament = {
+            id: performanceData.tournament_id,
+            name: performanceData.tournaments.name || 'Torneio não especificado',
+            club_id: '', // We don't have this from the performance data
+            type: '', // We don't have this either
+            clubs: performanceData.tournaments.clubs,
+            // ... other tournament fields with defaults
+          };
+          setSelectedTournament(tempTournament);
+        }
       }
       
       form.reset({

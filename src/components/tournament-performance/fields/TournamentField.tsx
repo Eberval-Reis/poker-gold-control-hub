@@ -40,6 +40,21 @@ const TournamentField = ({ form, tournaments, onTournamentChange }: TournamentFi
     return () => subscription.unsubscribe();
   }, [form, onTournamentChange]);
 
+  // Function to get club name with fallback
+  const getClubName = () => {
+    if (selectedTournament?.clubs?.name) {
+      return selectedTournament.clubs.name;
+    }
+    
+    // Fallback: if we have a selected tournament ID but no club name in the tournaments list,
+    // it might be because we're loading data during edit mode
+    if (selectedTournamentId && tournaments.length > 0) {
+      return 'Carregando...';
+    }
+    
+    return '';
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <div className="md:col-span-2">
@@ -81,7 +96,7 @@ const TournamentField = ({ form, tournaments, onTournamentChange }: TournamentFi
           <FormLabel className="text-base">Clube</FormLabel>
           <FormControl>
             <Input 
-              value={selectedTournament?.clubs?.name || ''} 
+              value={getClubName()} 
               placeholder="Clube será preenchido automaticamente"
               readOnly
               className="bg-gray-50 text-gray-600"

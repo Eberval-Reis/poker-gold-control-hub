@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { TournamentPerformance } from '@/lib/supabase';
 
@@ -6,7 +5,18 @@ import { TournamentPerformance } from '@/lib/supabase';
 export const getTournamentPerformances = async (): Promise<TournamentPerformance[]> => {
   const { data, error } = await supabase
     .from('tournament_performance')
-    .select('*, tournament_id (name, club_id (name))');
+    .select(`
+      *,
+      tournaments!inner (
+        id,
+        name,
+        date,
+        clubs:club_id (
+          id,
+          name
+        )
+      )
+    `);
   
   if (error) {
     console.error('Error fetching tournament performances:', error);
@@ -19,7 +29,18 @@ export const getTournamentPerformances = async (): Promise<TournamentPerformance
 export const getTournamentPerformanceById = async (id: string): Promise<TournamentPerformance | null> => {
   const { data, error } = await supabase
     .from('tournament_performance')
-    .select('*, tournament_id (name, club_id (name))')
+    .select(`
+      *,
+      tournaments!inner (
+        id,
+        name,
+        date,
+        clubs:club_id (
+          id,
+          name
+        )
+      )
+    `)
     .eq('id', id)
     .single();
   
@@ -31,6 +52,7 @@ export const getTournamentPerformanceById = async (id: string): Promise<Tourname
     throw error;
   }
   
+  console.log('Performance data loaded:', data);
   return data as TournamentPerformance;
 };
 
