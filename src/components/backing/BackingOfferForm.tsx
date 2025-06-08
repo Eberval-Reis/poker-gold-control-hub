@@ -4,211 +4,164 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tournament } from '@/lib/supabase';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BackingOffer } from '@/lib/backing-types';
 
 const backingOfferSchema = z.object({
-  tournament_id: z.string().min(1, 'Selecione um torneio'),
+  tournament_id: z.string().min(1, 'Torneio é obrigatório'),
   player_name: z.string().min(1, 'Nome do jogador é obrigatório'),
-  buy_in_amount: z.number().min(1, 'Buy-in deve ser maior que zero'),
+  buy_in_amount: z.number().min(0.01, 'Buy-in deve ser maior que 0'),
   tournament_date: z.string().min(1, 'Data do torneio é obrigatória'),
   collective_financing: z.boolean().default(false),
-  available_percentage: z.number().min(1).max(90, 'Máximo 90% disponível'),
-  markup_percentage: z.number().min(1.2, 'Mark-up mínimo de 1.2x')
+  available_percentage: z.number().min(1, 'Percentual deve ser pelo menos 1%').max(100, 'Percentual não pode exceder 100%'),
+  markup_percentage: z.number().min(0, 'Markup não pode ser negativo').max(200, 'Markup muito alto'),
 });
 
 type BackingOfferFormData = z.infer<typeof backingOfferSchema>;
 
 interface BackingOfferFormProps {
-  tournaments: Tournament[];
-  onSubmit: (data: Partial<BackingOffer>) => void;
-  initialData?: BackingOffer;
-  isLoading?: boolean;
+  onSubmit: (data: Partial<BackingOffer>) => Promise<void>;
+  onCancel: () => void;
+  isLoading: boolean;
 }
 
-const BackingOfferForm = ({ tournaments, onSubmit, initialData, isLoading }: BackingOfferFormProps) => {
-  const form = useForm<BackingOfferFormData>({
+const BackingOfferForm: React.FC<BackingOfferFormProps> = ({ onSubmit, onCancel, isLoading }) => {
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BackingOfferFormData>({
     resolver: zodResolver(backingOfferSchema),
     defaultValues: {
-      tournament_id: initialData?.tournament_id || '',
-      player_name: initialData?.player_name || '',
-      buy_in_amount: initialData?.buy_in_amount || 0,
-      tournament_date: initialData?.tournament_date || '',
-      collective_financing: initialData?.collective_financing || false,
-      available_percentage: initialData?.available_percentage || 70,
-      markup_percentage: initialData?.markup_percentage || 1.2
+      collective_financing: false,
+      available_percentage: 50,
+      markup_percentage: 20,
     }
   });
 
-  const handleSubmit = (data: BackingOfferFormData) => {
-    onSubmit(data);
+  const watchCollectiveFinancing = watch('collective_financing');
+  const watchBuyIn = watch('buy_in_amount');
+  const watchMarkup = watch('markup_percentage');
+
+  const handleFormSubmit = async (data: BackingOfferFormData) => {
+    await onSubmit(data);
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card>
       <CardHeader>
-        <CardTitle>
-          {initialData ? 'Editar Oferta de Cavalagem' : 'Nova Oferta de Cavalagem'}
-        </CardTitle>
+        <CardTitle>Detalhes da Oferta</CardTitle>
       </CardHeader>
       <CardContent>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="tournament_id"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Torneio*</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione o torneio" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {tournaments.map((tournament) => (
-                            <SelectItem key={tournament.id} value={tournament.id}>
-                              {tournament.name}
-                              {tournament.date && ` (${tournament.date})`}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="tournament_id">Torneio</Label>
+              <Input
+                id="tournament_id"
+                {...register('tournament_id')}
+                placeholder="ID do torneio"
               />
-
-              <FormField
-                control={form.control}
-                name="player_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome do Jogador*</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Digite o nome do jogador" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="buy_in_amount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Buy-in (R$)*</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        step="0.01"
-                        placeholder="0.00" 
-                        {...field}
-                        onChange={e => field.onChange(parseFloat(e.target.value) || 0)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="tournament_date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Data do Torneio*</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name="collective_financing"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Financiamento Coletivo (Cavalagem)</FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      Permitir que múltiplos investidores comprem ações
-                    </p>
-                  </div>
-                </FormItem>
+              {errors.tournament_id && (
+                <p className="text-sm text-red-500 mt-1">{errors.tournament_id.message}</p>
               )}
+            </div>
+
+            <div>
+              <Label htmlFor="player_name">Nome do Jogador</Label>
+              <Input
+                id="player_name"
+                {...register('player_name')}
+                placeholder="Seu nome"
+              />
+              {errors.player_name && (
+                <p className="text-sm text-red-500 mt-1">{errors.player_name.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="buy_in_amount">Buy-in (R$)</Label>
+              <Input
+                id="buy_in_amount"
+                type="number"
+                step="0.01"
+                {...register('buy_in_amount', { valueAsNumber: true })}
+                placeholder="0.00"
+              />
+              {errors.buy_in_amount && (
+                <p className="text-sm text-red-500 mt-1">{errors.buy_in_amount.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="tournament_date">Data do Torneio</Label>
+              <Input
+                id="tournament_date"
+                type="date"
+                {...register('tournament_date')}
+              />
+              {errors.tournament_date && (
+                <p className="text-sm text-red-500 mt-1">{errors.tournament_date.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="available_percentage">Percentual Disponível (%)</Label>
+              <Input
+                id="available_percentage"
+                type="number"
+                min="1"
+                max="100"
+                {...register('available_percentage', { valueAsNumber: true })}
+              />
+              {errors.available_percentage && (
+                <p className="text-sm text-red-500 mt-1">{errors.available_percentage.message}</p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="markup_percentage">Markup (%)</Label>
+              <Input
+                id="markup_percentage"
+                type="number"
+                min="0"
+                max="200"
+                step="0.1"
+                {...register('markup_percentage', { valueAsNumber: true })}
+              />
+              {errors.markup_percentage && (
+                <p className="text-sm text-red-500 mt-1">{errors.markup_percentage.message}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="collective_financing"
+              checked={watchCollectiveFinancing}
+              onCheckedChange={(checked) => setValue('collective_financing', checked)}
             />
+            <Label htmlFor="collective_financing">Financiamento Coletivo</Label>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="available_percentage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>% de Ação Disponível*</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        min="1"
-                        max="90"
-                        placeholder="70" 
-                        {...field}
-                        onChange={e => field.onChange(parseFloat(e.target.value) || 0)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="markup_percentage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mark-up Padrão*</FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        step="0.1"
-                        min="1.2"
-                        placeholder="1.2" 
-                        {...field}
-                        onChange={e => field.onChange(parseFloat(e.target.value) || 1.2)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+          {watchBuyIn && watchMarkup !== undefined && (
+            <div className="bg-muted p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Resumo Financeiro</h4>
+              <p>Buy-in: R$ {watchBuyIn.toFixed(2)}</p>
+              <p>Markup: {watchMarkup}%</p>
+              <p>Valor com markup: R$ {(watchBuyIn * (1 + watchMarkup / 100)).toFixed(2)}</p>
             </div>
+          )}
 
-            <div className="flex gap-4">
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Salvando...' : (initialData ? 'Atualizar' : 'Criar Oferta')}
-              </Button>
-            </div>
-          </form>
-        </Form>
+          <div className="flex gap-4">
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? 'Criando...' : 'Criar Oferta'}
+            </Button>
+            <Button type="button" variant="outline" onClick={onCancel}>
+              Cancelar
+            </Button>
+          </div>
+        </form>
       </CardContent>
     </Card>
   );

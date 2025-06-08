@@ -18,28 +18,33 @@ const RegisterTournamentPerformance = () => {
 
   return (
     <div className="min-h-screen bg-poker-background">
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <Header onMenuClick={toggleSidebar} />
+      <div className="flex h-screen">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Header onMenuClick={toggleSidebar} />
+          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-poker-background">
+            <div className="max-w-4xl mx-auto p-6">
+              <div className="mb-8">
+                <div className="flex items-center gap-4 mb-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate('/tournament-performances')}
+                    className="text-poker-gold hover:text-poker-gold/80"
+                  >
+                    <ArrowLeft className="h-6 w-6" />
+                  </Button>
+                  <h1 className="text-2xl font-bold text-poker-text-dark">
+                    {id ? 'Editar Movimento do Torneio' : 'Registrar Movimento do Torneio'}
+                  </h1>
+                </div>
+                <p className="text-gray-600">Registre todos os gastos e ganhos do torneio</p>
+              </div>
 
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/tournament-performances')}
-              className="text-poker-gold hover:text-poker-gold/80"
-            >
-              <ArrowLeft className="h-6 w-6" />
-            </Button>
-            <h1 className="text-2xl font-bold text-poker-text-dark">
-              {id ? 'Editar Movimento do Torneio' : 'Registrar Movimento do Torneio'}
-            </h1>
-          </div>
-          <p className="text-gray-600">Registre todos os gastos e ganhos do torneio</p>
+              <TournamentPerformanceForm />
+            </div>
+          </main>
         </div>
-
-        <TournamentPerformanceForm />
       </div>
     </div>
   );
