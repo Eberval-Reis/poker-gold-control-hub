@@ -1,138 +1,61 @@
 
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Separator } from "@/components/ui/separator";
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Home, Users, Trophy, Receipt, BarChart3, FileText, Star } from "lucide-react";
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { 
+  BarChart3, 
+  Building2, 
+  Calendar, 
+  CreditCard, 
+  FileText, 
+  Home, 
+  Trophy, 
+  Users,
+  TrendingUp,
+  DollarSign
+} from 'lucide-react';
 
-interface SidebarProps {
-  isOpen?: boolean;
-  onClose?: () => void;
-}
-
-export const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
+const Sidebar = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
 
   const menuItems = [
-    {
-      title: "Home",
-      icon: Home,
-      href: "/",
-    },
-    {
-      title: "Clube",
-      icon: Users,
-      href: "/clubs",
-    },
-    {
-      title: "Torneio",
-      icon: Trophy,
-      href: "/tournaments",
-    },
-    {
-      title: "Cadastro das Despesas",
-      icon: Receipt,
-      href: "/register-expense",
-    },
-    {
-      title: "Movimento Torneio",
-      icon: BarChart3,
-      href: "/tournament-performances",
-    },
-    {
-      title: "Final Tables",
-      icon: Star,
-      href: "/final-tables",
-    },
-    {
-      title: "Movimento Despesas",
-      icon: FileText,
-      href: "/expenses",
-    },
+    { path: '/', icon: Home, label: 'Dashboard' },
+    { path: '/tournaments', icon: Calendar, label: 'Torneios' },
+    { path: '/clubs', icon: Building2, label: 'Clubes' },
+    { path: '/tournament-performances', icon: Trophy, label: 'Performances' },
+    { path: '/expenses', icon: CreditCard, label: 'Despesas' },
+    { path: '/tournament-results', icon: BarChart3, label: 'Resultados' },
+    { path: '/final-tables', icon: Users, label: 'Final Tables' },
+    { path: '/backing', icon: DollarSign, label: 'Cavalagem' },
+    { path: '/report', icon: FileText, label: 'Relatórios' },
   ];
 
-  if (isOpen !== undefined) {
-    // Controlled sidebar (used with isOpen prop)
-    return (
-      <Sheet open={isOpen} onOpenChange={onClose}>
-        <SheetContent side="left" className="w-full sm:w-64">
-          <SheetHeader>
-            <SheetTitle className="text-[#d4af37]">Menu</SheetTitle>
-            <SheetDescription>
-              Navegue pelas opções do sistema.
-            </SheetDescription>
-          </SheetHeader>
-          <Separator className="my-4" />
-          <div className="flex flex-col space-y-1">
-            {menuItems.map((item, index) => (
-              <button
-                key={index}
-                onClick={() => {
-                  navigate(item.href);
-                  onClose?.();
-                }}
-                className={`flex items-center justify-start space-x-3 px-3 py-3 rounded-md text-left hover:bg-secondary hover:text-secondary-foreground transition-colors w-full ${
-                  location.pathname === item.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
-                }`}
-              >
-                <item.icon className="h-5 w-5 text-[#d4af37] flex-shrink-0" />
-                <span className="text-sm font-medium leading-none">{item.title}</span>
-              </button>
-            ))}
-          </div>
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
-  // Uncontrolled sidebar (original behavior)
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background px-4 py-2 hover:bg-accent hover:text-accent-foreground">
-          Menu
-        </button>
-      </SheetTrigger>
-      <SheetContent side="left" className="w-full sm:w-64">
-        <SheetHeader>
-          <SheetTitle className="text-[#d4af37]">Menu</SheetTitle>
-          <SheetDescription>
-            Navegue pelas opções do sistema.
-          </SheetDescription>
-        </SheetHeader>
-        <Separator className="my-4" />
-        <div className="flex flex-col space-y-1">
-          {menuItems.map((item, index) => (
-            <button
-              key={index}
-              onClick={() => navigate(item.href)}
-              className={`flex items-center justify-start space-x-3 px-3 py-3 rounded-md text-left hover:bg-secondary hover:text-secondary-foreground transition-colors w-full ${
-                location.pathname === item.href ? 'bg-secondary text-secondary-foreground' : 'text-muted-foreground'
+    <div className="bg-white w-64 min-h-screen shadow-lg">
+      <div className="p-6">
+        <h1 className="text-xl font-bold text-gray-800">Poker Manager</h1>
+      </div>
+      
+      <nav className="mt-6">
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = location.pathname === item.path;
+          
+          return (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100 transition-colors ${
+                isActive ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : ''
               }`}
             >
-              <item.icon className="h-5 w-5 text-[#d4af37] flex-shrink-0" />
-              <span className="text-sm font-medium leading-none">{item.title}</span>
-            </button>
-          ))}
-        </div>
-      </SheetContent>
-    </Sheet>
+              <Icon className={`w-5 h-5 mr-3 ${isActive ? 'text-blue-600' : 'text-gray-500'}`} />
+              <span className="font-medium">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+    </div>
   );
 };
+
+export default Sidebar;

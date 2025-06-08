@@ -9,6 +9,186 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      backer_payouts: {
+        Row: {
+          backing_investment_id: string
+          backing_result_id: string
+          created_at: string
+          id: string
+          payment_status: string | null
+          payout_amount: number
+          roi_percentage: number
+          updated_at: string
+        }
+        Insert: {
+          backing_investment_id: string
+          backing_result_id: string
+          created_at?: string
+          id?: string
+          payment_status?: string | null
+          payout_amount: number
+          roi_percentage: number
+          updated_at?: string
+        }
+        Update: {
+          backing_investment_id?: string
+          backing_result_id?: string
+          created_at?: string
+          id?: string
+          payment_status?: string | null
+          payout_amount?: number
+          roi_percentage?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backer_payouts_backing_investment_id_fkey"
+            columns: ["backing_investment_id"]
+            isOneToOne: false
+            referencedRelation: "backing_investments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backer_payouts_backing_result_id_fkey"
+            columns: ["backing_result_id"]
+            isOneToOne: false
+            referencedRelation: "backing_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backing_investments: {
+        Row: {
+          amount_paid: number
+          backer_name: string
+          backing_offer_id: string
+          created_at: string
+          id: string
+          payment_status: string | null
+          percentage_bought: number
+          updated_at: string
+        }
+        Insert: {
+          amount_paid: number
+          backer_name: string
+          backing_offer_id: string
+          created_at?: string
+          id?: string
+          payment_status?: string | null
+          percentage_bought: number
+          updated_at?: string
+        }
+        Update: {
+          amount_paid?: number
+          backer_name?: string
+          backing_offer_id?: string
+          created_at?: string
+          id?: string
+          payment_status?: string | null
+          percentage_bought?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backing_investments_backing_offer_id_fkey"
+            columns: ["backing_offer_id"]
+            isOneToOne: false
+            referencedRelation: "backing_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backing_offers: {
+        Row: {
+          available_percentage: number
+          buy_in_amount: number
+          collective_financing: boolean | null
+          created_at: string
+          id: string
+          markup_percentage: number
+          player_name: string
+          status: string | null
+          tournament_date: string
+          tournament_id: string
+          updated_at: string
+        }
+        Insert: {
+          available_percentage: number
+          buy_in_amount: number
+          collective_financing?: boolean | null
+          created_at?: string
+          id?: string
+          markup_percentage?: number
+          player_name: string
+          status?: string | null
+          tournament_date: string
+          tournament_id: string
+          updated_at?: string
+        }
+        Update: {
+          available_percentage?: number
+          buy_in_amount?: number
+          collective_financing?: boolean | null
+          created_at?: string
+          id?: string
+          markup_percentage?: number
+          player_name?: string
+          status?: string | null
+          tournament_date?: string
+          tournament_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backing_offers_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backing_results: {
+        Row: {
+          backing_offer_id: string
+          created_at: string
+          id: string
+          net_prize: number | null
+          player_profit: number | null
+          prize_amount: number | null
+          result_type: string
+          updated_at: string
+        }
+        Insert: {
+          backing_offer_id: string
+          created_at?: string
+          id?: string
+          net_prize?: number | null
+          player_profit?: number | null
+          prize_amount?: number | null
+          result_type: string
+          updated_at?: string
+        }
+        Update: {
+          backing_offer_id?: string
+          created_at?: string
+          id?: string
+          net_prize?: number | null
+          player_profit?: number | null
+          prize_amount?: number | null
+          result_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backing_results_backing_offer_id_fkey"
+            columns: ["backing_offer_id"]
+            isOneToOne: false
+            referencedRelation: "backing_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       "Cadastro Clube": {
         Row: {
           address_link: string | null
