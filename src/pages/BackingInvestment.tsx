@@ -3,13 +3,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { getBackingOfferById, getBackingInvestments, createBackingInvestment } from '@/services/backing.service';
-import { BackingOffer, BackingInvestment } from '@/lib/backing-types';
+import { BackingOffer } from '@/lib/backing-types';
+import type { BackingInvestment as BackingInvestmentType } from '@/lib/backing-types';
 import BackingInvestmentForm from '@/components/backing/BackingInvestmentForm';
 
 const BackingInvestment = () => {
   const { offerId } = useParams<{ offerId: string }>();
   const [offer, setOffer] = useState<BackingOffer | null>(null);
-  const [investments, setInvestments] = useState<BackingInvestment[]>([]);
+  const [investments, setInvestments] = useState<BackingInvestmentType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -42,7 +43,7 @@ const BackingInvestment = () => {
     }
   };
 
-  const handleSubmit = async (data: Partial<BackingInvestment>) => {
+  const handleSubmit = async (data: Partial<BackingInvestmentType>) => {
     try {
       setIsLoading(true);
       await createBackingInvestment(data);

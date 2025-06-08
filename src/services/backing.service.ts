@@ -53,10 +53,19 @@ export const getBackingOfferById = async (id: string): Promise<BackingOffer | nu
   return data as BackingOffer;
 };
 
-export const createBackingOffer = async (offerData: Partial<BackingOffer>): Promise<BackingOffer> => {
+export const createBackingOffer = async (offerData: Omit<BackingOffer, 'id' | 'created_at' | 'updated_at'>): Promise<BackingOffer> => {
   const { data, error } = await supabase
     .from('backing_offers')
-    .insert(offerData)
+    .insert({
+      tournament_id: offerData.tournament_id,
+      player_name: offerData.player_name,
+      buy_in_amount: offerData.buy_in_amount,
+      tournament_date: offerData.tournament_date,
+      collective_financing: offerData.collective_financing,
+      available_percentage: offerData.available_percentage,
+      markup_percentage: offerData.markup_percentage,
+      status: offerData.status
+    })
     .select()
     .single();
   
@@ -102,10 +111,16 @@ export const getBackingInvestments = async (offerId?: string): Promise<BackingIn
   return (data || []) as BackingInvestment[];
 };
 
-export const createBackingInvestment = async (investmentData: Partial<BackingInvestment>): Promise<BackingInvestment> => {
+export const createBackingInvestment = async (investmentData: Omit<BackingInvestment, 'id' | 'created_at' | 'updated_at'>): Promise<BackingInvestment> => {
   const { data, error } = await supabase
     .from('backing_investments')
-    .insert(investmentData)
+    .insert({
+      backing_offer_id: investmentData.backing_offer_id!,
+      backer_name: investmentData.backer_name!,
+      percentage_bought: investmentData.percentage_bought!,
+      amount_paid: investmentData.amount_paid!,
+      payment_status: investmentData.payment_status || 'pending'
+    })
     .select()
     .single();
   
@@ -118,10 +133,16 @@ export const createBackingInvestment = async (investmentData: Partial<BackingInv
 };
 
 // Backing Results Service
-export const createBackingResult = async (resultData: Partial<BackingResult>): Promise<BackingResult> => {
+export const createBackingResult = async (resultData: Omit<BackingResult, 'id' | 'created_at' | 'updated_at'>): Promise<BackingResult> => {
   const { data, error } = await supabase
     .from('backing_results')
-    .insert(resultData)
+    .insert({
+      backing_offer_id: resultData.backing_offer_id!,
+      result_type: resultData.result_type!,
+      prize_amount: resultData.prize_amount || 0,
+      net_prize: resultData.net_prize || 0,
+      player_profit: resultData.player_profit || 0
+    })
     .select()
     .single();
   
@@ -134,10 +155,18 @@ export const createBackingResult = async (resultData: Partial<BackingResult>): P
 };
 
 // Backer Payouts Service
-export const createBackerPayouts = async (payouts: Partial<BackerPayout>[]): Promise<BackerPayout[]> => {
+export const createBackerPayouts = async (payouts: Omit<BackerPayout, 'id' | 'created_at' | 'updated_at'>[]): Promise<BackerPayout[]> => {
+  const payoutInserts = payouts.map(payout => ({
+    backing_investment_id: payout.backing_investment_id,
+    backing_result_id: payout.backing_result_id,
+    payout_amount: payout.payout_amount,
+    roi_percentage: payout.roi_percentage,
+    payment_status: payout.payment_status || 'pending'
+  }));
+
   const { data, error } = await supabase
     .from('backer_payouts')
-    .insert(payouts)
+    .insert(payoutInserts)
     .select();
   
   if (error) {
