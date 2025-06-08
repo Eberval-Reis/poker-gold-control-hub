@@ -10,8 +10,7 @@ import {
   Home, 
   Trophy, 
   Users,
-  TrendingUp,
-  DollarSign
+  TrendingUp
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -25,7 +24,6 @@ const Sidebar = () => {
     { path: '/expenses', icon: CreditCard, label: 'Despesas' },
     { path: '/tournament-results', icon: BarChart3, label: 'Resultados' },
     { path: '/final-tables', icon: Users, label: 'Final Tables' },
-    { path: '/backing', icon: DollarSign, label: 'Cavalagem' },
     { path: '/report', icon: FileText, label: 'Relatórios' },
   ];
 

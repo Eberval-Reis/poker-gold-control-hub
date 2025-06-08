@@ -19,9 +19,6 @@ import RegisterExpense from "./pages/RegisterExpense";
 import TournamentResults from "./pages/TournamentResults";
 import FinalTableList from "./pages/FinalTableList";
 import Report from "./pages/Report";
-import BackingDashboard from "./pages/BackingDashboard";
-import CreateBackingOffer from "./pages/CreateBackingOffer";
-import BackingInvestment from "./pages/BackingInvestment";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
@@ -57,9 +54,6 @@ const App = () => {
                       <Route path="/tournament-results" element={<TournamentResults />} />
                       <Route path="/final-tables" element={<FinalTableList />} />
                       <Route path="/report" element={<Report />} />
-                      <Route path="/backing" element={<BackingDashboard />} />
-                      <Route path="/backing/create" element={<CreateBackingOffer />} />
-                      <Route path="/backing/invest/:offerId" element={<BackingInvestment />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </ProtectedRoute>
