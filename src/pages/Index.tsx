@@ -1,351 +1,203 @@
-import { useState, useMemo } from 'react';
-import { Home, CalendarDays, DollarSign, TrendingUp, TrendingDown, Medal, Trophy, PieChart, BarChart } from 'lucide-react';
-import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useQuery } from '@tanstack/react-query';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import DashboardFilters from '@/components/dashboard/DashboardFilters';
-import MetricCard from '@/components/dashboard/MetricCard';
-import RecentTournamentsTable from '@/components/dashboard/RecentTournamentsTable';
-import MonthlyPerformanceChart from '@/components/dashboard/MonthlyPerformanceChart';
-import ExpenseDistributionChart from '@/components/dashboard/ExpenseDistributionChart';
-import TournamentBarChart from '@/components/dashboard/TournamentBarChart';
-import { tournamentPerformanceService } from '@/services/tournament-performance.service';
-import { tournamentService } from '@/services/tournament.service';
-import { expenseService } from '@/services/expense.service';
-import { DateRange } from 'react-day-picker';
-import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
-
-// Time period filter options
-const timePeriods = [
-  { value: 'all', label: 'Todos os tempos' },
-  { value: 'year', label: 'Este ano' },
-  { value: 'month', label: 'Este mês' },
-  { value: '3months', label: 'Últimos 3 meses' }
-];
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import MetricCard from "@/components/dashboard/MetricCard";
+import DashboardFilters from "@/components/dashboard/DashboardFilters";
+import TournamentBarChart from "@/components/dashboard/TournamentBarChart";
+import MonthlyPerformanceChart from "@/components/dashboard/MonthlyPerformanceChart";
+import ExpenseDistributionChart from "@/components/dashboard/ExpenseDistributionChart";
+import RecentTournamentsTable from "@/components/dashboard/RecentTournamentsTable";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('overview');
-  
-  // Filters state
-  const [filters, setFilters] = useState({
-    timePeriod: 'all',
-    gameType: 'all',
-    clubId: 'all'
-  });
-  
-  // Fetch data
-  const { data: performances = [], isLoading: isLoadingPerformances } = useQuery({
-    queryKey: ['tournament-performances'],
-    queryFn: tournamentPerformanceService.getTournamentPerformances
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+
+  const { data: tournaments, isLoading } = useQuery({
+    queryKey: ["tournaments", selectedYear, selectedMonth],
+    queryFn: async () => {
+      let query = supabase
+        .from("tournaments")
+        .select("*")
+        .order("date", { ascending: false });
+
+      if (selectedYear) {
+        query = query.gte("date", `${selectedYear}-01-01`).lte("date", `${selectedYear}-12-31`);
+      }
+
+      if (selectedMonth) {
+        const month = String(selectedMonth).padStart(2, '0');
+        query = query.gte("date", `${selectedYear}-${month}-01`).lte("date", `${selectedYear}-${month}-31`);
+      }
+
+      const { data } = await query;
+      return data || [];
+    },
   });
 
-  const { data: tournaments = [], isLoading: isLoadingTournaments } = useQuery({
-    queryKey: ['tournaments'],
-    queryFn: tournamentService.getTournaments
+  const { data: expenses } = useQuery({
+    queryKey: ["expenses", selectedYear, selectedMonth],
+    queryFn: async () => {
+      let query = supabase
+        .from("expenses")
+        .select("*")
+        .order("date", { ascending: false });
+
+      if (selectedYear) {
+        query = query.gte("date", `${selectedYear}-01-01`).lte("date", `${selectedYear}-12-31`);
+      }
+
+      if (selectedMonth) {
+        const month = String(selectedMonth).padStart(2, '0');
+        query = query.gte("date", `${selectedYear}-${month}-01`).lte("date", `${selectedYear}-${month}-31`);
+      }
+
+      const { data } = await query;
+      return data || [];
+    },
   });
 
-  const { data: expenses = [], isLoading: isLoadingExpenses } = useQuery({
-    queryKey: ['expenses'],
-    queryFn: expenseService.getExpenses
-  });
+  const calculateDashboardData = () => {
+    if (!tournaments || !expenses) {
+      return {
+        totalTournaments: 0,
+        totalProfit: 0,
+        roi: 0,
+        itmRate: 0,
+        monthlyData: [],
+        expenseData: [],
+        recentTournaments: [],
+        tournamentsTrend: 0,
+        profitTrend: 0,
+        roiTrend: 0,
+        itmTrend: 0,
+      };
+    }
 
-  // Memoized calculations for metrics
-  const metrics = useMemo(() => {
-    // Filter data based on filters if needed
-    const filteredPerformances = performances;
-    
-    // Calculate metrics
-    const totalTournaments = filteredPerformances.length;
-    const totalBuyins = filteredPerformances.reduce((sum, perf) => sum + Number(perf.buyin_amount || 0), 0);
-    
-    const totalRebuys = filteredPerformances.reduce((sum, perf) => {
-      const rebuyAmount = Number(perf.rebuy_amount || 0);
-      const rebuyQuantity = Number(perf.rebuy_quantity || 0);
-      return sum + (rebuyAmount * rebuyQuantity);
-    }, 0);
-    
-    const totalRebuyCount = filteredPerformances.reduce((sum, perf) => sum + Number(perf.rebuy_quantity || 0), 0);
-    
-    const itmCount = filteredPerformances.filter(perf => perf.itm_achieved).length;
-    const itmPercentage = totalTournaments > 0 ? (itmCount / totalTournaments) * 100 : 0;
-    
-    const finalTableCount = filteredPerformances.filter(perf => perf.final_table_achieved).length;
-    
-    const totalPrizes = filteredPerformances.reduce((sum, perf) => sum + Number(perf.prize_amount || 0), 0);
-    
-    const totalInvested = totalBuyins + totalRebuys;
-    const roi = totalInvested > 0 ? ((totalPrizes - totalInvested) / totalInvested) * 100 : 0;
-    
-    const totalExpensesAmount = expenses.reduce((sum, expense) => sum + Number(expense.amount || 0), 0);
-    
-    const netProfit = totalPrizes - totalInvested - totalExpensesAmount;
-    
+    const totalTournaments = tournaments.length;
+    const totalProfit = tournaments.reduce((sum, t) => sum + (t.prize || 0) - (t.buy_in || 0), 0);
+    const totalBuyIn = tournaments.reduce((sum, t) => sum + (t.buy_in || 0), 0);
+    const roi = totalBuyIn === 0 ? 0 : (totalProfit / totalBuyIn) * 100;
+    const itmRate = totalTournaments === 0 ? 0 : (tournaments.filter(t => t.prize && t.prize > 0).length / totalTournaments) * 100;
+
+    // Dados para o gráfico de barras de torneios mensais
+    const monthlyData: { month: string; profit: number }[] = [];
+    for (let i = 1; i <= 12; i++) {
+      const month = String(i).padStart(2, '0');
+      const monthlyTournaments = tournaments.filter(t => t.date.startsWith(`${selectedYear}-${month}`));
+      const monthlyProfit = monthlyTournaments.reduce((sum, t) => sum + (t.prize || 0) - (t.buy_in || 0), 0);
+      monthlyData.push({ month: `${selectedYear}-${month}`, profit: monthlyProfit });
+    }
+
+    // Dados para o gráfico de distribuição de despesas
+    const expenseData = expenses.reduce((acc: { category: string; amount: number }[], expense) => {
+      const category = expense.category || 'Outros';
+      const existingCategory = acc.find(item => item.category === category);
+      if (existingCategory) {
+        existingCategory.amount += expense.amount;
+      } else {
+        acc.push({ category, amount: expense.amount });
+      }
+      return acc;
+    }, []);
+
+    // Dados para a tabela de torneios recentes
+    const recentTournaments = tournaments.slice(0, 5);
+
+    // Cálculo das tendências (simples, comparando com o mês anterior)
+    const previousMonth = String(selectedMonth ? selectedMonth - 1 : 12).padStart(2, '0');
+    const previousYear = selectedMonth ? selectedYear : selectedYear - 1;
+
+    const previousMonthTournaments = tournaments.filter(t => t.date.startsWith(`${previousYear}-${previousMonth}`));
+    const previousMonthProfit = previousMonthTournaments.reduce((sum, t) => sum + (t.prize || 0) - (t.buy_in || 0), 0);
+    const previousMonthBuyIn = previousMonthTournaments.reduce((sum, t) => sum + (t.buy_in || 0), 0);
+    const previousMonthRoi = previousMonthBuyIn === 0 ? 0 : (previousMonthProfit / previousMonthBuyIn) * 100;
+    const previousMonthTotalTournaments = previousMonthTournaments.length;
+    const previousMonthItmRate = previousMonthTotalTournaments === 0 ? 0 : (previousMonthTournaments.filter(t => t.prize && t.prize > 0).length / previousMonthTotalTournaments) * 100;
+
+    const tournamentsTrend = totalTournaments - previousMonthTotalTournaments;
+    const profitTrend = totalProfit - previousMonthProfit;
+    const roiTrend = roi - previousMonthRoi;
+    const itmTrend = itmRate - previousMonthItmRate;
+
     return {
       totalTournaments,
-      totalBuyins,
-      totalRebuys,
-      totalRebuyCount,
-      itmCount,
-      itmPercentage,
-      finalTableCount,
-      totalPrizes,
+      totalProfit,
       roi,
-      totalExpensesAmount,
-      netProfit,
-      totalInvested
+      itmRate,
+      monthlyData,
+      expenseData,
+      recentTournaments,
+      tournamentsTrend,
+      profitTrend,
+      roiTrend,
+      itmTrend,
     };
-  }, [performances, expenses, filters]);
-
-  // Helper to format currency
-  const formatCurrency = (value) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
   };
 
-  return (
-    <div className="min-h-screen bg-[#f5f5f5]">
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <Header onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
-          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-[#f5f5f5]">
-            <div className="container mx-auto p-4 md:p-6">
-              <div className="mb-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <Home className="h-6 w-6 text-[#d4af37]" />
-                  <h1 className="text-2xl font-bold text-poker-text-dark">Dashboard</h1>
-                </div>
-                <p className="text-[#5a5a5a]">Análise de desempenho em torneios e cash games</p>
-              </div>
-              
-              {/* Filters */}
-              <DashboardFilters 
-                filters={filters} 
-                setFilters={setFilters} 
-                tournaments={tournaments} 
-              />
-              
-              {/* Tabs */}
-              <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab} className="mt-6">
-                <TabsList className="grid w-full grid-cols-2 md:w-auto md:inline-flex">
-                  <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-                  <TabsTrigger value="details">Detalhes</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="overview" className="mt-4">
-                  {/* Metrics Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-                    <MetricCard 
-                      title="Torneios Jogados"
-                      value={metrics.totalTournaments.toString()}
-                      icon={<Trophy size={24} className="text-[#d4af37]" />}
-                      loading={isLoadingPerformances}
-                    />
-                    
-                    <MetricCard 
-                      title="Total em Buy-ins"
-                      value={formatCurrency(metrics.totalBuyins)}
-                      icon={<DollarSign size={24} className="text-black" />}
-                      loading={isLoadingPerformances}
-                    />
-                    
-                    <MetricCard 
-                      title="Rebuys Realizados"
-                      value={`${metrics.totalRebuyCount} (${formatCurrency(metrics.totalRebuys)})`}
-                      icon={<CalendarDays size={24} className="text-[#5a5a5a]" />}
-                      loading={isLoadingPerformances}
-                    />
-                    
-                    <MetricCard 
-                      title="ITM (In The Money)"
-                      value={`${metrics.itmCount} (${metrics.itmPercentage.toFixed(0)}%)`}
-                      icon={<BarChart size={24} className="text-[#d4af37]" />}
-                      colorClass={metrics.itmPercentage >= 30 ? "text-[#006400]" : ""}
-                      loading={isLoadingPerformances}
-                    />
-                    
-                    <MetricCard 
-                      title="Final Tables"
-                      value={metrics.finalTableCount.toString()}
-                      icon={<Medal size={24} className="text-[#d4af37]" />}
-                      loading={isLoadingPerformances}
-                    />
-                    
-                    <MetricCard 
-                      title="Prêmios Ganhos"
-                      value={formatCurrency(metrics.totalPrizes)}
-                      icon={<DollarSign size={24} className="text-[#006400]" />}
-                      colorClass="text-[#006400]"
-                      loading={isLoadingPerformances}
-                    />
-                    
-                    <MetricCard 
-                      title="ROI"
-                      value={`${metrics.roi.toFixed(2)}%`}
-                      icon={metrics.roi >= 0 ? 
-                        <TrendingUp size={24} className="text-[#006400]" /> : 
-                        <TrendingDown size={24} className="text-[#8b0000]" />
-                      }
-                      colorClass={metrics.roi >= 0 ? "text-[#006400]" : "text-[#8b0000]"}
-                      loading={isLoadingPerformances}
-                    />
-                    
-                    <MetricCard 
-                      title="Despesas Totais"
-                      value={formatCurrency(metrics.totalExpensesAmount)}
-                      icon={<DollarSign size={24} className="text-[#8b0000]" />}
-                      colorClass="text-[#8b0000]"
-                      loading={isLoadingExpenses}
-                    />
-                    
-                    <MetricCard 
-                      title="Lucro Líquido"
-                      value={formatCurrency(metrics.netProfit)}
-                      icon={metrics.netProfit >= 0 ? 
-                        <TrendingUp size={24} /> : 
-                        <TrendingDown size={24} />
-                      }
-                      colorClass={metrics.netProfit >= 0 ? "text-[#006400]" : "text-[#8b0000]"}
-                      loading={isLoadingPerformances || isLoadingExpenses}
-                    />
-                  </div>
-                  
-                  {/* ROI Goal Progress */}
-                  <Card className="mb-6">
-                    <CardHeader>
-                      <CardTitle className="text-lg">Meta de ROI (30%)</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Atual: {metrics.roi.toFixed(2)}%</span>
-                          <span>Meta: 30%</span>
-                        </div>
-                        <Progress value={Math.min(metrics.roi, 100)} 
-                          className={metrics.roi >= 30 ? "bg-gray-200" : ""} 
-                        />
-                        {metrics.roi >= 30 ? (
-                          <p className="text-sm text-[#006400] font-medium">Meta atingida! 🎉</p>
-                        ) : (
-                          <p className="text-sm text-gray-500">
-                            Faltam {(30 - metrics.roi).toFixed(2)}% para atingir a meta
-                          </p>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                  
-                  {/* Charts */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Receita por Torneio</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {isLoadingPerformances ? (
-                          <div className="space-y-3">
-                            <Skeleton className="h-4 w-full" />
-                            <Skeleton className="h-4 w-full" />
-                            <Skeleton className="h-4 w-full" />
-                            <Skeleton className="h-4 w-full" />
-                            <Skeleton className="h-4 w-full" />
-                          </div>
-                        ) : (
-                          <TournamentBarChart 
-                            performances={performances} 
-                            tournaments={tournaments}
-                          />
-                        )}
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Evolução Mensal</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {isLoadingPerformances ? (
-                          <div className="space-y-3">
-                            <Skeleton className="h-4 w-full" />
-                            <Skeleton className="h-4 w-full" />
-                            <Skeleton className="h-4 w-full" />
-                            <Skeleton className="h-4 w-full" />
-                            <Skeleton className="h-4 w-full" />
-                          </div>
-                        ) : (
-                          <MonthlyPerformanceChart 
-                            performances={performances}
-                          />
-                        )}
-                      </CardContent>
-                    </Card>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Distribuição de Despesas</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {isLoadingExpenses ? (
-                          <div className="h-[300px] flex items-center justify-center">
-                            <Skeleton className="h-64 w-64 rounded-full" />
-                          </div>
-                        ) : (
-                          <ExpenseDistributionChart 
-                            expenses={expenses}
-                          />
-                        )}
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader className="flex flex-row items-center justify-between">
-                        <CardTitle className="text-lg">Últimos Torneios</CardTitle>
-                        <Button variant="outline" size="sm">Ver todos</Button>
-                      </CardHeader>
-                      <CardContent>
-                        {isLoadingPerformances ? (
-                          <div className="space-y-3">
-                            <Skeleton className="h-8 w-full" />
-                            <Skeleton className="h-8 w-full" />
-                            <Skeleton className="h-8 w-full" />
-                            <Skeleton className="h-8 w-full" />
-                          </div>
-                        ) : (
-                          <RecentTournamentsTable 
-                            performances={performances}
-                            tournaments={tournaments}
-                          />
-                        )}
-                      </CardContent>
-                    </Card>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="details">
-                  <Card>
-                    <CardContent className="p-6">
-                      <h2 className="text-xl font-semibold mb-4">Análise Detalhada</h2>
-                      <p className="text-muted-foreground">
-                        Página de detalhes em desenvolvimento. Em breve você terá acesso a análises mais aprofundadas de seu desempenho.
-                      </p>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              </Tabs>
-            </div>
-          </main>
+  const dashboardData = calculateDashboardData();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Carregando dashboard...</p>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-6">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
+        <p className="text-gray-600">Visão geral das suas performances no poker</p>
+      </div>
+
+      <DashboardFilters
+        selectedYear={selectedYear}
+        selectedMonth={selectedMonth}
+        onYearChange={setSelectedYear}
+        onMonthChange={setSelectedMonth}
+      />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <MetricCard
+          title="Total de Torneios"
+          value={dashboardData.totalTournaments}
+          icon="trophy"
+          trend={dashboardData.tournamentsTrend}
+        />
+        <MetricCard
+          title="ROI"
+          value={`${dashboardData.roi.toFixed(1)}%`}
+          icon="trending-up"
+          trend={dashboardData.roiTrend}
+          color={dashboardData.roi >= 0 ? "green" : "red"}
+        />
+        <MetricCard
+          title="Lucro Total"
+          value={`R$ ${dashboardData.totalProfit.toFixed(2)}`}
+          icon="dollar-sign"
+          trend={dashboardData.profitTrend}
+          color={dashboardData.totalProfit >= 0 ? "green" : "red"}
+        />
+        <MetricCard
+          title="ITM Rate"
+          value={`${dashboardData.itmRate.toFixed(1)}%`}
+          icon="target"
+          trend={dashboardData.itmTrend}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <TournamentBarChart data={dashboardData.monthlyData} />
+        <MonthlyPerformanceChart data={dashboardData.monthlyData} />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ExpenseDistributionChart data={dashboardData.expenseData} />
+        <RecentTournamentsTable data={dashboardData.recentTournaments} />
       </div>
     </div>
   );

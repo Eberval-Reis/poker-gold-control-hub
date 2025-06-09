@@ -20,6 +20,7 @@ import TournamentResults from "./pages/TournamentResults";
 import FinalTableList from "./pages/FinalTableList";
 import Report from "./pages/Report";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -37,25 +38,27 @@ const App = () => {
                 path="/*"
                 element={
                   <ProtectedRoute>
-                    <Routes>
-                      <Route path="/" element={<Index />} />
-                      <Route path="/tournaments" element={<TournamentList />} />
-                      <Route path="/register-tournament" element={<RegisterTournament />} />
-                      <Route path="/register-tournament/:id" element={<RegisterTournament />} />
-                      <Route path="/clubs" element={<ClubList />} />
-                      <Route path="/register-club" element={<RegisterClub />} />
-                      <Route path="/register-club/:id" element={<RegisterClub />} />
-                      <Route path="/tournament-performances" element={<TournamentPerformanceList />} />
-                      <Route path="/register-tournament-performance" element={<RegisterTournamentPerformance />} />
-                      <Route path="/register-tournament-performance/:id" element={<RegisterTournamentPerformance />} />
-                      <Route path="/expenses" element={<ExpenseList />} />
-                      <Route path="/register-expense" element={<RegisterExpense />} />
-                      <Route path="/register-expense/:id" element={<RegisterExpense />} />
-                      <Route path="/tournament-results" element={<TournamentResults />} />
-                      <Route path="/final-tables" element={<FinalTableList />} />
-                      <Route path="/report" element={<Report />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
+                    <Layout>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/tournaments" element={<TournamentList />} />
+                        <Route path="/register-tournament" element={<RegisterTournament />} />
+                        <Route path="/register-tournament/:id" element={<RegisterTournament />} />
+                        <Route path="/clubs" element={<ClubList />} />
+                        <Route path="/register-club" element={<RegisterClub />} />
+                        <Route path="/register-club/:id" element={<RegisterClub />} />
+                        <Route path="/tournament-performances" element={<TournamentPerformanceList />} />
+                        <Route path="/register-tournament-performance" element={<RegisterTournamentPerformance />} />
+                        <Route path="/register-tournament-performance/:id" element={<RegisterTournamentPerformance />} />
+                        <Route path="/expenses" element={<ExpenseList />} />
+                        <Route path="/register-expense" element={<RegisterExpense />} />
+                        <Route path="/register-expense/:id" element={<RegisterExpense />} />
+                        <Route path="/tournament-results" element={<TournamentResults />} />
+                        <Route path="/final-tables" element={<FinalTableList />} />
+                        <Route path="/report" element={<Report />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </Layout>
                   </ProtectedRoute>
                 }
               />
