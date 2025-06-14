@@ -7,12 +7,13 @@ import { useForm } from "react-hook-form";
 import { Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
+// Tipagem local para evitar erro do types gerado
 type Backer = {
   id: string;
   name: string;
   whatsapp: string;
-  cpf?: string;
-  nickname?: string;
+  cpf?: string | null;
+  nickname?: string | null;
 };
 
 type FormValues = {
@@ -39,8 +40,9 @@ export default function BackerSelectWithModal({
 
   async function fetchBackers() {
     setIsLoading(true);
+    // Aqui usamos asserção de tipo para passar pela limitação do types gerado
     const { data, error } = await supabase
-      .from("financiadores")
+      .from("financiadores" as any)
       .select("id, name, whatsapp, cpf, nickname")
       .order("name", { ascending: true });
     setIsLoading(false);
@@ -56,7 +58,7 @@ export default function BackerSelectWithModal({
   async function onSubmit(form: FormValues) {
     setModalLoading(true);
     const { data, error } = await supabase
-      .from("financiadores")
+      .from("financiadores" as any)
       .insert([form])
       .select()
       .single();
@@ -67,7 +69,6 @@ export default function BackerSelectWithModal({
       setOpen(false);
       reset();
     }
-    // (Você pode colocar toasts etc)
   }
 
   const selected = backers.find(b => b.id === value);
@@ -78,15 +79,16 @@ export default function BackerSelectWithModal({
         <label className="block text-poker-gold font-semibold mb-1 text-base">
           Nome do Financiador*
         </label>
-        <Select value={value || ""} onValueChange={(v) => onChange(v)}>
+        <Select
+          value={value ?? ""}
+          onValueChange={v => onChange(v)}
+        >
           <SelectTrigger>
-            <SelectValue placeholder="Nome ou selecione cadastrado" />
+            <SelectValue placeholder={isLoading ? "Carregando..." : "Selecione ou busque um financiador"} />
           </SelectTrigger>
           <SelectContent className="z-50 bg-background">
-            {isLoading && (
-              <SelectItem value="" disabled>
-                Carregando...
-              </SelectItem>
+            {backers.length === 0 && !isLoading && (
+              <div className="px-4 py-2 text-muted-foreground text-sm">Nenhum financiador encontrado</div>
             )}
             {backers.map((b) => (
               <SelectItem key={b.id} value={b.id}>
