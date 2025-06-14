@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Trophy, Building, BarChart, Plus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
@@ -26,11 +27,12 @@ import { QuickEventModal } from '@/components/schedule/QuickEventModal';
 
 interface BasicInformationSectionProps {
   form: UseFormReturn<TournamentFormData>;
+  clubsLoaded?: boolean; // NOVO: flag opcional
 }
 
 const BASIC_EVENT_DEFAULT = { id: 'regular-clube', name: 'Regular Clube' };
 
-const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form }) => {
+const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form, clubsLoaded = true }) => {
   // Fetch clubs from Supabase
   const { data: clubs = [], isLoading } = useQuery({
     queryKey: ['clubs'],
@@ -66,12 +68,22 @@ const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form 
 
   // Por padrão, seleciona o "Regular Clube" no primeiro render
   React.useEffect(() => {
-    // Só atribui se ainda não houver valor explicitamente
     if (!form.getValues('event_id')) {
       form.setValue('event_id', BASIC_EVENT_DEFAULT.id);
     }
     // eslint-disable-next-line
   }, []);
+
+  // Corrigido: Após os clubes serem carregados, se no modo edição, e já existe um valor válido de club_id, garanta que este valor esteja no select
+  React.useEffect(() => {
+    if (!isLoading && form.getValues('club_id')) {
+      // Se o valor não existe na lista de clubes, resete
+      const clubExists = clubs.some(c => c.id === form.getValues('club_id'));
+      if (!clubExists) {
+        form.setValue('club_id', '');
+      }
+    }
+  }, [isLoading, clubs, form]);
 
   return (
     <div className="space-y-4">
@@ -210,3 +222,4 @@ const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form 
 };
 
 export default BasicInformationSection;
+

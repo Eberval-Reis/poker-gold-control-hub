@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -12,7 +11,7 @@ import TournamentStructureSection from '@/components/tournament/TournamentStruct
 import AdditionalDetailsSection from '@/components/tournament/AdditionalDetailsSection';
 import FormActions from '@/components/tournament/FormActions';
 import { TournamentFormData, tournamentFormSchema } from '@/components/tournament/TournamentFormSchema';
-import { tournamentService } from '@/services/tournament.service';
+import { tournamentService, clubService } from '@/services/tournament.service';
 import { Tournament } from '@/lib/supabase';
 
 interface TournamentFormProps {
@@ -37,6 +36,12 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     enabled: !!tournamentId, // Only run if editing
   });
 
+  // Adicione useQuery para os clubes
+  const { data: clubs = [], isLoading: clubsLoading } = useQuery({
+    queryKey: ['clubs'],
+    queryFn: clubService.getClubs,
+  });
+
   const form = useForm<TournamentFormData>({
     resolver: zodResolver(tournamentFormSchema),
     defaultValues: {
@@ -50,11 +55,11 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     },
   });
 
-  // Reset form values if tournament data is loaded (editing mode)
+  // Movemos o form.reset para esperar também os clubes carregarem
   React.useEffect(() => {
-    // Prefer fetched data (editing), then prop fallback
     const data = isEditing ? fetchedTournamentData : propTournamentData;
-    if (data) {
+    // Só tenta resetar quando os clubes já carregaram!
+    if (data && !clubsLoading) {
       form.reset({
         name: data.name || '',
         club_id: data.club_id || '',
@@ -65,7 +70,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
         notes: data.notes || '',
       });
     }
-  }, [fetchedTournamentData, propTournamentData, isEditing, form]);
+  }, [fetchedTournamentData, propTournamentData, isEditing, form, clubsLoading]);
 
   // Create or update tournament mutation
   const mutation = useMutation({
@@ -111,7 +116,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   };
 
   // Show loading until data is fetched
-  if (propIsLoading || isFetchingData) {
+  if (propIsLoading || isFetchingData || clubsLoading) {
     return (
       <div className="flex justify-center items-center p-8">
         <p>Carregando...</p>
@@ -122,7 +127,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <BasicInformationSection form={form} />
+        <BasicInformationSection form={form} clubsLoaded={!clubsLoading} />
         <TournamentStructureSection form={form} useStandardStructure={useStandardStructure} />
         <AdditionalDetailsSection form={form} />
         {/* Form Actions */}
@@ -133,4 +138,3 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
 };
 
 export default TournamentForm;
-
