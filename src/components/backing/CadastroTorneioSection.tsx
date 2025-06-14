@@ -16,7 +16,9 @@ const CadastroTorneioSection = () => {
   const [selectedTorneio, setSelectedTorneio] = React.useState<string>("");
   const [selectedEvento, setSelectedEvento] = React.useState<string>("");
 
+  // Busca os torneios da tabela tournaments
   const { torneios, loading: loadingTorneios } = useTorneioList();
+  // Busca os eventos da tabela schedule_events (fonte para o dropdown)
   const { events: agendaEvents, loading: loadingAgenda } = useAgendaEventList();
 
   return (
@@ -41,6 +43,11 @@ const CadastroTorneioSection = () => {
                 />
               </SelectTrigger>
               <SelectContent>
+                {agendaEvents.length === 0 && !loadingAgenda && (
+                  <div className="px-4 py-2 text-muted-foreground text-sm">
+                    Nenhum evento encontrado
+                  </div>
+                )}
                 {agendaEvents.map((ev) => (
                   <SelectItem key={ev.id} value={ev.id}>
                     {ev.name}
@@ -144,3 +151,4 @@ const CadastroTorneioSection = () => {
 };
 
 export default CadastroTorneioSection;
+
