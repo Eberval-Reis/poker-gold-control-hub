@@ -87,21 +87,36 @@ const SchedulePage = () => {
       <div className="flex gap-2">
         <Button
           variant={filterStatus === "all" ? "default" : "outline"}
+          className={
+            filterStatus === "all"
+              ? "bg-primary text-primary-foreground"
+              : ""
+          }
           onClick={() => setFilterStatus("all")}
         >
           Todos
         </Button>
         <Button
           variant={filterStatus === "done" ? "default" : "outline"}
+          className={
+            filterStatus === "done"
+              ? "bg-green-600 text-white border-green-600"
+              : "border-green-600 text-green-600"
+          }
           onClick={() => setFilterStatus("done")}
         >
-          <span className="text-green-400">✔️</span> Cumpridos
+          <span className="text-green-500">✔️</span> Cumpridos
         </Button>
         <Button
           variant={filterStatus === "not_done" ? "default" : "outline"}
+          className={
+            filterStatus === "not_done"
+              ? "bg-destructive text-destructive-foreground border-destructive"
+              : "border-destructive text-destructive"
+          }
           onClick={() => setFilterStatus("not_done")}
         >
-          <span className="text-red-400">❌</span> Não Cumpridos
+          <span className="text-red-500">❌</span> Não Cumpridos
         </Button>
       </div>
       <div className="flex gap-2 mt-2 sm:mt-0">
@@ -113,14 +128,24 @@ const SchedulePage = () => {
         />
         <Button
           size="icon"
-          variant={viewMode === "grid" ? "default" : "ghost"}
+          variant={viewMode === "grid" ? "default" : "outline"}
+          className={
+            viewMode === "grid"
+              ? "bg-primary text-primary-foreground"
+              : ""
+          }
           onClick={() => setViewMode("grid")}
         >
           <Grid2x2 />
         </Button>
         <Button
           size="icon"
-          variant={viewMode === "list" ? "default" : "ghost"}
+          variant={viewMode === "list" ? "default" : "outline"}
+          className={
+            viewMode === "list"
+              ? "bg-primary text-primary-foreground"
+              : ""
+          }
           onClick={() => setViewMode("list")}
         >
           <List />
@@ -130,9 +155,9 @@ const SchedulePage = () => {
   );
 
   return (
-    <div className="container mx-auto p-6 relative">
+    <div className="container mx-auto px-4 sm:px-6 py-6 relative">
       <h1 className="text-2xl font-bold text-poker-gold mb-2">Agenda de Eventos</h1>
-      <p className="mb-6 text-gray-400">
+      <p className="mb-6 text-muted-foreground">
         Gerencie seus agendamentos de torneios de poker de forma visual e prática.
       </p>
       {FilterBar}
@@ -144,7 +169,7 @@ const SchedulePage = () => {
         }
       >
         {filteredEvents.length === 0 ? (
-          <div className="text-center text-gray-400 bg-[#171717] rounded-lg p-8 shadow animate-fade-in">
+          <div className="text-center text-muted-foreground bg-card border border-border rounded-lg p-8 shadow animate-fade-in">
             <p>Nenhum evento agendado encontrado.</p>
             <p>
               Clique no botão <span className="text-poker-gold font-bold">+</span> para adicionar!
@@ -197,3 +222,4 @@ const SchedulePage = () => {
 };
 
 export default SchedulePage;
+
