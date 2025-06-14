@@ -15,7 +15,6 @@ import TournamentPerformanceList from "./pages/TournamentPerformanceList";
 import RegisterTournamentPerformance from "./pages/RegisterTournamentPerformance";
 import ExpenseList from "./pages/ExpenseList";
 import RegisterExpense from "./pages/RegisterExpense";
-import TournamentResults from "./pages/TournamentResults";
 import FinalTableList from "./pages/FinalTableList";
 import Report from "./pages/Report";
 import ProtectedRoute from "./components/ProtectedRoute";
