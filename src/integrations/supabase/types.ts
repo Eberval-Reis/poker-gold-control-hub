@@ -391,6 +391,7 @@ export type Database = {
           club_id: string
           created_at: string
           date: string
+          event_id: string | null
           id: string
           initial_stack: string | null
           name: string
@@ -405,6 +406,7 @@ export type Database = {
           club_id: string
           created_at?: string
           date?: string
+          event_id?: string | null
           id?: string
           initial_stack?: string | null
           name: string
@@ -419,6 +421,7 @@ export type Database = {
           club_id?: string
           created_at?: string
           date?: string
+          event_id?: string | null
           id?: string
           initial_stack?: string | null
           name?: string
@@ -434,6 +437,13 @@ export type Database = {
             columns: ["club_id"]
             isOneToOne: false
             referencedRelation: "Cadastro Clube"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournaments_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "schedule_events"
             referencedColumns: ["id"]
           },
         ]

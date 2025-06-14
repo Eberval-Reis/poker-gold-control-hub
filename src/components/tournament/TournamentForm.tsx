@@ -48,6 +48,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     defaultValues: {
       name: '',
       club_id: '',
+      event_id: '', // <--- Adicionamos o campo event_id
       type: '',
       initial_stack: '',
       blind_structure: '',
@@ -64,6 +65,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
       form.reset({
         name: data.name || '',
         club_id: data.club_id || '',
+        event_id: data.event_id || '', // Carrega o event_id corretamente
         type: data.type || '',
         initial_stack: data.initial_stack || '',
         blind_structure: data.blind_structure || '',
@@ -80,6 +82,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
         ...data,
         name: data.name,
         club_id: data.club_id,
+        event_id: data.event_id, // Adicionamos o event_id
         type: data.type,
         initial_stack: data.initial_stack,
         blind_structure: data.blind_structure,

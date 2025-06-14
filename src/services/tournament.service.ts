@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Tournament } from '@/lib/supabase';
 
@@ -5,18 +6,19 @@ import { Tournament } from '@/lib/supabase';
 export const getTournaments = async (): Promise<Tournament[]> => {
   const { data, error } = await supabase
     .from('tournaments')
-    .select('*, club_id (name)');
+    .select('*, club_id (name), event_id (name, date)');
   
   if (error) {
     console.error('Error fetching tournaments:', error);
     throw error;
   }
   
-  // Make sure we convert and ensure the data has all required fields
+  // Map event and club join fields
   return (data as any[] || []).map(item => ({
     id: item.id,
     name: item.name,
     club_id: item.club_id,
+    event_id: item.event_id,
     type: item.type,
     initial_stack: item.initial_stack || '',
     blind_structure: item.blind_structure,
@@ -24,16 +26,17 @@ export const getTournaments = async (): Promise<Tournament[]> => {
     notes: item.notes,
     created_at: item.created_at,
     updated_at: item.updated_at,
-    clubs: item.club_id
+    clubs: item.club_id,
+    event: item.event_id // event_id join: { name, date }
   })) as Tournament[];
 };
 
 export const getTournamentById = async (id: string): Promise<Tournament | null> => {
   const { data, error } = await supabase
     .from('tournaments')
-    .select('*, club_id (name)')
+    .select('*, club_id (name), event_id (name, date)')
     .eq('id', id)
-    .single();
+    .maybeSingle();
   
   if (error) {
     if (error.code === 'PGRST116') { // Record not found
@@ -43,11 +46,12 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     throw error;
   }
   
-  // Convert to the required Tournament type with all required fields
+  // Map event and club join fields
   return data ? {
     id: data.id,
     name: data.name,
     club_id: data.club_id,
+    event_id: data.event_id,
     type: data.type,
     initial_stack: data.initial_stack || '',
     blind_structure: data.blind_structure,
@@ -55,12 +59,12 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     notes: data.notes,
     created_at: data.created_at,
     updated_at: data.updated_at,
-    clubs: data.club_id
+    clubs: data.club_id,
+    event: data.event_id // { name, date }
   } as Tournament : null;
 };
 
 export const createTournament = async (tournamentData: Partial<Tournament>): Promise<Tournament> => {
-  // Make sure required fields are present
   if (!tournamentData.name || !tournamentData.club_id || !tournamentData.type) {
     throw new Error('Missing required tournament fields');
   }
@@ -70,14 +74,15 @@ export const createTournament = async (tournamentData: Partial<Tournament>): Pro
     .insert({
       name: tournamentData.name,
       club_id: tournamentData.club_id,
+      event_id: tournamentData.event_id || null,
       type: tournamentData.type,
       initial_stack: tournamentData.initial_stack,
       blind_structure: tournamentData.blind_structure,
       prizes: tournamentData.prizes,
       notes: tournamentData.notes
     })
-    .select()
-    .single();
+    .select('*, club_id (name), event_id (name, date)')
+    .maybeSingle();
   
   if (error) {
     console.error('Error creating tournament:', error);
@@ -88,10 +93,10 @@ export const createTournament = async (tournamentData: Partial<Tournament>): Pro
 };
 
 export const updateTournament = async (id: string, tournamentData: Partial<Tournament>): Promise<Tournament> => {
-  // Create an object with only the properties that are present
   const updateData: Record<string, any> = {};
   if (tournamentData.name !== undefined) updateData.name = tournamentData.name;
   if (tournamentData.club_id !== undefined) updateData.club_id = tournamentData.club_id;
+  if (tournamentData.event_id !== undefined) updateData.event_id = tournamentData.event_id;
   if (tournamentData.type !== undefined) updateData.type = tournamentData.type;
   if (tournamentData.initial_stack !== undefined) updateData.initial_stack = tournamentData.initial_stack;
   if (tournamentData.blind_structure !== undefined) updateData.blind_structure = tournamentData.blind_structure;
@@ -102,8 +107,8 @@ export const updateTournament = async (id: string, tournamentData: Partial<Tourn
     .from('tournaments')
     .update(updateData)
     .eq('id', id)
-    .select()
-    .single();
+    .select('*, club_id (name), event_id (name, date)')
+    .maybeSingle();
   
   if (error) {
     console.error('Error updating tournament:', error);
@@ -127,7 +132,6 @@ export const deleteTournament = async (id: string): Promise<{ success: boolean }
   return { success: true };
 };
 
-// Export tournamentService object for components that expect it
 export const tournamentService = {
   getTournaments,
   getTournamentById,
@@ -135,3 +139,4 @@ export const tournamentService = {
   updateTournament,
   deleteTournament
 };
+
