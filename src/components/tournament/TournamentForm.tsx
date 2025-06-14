@@ -43,12 +43,19 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     queryFn: clubService.getClubs,
   });
 
+  // Helper to ensure only valid UUID strings for club_id and event_id
+  function normalizeUuid(val: string | undefined | null): string | null {
+    if (!val) return null;
+    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+    return uuidRegex.test(val) ? val : null;
+  }
+
   const form = useForm<TournamentFormData>({
     resolver: zodResolver(tournamentFormSchema),
     defaultValues: {
       name: '',
       club_id: '',
-      event_id: '', // <--- Adicionamos o campo event_id
+      event_id: '',
       type: '',
       initial_stack: '',
       blind_structure: '',
@@ -57,15 +64,20 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     },
   });
 
-  // Movemos o form.reset para esperar também os clubes carregarem
   React.useEffect(() => {
     const data = isEditing ? fetchedTournamentData : propTournamentData;
-    // Só tenta resetar quando os clubes já carregaram!
     if (data && !clubsLoading) {
+      // Defensive: ensure reset never provides "regular-clube" or a non-uuid to event_id
+      let safeEventId = data.event_id;
+      if (!safeEventId || safeEventId === "regular-clube") safeEventId = '';
+      let safeClubId = data.club_id;
+      // allow empty string for unselected, but never a non-uuid string
+      const safeClubIdValue =
+        normalizeUuid(safeClubId) || '';
       form.reset({
         name: data.name || '',
-        club_id: data.club_id || '',
-        event_id: data.event_id || '', // Carrega o event_id corretamente
+        club_id: safeClubIdValue,
+        event_id: normalizeUuid(safeEventId) || '',
         type: data.type || '',
         initial_stack: data.initial_stack || '',
         blind_structure: data.blind_structure || '',
@@ -75,14 +87,17 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     }
   }, [fetchedTournamentData, propTournamentData, isEditing, form, clubsLoading]);
 
-  // Create or update tournament mutation
   const mutation = useMutation({
     mutationFn: (data: TournamentFormData) => {
+      // Defensive: only send valid UUIDs, else null
       const formattedData = {
         ...data,
+        club_id: normalizeUuid(data.club_id) || '', // still required field
+        // event_id: send null if "regular-clube", "", or not a UUID
+        event_id: (data.event_id && normalizeUuid(data.event_id))
+          ? data.event_id
+          : null,
         name: data.name,
-        club_id: data.club_id,
-        event_id: data.event_id, // Adicionamos o event_id
         type: data.type,
         initial_stack: data.initial_stack,
         blind_structure: data.blind_structure,
@@ -116,6 +131,15 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   };
 
   const onSubmit = (data: TournamentFormData) => {
+    // Defensive: Don't allow submit without a club_id UUID, for clarity for users
+    if (!normalizeUuid(data.club_id || '')) {
+      toast({
+        variant: "destructive",
+        title: "Clube inválido",
+        description: "Selecione um clube válido.",
+      });
+      return;
+    }
     mutation.mutate(data);
   };
 
