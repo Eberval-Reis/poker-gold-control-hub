@@ -12,12 +12,41 @@ const BackingManagement = () => {
     <div className="container mx-auto px-2 py-8">
       <h1 className="text-2xl font-bold text-poker-gold mb-2">Gestão de Cavalagem</h1>
       <Tabs defaultValue="cadastro" className="w-full">
-        <TabsList className="mb-6 gap-2 w-full max-w-2xl overflow-auto">
-          <TabsTrigger value="cadastro">Cadastrar Torneio</TabsTrigger>
-          <TabsTrigger value="vender">Vender Ações</TabsTrigger>
-          <TabsTrigger value="controle">Controle de Backers</TabsTrigger>
-          <TabsTrigger value="resultado">Registrar Resultado</TabsTrigger>
-          <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+        <TabsList
+          className="mb-6 w-full max-w-2xl flex flex-wrap gap-1 bg-muted rounded-md"
+          style={{ minHeight: "40px", height: "auto", padding: "0.25rem 0.25rem" }}
+        >
+          {/* Aba ativa: font-bold, abas inativas: font-normal */}
+          <TabsTrigger
+            value="cadastro"
+            className="px-2 py-1 text-sm lg:text-base min-w-[110px] h-8"
+          >
+            Cadastrar Torneio
+          </TabsTrigger>
+          <TabsTrigger
+            value="vender"
+            className="px-2 py-1 text-sm lg:text-base min-w-[110px] h-8"
+          >
+            Vender Ações
+          </TabsTrigger>
+          <TabsTrigger
+            value="controle"
+            className="px-2 py-1 text-sm lg:text-base min-w-[140px] h-8"
+          >
+            Controle de Backers
+          </TabsTrigger>
+          <TabsTrigger
+            value="resultado"
+            className="px-2 py-1 text-sm lg:text-base min-w-[140px] h-8"
+          >
+            Registrar Resultado
+          </TabsTrigger>
+          <TabsTrigger
+            value="dashboard"
+            className="px-2 py-1 text-sm lg:text-base min-w-[110px] h-8"
+          >
+            Dashboard
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="cadastro">
           <CadastroTorneioSection />
