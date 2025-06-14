@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form } from '@/components/ui/form';
 import { toast } from '@/hooks/use-toast';
@@ -21,15 +21,22 @@ interface TournamentFormProps {
   isLoading?: boolean;
 }
 
-const TournamentForm: React.FC<TournamentFormProps> = ({ 
-  tournamentId, 
-  tournamentData, 
-  isLoading = false 
+const TournamentForm: React.FC<TournamentFormProps> = ({
+  tournamentId,
+  tournamentData: propTournamentData,
+  isLoading: propIsLoading = false
 }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const isEditing = !!tournamentId;
-  
+
+  // Fetch tournament data if editing
+  const { data: fetchedTournamentData, isLoading: isFetchingData } = useQuery({
+    queryKey: ['tournament', tournamentId],
+    queryFn: () => tournamentId ? tournamentService.getTournamentById(tournamentId) : Promise.resolve(null),
+    enabled: !!tournamentId, // Only run if editing
+  });
+
   const form = useForm<TournamentFormData>({
     resolver: zodResolver(tournamentFormSchema),
     defaultValues: {
@@ -43,25 +50,26 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     },
   });
 
-  // Set form values if tournament data is available
+  // Reset form values if tournament data is loaded (editing mode)
   React.useEffect(() => {
-    if (tournamentData) {
+    // Prefer fetched data (editing), then prop fallback
+    const data = isEditing ? fetchedTournamentData : propTournamentData;
+    if (data) {
       form.reset({
-        name: tournamentData.name,
-        club_id: tournamentData.club_id,
-        type: tournamentData.type,
-        initial_stack: tournamentData.initial_stack || '',
-        blind_structure: tournamentData.blind_structure || '',
-        prizes: tournamentData.prizes || '',
-        notes: tournamentData.notes || '',
+        name: data.name || '',
+        club_id: data.club_id || '',
+        type: data.type || '',
+        initial_stack: data.initial_stack || '',
+        blind_structure: data.blind_structure || '',
+        prizes: data.prizes || '',
+        notes: data.notes || '',
       });
     }
-  }, [tournamentData, form]);
+  }, [fetchedTournamentData, propTournamentData, isEditing, form]);
 
   // Create or update tournament mutation
   const mutation = useMutation({
     mutationFn: (data: TournamentFormData) => {
-      // Format data for database storage
       const formattedData = {
         ...data,
         name: data.name,
@@ -72,7 +80,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
         prizes: data.prizes,
         notes: data.notes,
       };
-      
+
       return isEditing
         ? tournamentService.updateTournament(tournamentId as string, formattedData)
         : tournamentService.createTournament(formattedData);
@@ -102,26 +110,27 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     mutation.mutate(data);
   };
 
-  return (
-    <>
-      {isLoading ? (
-        <div className="flex justify-center items-center p-8">
-          <p>Carregando...</p>
-        </div>
-      ) : (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <BasicInformationSection form={form} />
-            <TournamentStructureSection form={form} useStandardStructure={useStandardStructure} />
-            <AdditionalDetailsSection form={form} />
+  // Show loading until data is fetched
+  if (propIsLoading || isFetchingData) {
+    return (
+      <div className="flex justify-center items-center p-8">
+        <p>Carregando...</p>
+      </div>
+    );
+  }
 
-            {/* Form Actions */}
-            <FormActions isEditing={isEditing} isPending={mutation.isPending} onCancel={() => navigate('/tournaments')} />
-          </form>
-        </Form>
-      )}
-    </>
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <BasicInformationSection form={form} />
+        <TournamentStructureSection form={form} useStandardStructure={useStandardStructure} />
+        <AdditionalDetailsSection form={form} />
+        {/* Form Actions */}
+        <FormActions isEditing={isEditing} isPending={mutation.isPending} onCancel={() => navigate('/tournaments')} />
+      </form>
+    </Form>
   );
 };
 
 export default TournamentForm;
+
