@@ -1,5 +1,12 @@
 
 import React from "react";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { AgendaEvent } from "@/hooks/useAgendaEventList";
 
@@ -16,23 +23,23 @@ export const EventDropdown: React.FC<EventDropdownProps> = ({
   onChange,
   disabled,
 }) => (
-  <select
+  <Select
     value={value}
-    onChange={e => {
-      const id = e.target.value;
+    onValueChange={id => {
       const selected = events.find(ev => ev.id === id);
       onChange(id, selected?.name ?? "");
     }}
-    className={cn(
-      "w-full rounded p-2 text-white bg-background border border-input outline-none"
-    )}
-    disabled={disabled}
+    disabled={disabled || events.length === 0}
   >
-    <option value="">Selecione...</option>
-    {events.map((ev) => (
-      <option key={ev.id} value={ev.id}>
-        {ev.name} {ev.date ? `(${ev.date})` : ""}
-      </option>
-    ))}
-  </select>
+    <SelectTrigger className={cn("w-full", disabled ? "opacity-50" : "")}>
+      <SelectValue placeholder="Selecione..." />
+    </SelectTrigger>
+    <SelectContent className="z-[60]">
+      {events.map((ev) => (
+        <SelectItem key={ev.id} value={ev.id}>
+          {ev.name} {ev.date ? `(${ev.date})` : ""}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
 );
