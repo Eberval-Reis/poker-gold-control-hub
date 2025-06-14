@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -56,11 +57,10 @@ export default function BackerSelectWithModal({
       .order("name", { ascending: true });
     setIsLoading(false);
 
-    // Only store valid Backer objects
     if (!error && Array.isArray(data)) {
-      setBackers(
-        data.filter(isBacker)
-      );
+      // Filter for truly valid Backer objects only
+      const validBackers: Backer[] = (data as any[]).filter(isBacker);
+      setBackers(validBackers);
     } else {
       setBackers([]);
     }
