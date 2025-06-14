@@ -1,4 +1,3 @@
-
 import * as z from 'zod';
 
 export const tournamentFormSchema = z.object({
@@ -9,6 +8,7 @@ export const tournamentFormSchema = z.object({
   blind_structure: z.string().optional(),
   prizes: z.string().optional(),
   notes: z.string().optional(),
+  event_id: z.string().optional(),
 });
 
 export type TournamentFormData = z.infer<typeof tournamentFormSchema>;
