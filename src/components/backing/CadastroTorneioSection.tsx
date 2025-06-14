@@ -1,7 +1,13 @@
 
 import React from "react";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { useTorneioList } from "@/hooks/useTorneioList";
 import { useAgendaEventList } from "@/hooks/useAgendaEventList";
 
@@ -19,16 +25,44 @@ const CadastroTorneioSection = () => {
       <form className="space-y-4">
         {/* Linha dos campos principais */}
         <div className="flex flex-col gap-4 md:flex-row md:gap-6">
+          {/* Select Evento da Agenda - AGORA PRIMEIRO */}
+          <div className="flex-1 min-w-[180px]">
+            <label className="block text-poker-gold font-semibold mb-1">
+              Evento da Agenda
+            </label>
+            <Select
+              value={selectedEvento}
+              onValueChange={setSelectedEvento}
+              disabled={loadingAgenda}
+            >
+              <SelectTrigger>
+                <SelectValue
+                  placeholder={loadingAgenda ? "Carregando..." : "Selecione..."}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                {agendaEvents.map((ev) => (
+                  <SelectItem key={ev.id} value={ev.id}>
+                    {ev.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
           {/* Select Nome do Torneio */}
           <div className="flex-1 min-w-[180px]">
-            <label className="block text-poker-gold font-semibold mb-1">Nome do Torneio *</label>
+            <label className="block text-poker-gold font-semibold mb-1">
+              Nome do Torneio *
+            </label>
             <Select
               value={selectedTorneio}
               onValueChange={setSelectedTorneio}
               disabled={loadingTorneios}
             >
               <SelectTrigger>
-                <SelectValue placeholder={loadingTorneios ? "Carregando..." : "Selecione..."} />
+                <SelectValue
+                  placeholder={loadingTorneios ? "Carregando..." : "Selecione..."}
+                />
               </SelectTrigger>
               <SelectContent>
                 {torneios.map((torneio) => (
@@ -40,7 +74,9 @@ const CadastroTorneioSection = () => {
             </Select>
           </div>
           <div className="flex-1 min-w-[150px]">
-            <label className="block text-poker-gold font-semibold mb-1">Buy-in (R$) *</label>
+            <label className="block text-poker-gold font-semibold mb-1">
+              Buy-in (R$) *
+            </label>
             <input
               required
               type="number"
@@ -50,43 +86,29 @@ const CadastroTorneioSection = () => {
             />
           </div>
           <div className="flex-1 min-w-[140px]">
-            <label className="block text-poker-gold font-semibold mb-1">Data *</label>
+            <label className="block text-poker-gold font-semibold mb-1">
+              Data *
+            </label>
             <input
               type="date"
               required
               className="w-full p-2 rounded border border-input bg-background text-base"
             />
           </div>
-          {/* Select Evento da Agenda */}
-          <div className="flex-1 min-w-[180px]">
-            <label className="block text-poker-gold font-semibold mb-1">Evento da Agenda</label>
-            <Select
-              value={selectedEvento}
-              onValueChange={setSelectedEvento}
-              disabled={loadingAgenda}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={loadingAgenda ? "Carregando..." : "Selecione..."} />
-              </SelectTrigger>
-              <SelectContent>
-                {agendaEvents.map((ev) => (
-                  <SelectItem key={ev.id} value={ev.id}>
-                    {ev.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
         </div>
         {/* Switch e grupo de cavalagem */}
         <div className="flex items-center gap-3 mt-3">
           <Switch checked={cavEnable} onCheckedChange={setCavEnable} />
-          <span className="font-medium text-gray-800">Habilitar Cavalagem?</span>
+          <span className="font-medium text-gray-800">
+            Habilitar Cavalagem?
+          </span>
         </div>
         {cavEnable && (
           <div className="mt-4 p-4 bg-muted rounded-lg flex gap-4 flex-col md:flex-row">
             <div className="flex-1">
-              <label className="block text-poker-gold font-semibold mb-1">% Máxima para Venda</label>
+              <label className="block text-poker-gold font-semibold mb-1">
+                % Máxima para Venda
+              </label>
               <input
                 type="number"
                 required
@@ -97,7 +119,9 @@ const CadastroTorneioSection = () => {
               />
             </div>
             <div className="flex-1">
-              <label className="block text-poker-gold font-semibold mb-1">Mark-up Padrão</label>
+              <label className="block text-poker-gold font-semibold mb-1">
+                Mark-up Padrão
+              </label>
               <input
                 type="number"
                 required
