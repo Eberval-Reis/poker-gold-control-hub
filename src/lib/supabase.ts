@@ -26,6 +26,7 @@ export interface Tournament {
   notes?: string;
   created_at?: string;
   updated_at?: string;
+  event_id?: string; // <-- Adicionado para suportar campo de evento opcional
   // Join fields
   clubs?: {
     name: string;
