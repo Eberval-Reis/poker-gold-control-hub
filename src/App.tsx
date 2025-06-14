@@ -20,7 +20,8 @@ import FinalTableList from "./pages/FinalTableList";
 import Report from "./pages/Report";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
-import Schedule from "./pages/Schedule"; // ADD: import Schedule page
+import Schedule from "./pages/Schedule";
+import BackingManagement from "./pages/BackingManagement"; // ADICIONA O IMPORT
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -55,7 +56,8 @@ const App = () => {
                         <Route path="/register-expense/:id" element={<RegisterExpense />} />
                         <Route path="/final-tables" element={<FinalTableList />} />
                         <Route path="/report" element={<Report />} />
-                        <Route path="/schedule" element={<Schedule />} />     {/* ADDED THIS LINE */}
+                        <Route path="/schedule" element={<Schedule />} />
+                        <Route path="/backing-management" element={<BackingManagement />} /> {/* CORREÇÃO: adiciona rota */}
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Layout>
@@ -71,4 +73,3 @@ const App = () => {
 };
 
 export default App;
-
