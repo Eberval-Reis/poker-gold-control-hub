@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -40,14 +39,15 @@ export default function BackerSelectWithModal({
 
   async function fetchBackers() {
     setIsLoading(true);
-    // Aqui usamos asserção de tipo para passar pela limitação do types gerado
     const { data, error } = await supabase
       .from("financiadores" as any)
       .select("id, name, whatsapp, cpf, nickname")
       .order("name", { ascending: true });
     setIsLoading(false);
-    if (!error && data) {
-      setBackers(data as Backer[]);
+    if (!error && Array.isArray(data)) {
+      setBackers(data as unknown as Backer[]);
+    } else {
+      setBackers([]);
     }
   }
 
@@ -63,7 +63,7 @@ export default function BackerSelectWithModal({
       .select()
       .single();
     setModalLoading(false);
-    if (!error && data) {
+    if (!error && data && data.id) {
       await fetchBackers();
       onChange(data.id);
       setOpen(false);
@@ -71,7 +71,8 @@ export default function BackerSelectWithModal({
     }
   }
 
-  const selected = backers.find(b => b.id === value);
+  // Defensive: only try to find by id if all backers have id 
+  const selected = backers.find((b) => b && b.id === value);
 
   return (
     <div className="flex items-end gap-2">
@@ -90,16 +91,17 @@ export default function BackerSelectWithModal({
             {backers.length === 0 && !isLoading && (
               <div className="px-4 py-2 text-muted-foreground text-sm">Nenhum financiador encontrado</div>
             )}
-            {backers.map((b) => (
-              <SelectItem key={b.id} value={b.id}>
-                {b.name}
-                {b.nickname ? ` (${b.nickname})` : ""}
-                {b.whatsapp ? ` - ${b.whatsapp}` : ""}
-              </SelectItem>
-            ))}
+            {backers
+              .filter((b): b is Backer => !!b && !!b.id && !!b.name)
+              .map((b) => (
+                <SelectItem key={b.id} value={b.id}>
+                  {b.name}
+                  {b.nickname ? ` (${b.nickname})` : ""}
+                  {b.whatsapp ? ` - ${b.whatsapp}` : ""}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
-        {/* Subinfo do financiador selecionado */}
         {selected && (
           <div className="text-xs mt-1 text-muted-foreground">
             <div><b>WhatsApp:</b> {selected.whatsapp}</div>
