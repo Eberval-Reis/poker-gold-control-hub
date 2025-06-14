@@ -10,12 +10,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface QuickEventModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddEvent: (novoEvento: { nome: string; data: string; cidade: string }) => void;
+  onAddEvent: (eventoSalvo: { id: string; name: string; date: string }) => void;
 }
 
 export const QuickEventModal: React.FC<QuickEventModalProps> = ({
@@ -26,11 +26,32 @@ export const QuickEventModal: React.FC<QuickEventModalProps> = ({
   const [nome, setNome] = useState("");
   const [data, setData] = useState("");
   const [cidade, setCidade] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!nome.trim() || !data.trim() || !cidade.trim()) return;
-    onAddEvent({ nome, data, cidade });
+    setError(null);
+    if (!nome.trim() || !data.trim() || !cidade.trim()) {
+      setError("Preencha todos os campos obrigatórios.");
+      return;
+    }
+    setLoading(true);
+    // Como ainda não existe campo 'cidade', concatenamos no nome:
+    const fullName = `${nome} - ${cidade}`;
+    const { data: inserted, error } = await supabase
+      .from("schedule_events")
+      .insert([{ name: fullName, date }])
+      .select()
+      .maybeSingle();
+    setLoading(false);
+
+    if (error || !inserted) {
+      setError("Erro ao salvar evento. Tente novamente.");
+      return;
+    }
+    // Informa componente pai e reseta o modal
+    onAddEvent({ id: inserted.id, name: inserted.name, date: inserted.date });
     setNome("");
     setData("");
     setCidade("");
@@ -51,6 +72,7 @@ export const QuickEventModal: React.FC<QuickEventModalProps> = ({
               onChange={e => setNome(e.target.value)}
               placeholder="Digite o nome"
               required
+              disabled={loading}
             />
           </div>
           <div>
@@ -60,6 +82,7 @@ export const QuickEventModal: React.FC<QuickEventModalProps> = ({
               value={data}
               onChange={e => setData(e.target.value)}
               required
+              disabled={loading}
             />
           </div>
           <div>
@@ -69,16 +92,24 @@ export const QuickEventModal: React.FC<QuickEventModalProps> = ({
               onChange={e => setCidade(e.target.value)}
               placeholder="Digite a cidade"
               required
+              disabled={loading}
             />
           </div>
+          {error && (
+            <div className="text-red-600 text-sm py-1">{error}</div>
+          )}
           <DialogFooter className="gap-2 mt-2">
             <DialogClose asChild>
-              <Button variant="outline" type="button">
+              <Button variant="outline" type="button" disabled={loading}>
                 Cancelar
               </Button>
             </DialogClose>
-            <Button className="bg-poker-gold hover:bg-poker-gold/90 text-white" type="submit">
-              Salvar Evento
+            <Button
+              className="bg-poker-gold hover:bg-poker-gold/90 text-white"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Salvando..." : "Salvar Evento"}
             </Button>
           </DialogFooter>
         </form>

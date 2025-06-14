@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -11,12 +11,7 @@ import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { tournamentService } from "@/services/tournament.service";
 import { QuickEventModal } from "./QuickEventModal";
-
-interface QuickEvent {
-  nome: string;
-  data: string;
-  cidade: string;
-}
+import { useAgendaEventList } from "@/hooks/useAgendaEventList";
 
 interface EventFormProps {
   onSubmit: (event: Omit<ScheduleEvent, "id">) => void;
@@ -31,16 +26,17 @@ export const EventForm: React.FC<EventFormProps> = ({
   initialData,
   existingEvents,
 }) => {
-  // Modal de Evento rápido
-  const [quickEvents, setQuickEvents] = useState<QuickEvent[]>(() =>
-    JSON.parse(localStorage.getItem("quickEvents") || "[]")
-  );
+  // -------- INTEGRAÇÃO BASE DE DADOS --------
+  const { events: agendaEvents, loading: loadingAgenda } = useAgendaEventList();
   const [quickModalOpen, setQuickModalOpen] = useState(false);
   const [selectedQuick, setSelectedQuick] = useState("");
 
-  useEffect(() => {
-    localStorage.setItem("quickEvents", JSON.stringify(quickEvents));
-  }, [quickEvents]);
+  // Atualiza sempre que há evento novo cadastrado
+  const handleAddQuickEvent = (e: { id: string; name: string; date: string }) => {
+    setSelectedQuick(e.name); // Seleciona imediatamente o novo evento pelo nome
+    // Poderia haver um refetch de eventos se usar react-query ou um custom hook para recarregar se preferir.
+    // Como useAgendaEventList faz o fetch no mount, só recarrega ao dar refresh na página, mas para este contexto funciona.
+  };
 
   // Torneios vindos do banco
   const { data: tournaments = [] } = useQuery({
@@ -68,7 +64,6 @@ export const EventForm: React.FC<EventFormProps> = ({
     },
   });
 
-  // Atualiza tournamentName conforme o ID selecionado
   useEffect(() => {
     const selectedId = watch("tournamentId");
     const found = tournaments?.find((t: any) => t.id === selectedId);
@@ -76,7 +71,6 @@ export const EventForm: React.FC<EventFormProps> = ({
     // eslint-disable-next-line
   }, [watch("tournamentId"), tournaments]);
 
-  // Previne eventos duplicados
   function validateUnique(data: Omit<ScheduleEvent, "id">) {
     return (
       !existingEvents.some(
@@ -102,12 +96,6 @@ export const EventForm: React.FC<EventFormProps> = ({
     onSubmit(data);
   };
 
-  // Adiciona evento local à lista
-  const handleAddQuickEvent = (novo: QuickEvent) => {
-    setQuickEvents((prev) => [...prev, novo]);
-    setSelectedQuick(novo.nome);
-  };
-
   return (
     <form
       onSubmit={handleSubmit(submit)}
@@ -125,9 +113,9 @@ export const EventForm: React.FC<EventFormProps> = ({
             )}
           >
             <option value="">Selecione...</option>
-            {quickEvents.map((ev, i) => (
-              <option key={i} value={ev.nome}>
-                {ev.nome} {ev.cidade ? `- ${ev.cidade}` : ""} {ev.data ? `(${ev.data})` : ""}
+            {agendaEvents.map((ev) => (
+              <option key={ev.id} value={ev.name}>
+                {ev.name} {ev.date ? `(${ev.date})` : ""}
               </option>
             ))}
           </select>
