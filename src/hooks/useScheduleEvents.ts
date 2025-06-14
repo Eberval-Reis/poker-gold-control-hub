@@ -13,6 +13,8 @@ export interface ScheduleEvent {
   rebuys: number;
   status: ScheduleEventStatus;
   reason?: string;
+  eventId?: string;      // <-- allow optional eventId (for agenda event association)
+  eventName?: string | null; // <-- allow optional eventName
 }
 
 const STORAGE_KEY = "poker_schedule_events_v1";
