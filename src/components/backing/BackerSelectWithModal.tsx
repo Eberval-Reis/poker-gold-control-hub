@@ -22,6 +22,17 @@ type FormValues = {
   nickname?: string;
 };
 
+// Helper runtime type guard
+function isBacker(obj: any): obj is Backer {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    typeof obj.id === "string" &&
+    typeof obj.name === "string" &&
+    typeof obj.whatsapp === "string"
+  );
+}
+
 export default function BackerSelectWithModal({
   value,
   onChange,
@@ -44,8 +55,12 @@ export default function BackerSelectWithModal({
       .select("id, name, whatsapp, cpf, nickname")
       .order("name", { ascending: true });
     setIsLoading(false);
+
+    // Only store valid Backer objects
     if (!error && Array.isArray(data)) {
-      setBackers(data as unknown as Backer[]);
+      setBackers(
+        data.filter(isBacker)
+      );
     } else {
       setBackers([]);
     }
@@ -72,7 +87,7 @@ export default function BackerSelectWithModal({
   }
 
   // Defensive: only try to find by id if all backers have id 
-  const selected = backers.find((b) => b && b.id === value);
+  const selected = backers.find((b) => b.id === value);
 
   return (
     <div className="flex items-end gap-2">
@@ -91,15 +106,13 @@ export default function BackerSelectWithModal({
             {backers.length === 0 && !isLoading && (
               <div className="px-4 py-2 text-muted-foreground text-sm">Nenhum financiador encontrado</div>
             )}
-            {backers
-              .filter((b): b is Backer => !!b && !!b.id && !!b.name)
-              .map((b) => (
-                <SelectItem key={b.id} value={b.id}>
-                  {b.name}
-                  {b.nickname ? ` (${b.nickname})` : ""}
-                  {b.whatsapp ? ` - ${b.whatsapp}` : ""}
-                </SelectItem>
-              ))}
+            {backers.map((b) => (
+              <SelectItem key={b.id} value={b.id}>
+                {b.name}
+                {b.nickname ? ` (${b.nickname})` : ""}
+                {b.whatsapp ? ` - ${b.whatsapp}` : ""}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
         {selected && (
