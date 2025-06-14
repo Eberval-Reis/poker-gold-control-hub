@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -27,6 +28,7 @@ const AppSidebar = () => {
   const menuItems = [
     { path: '/', icon: Home, label: 'Dashboard' },
     { path: '/tournaments', icon: Calendar, label: 'Torneios' },
+    { path: '/schedule', icon: Calendar, label: 'Agenda' }, // ADDED "Agenda" (uses Calendar icon as well)
     { path: '/clubs', icon: Building2, label: 'Clubes' },
     { path: '/tournament-performances', icon: Trophy, label: 'Performances' },
     { path: '/expenses', icon: CreditCard, label: 'Despesas' },
@@ -68,3 +70,4 @@ const AppSidebar = () => {
 };
 
 export default AppSidebar;
+

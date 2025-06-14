@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +20,7 @@ import FinalTableList from "./pages/FinalTableList";
 import Report from "./pages/Report";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
+import Schedule from "./pages/Schedule"; // ADD: import Schedule page
 
 const App = () => {
   const [queryClient] = useState(() => new QueryClient());
@@ -53,6 +55,7 @@ const App = () => {
                         <Route path="/register-expense/:id" element={<RegisterExpense />} />
                         <Route path="/final-tables" element={<FinalTableList />} />
                         <Route path="/report" element={<Report />} />
+                        <Route path="/schedule" element={<Schedule />} />     {/* ADDED THIS LINE */}
                         <Route path="*" element={<NotFound />} />
                       </Routes>
                     </Layout>
@@ -68,3 +71,4 @@ const App = () => {
 };
 
 export default App;
+
