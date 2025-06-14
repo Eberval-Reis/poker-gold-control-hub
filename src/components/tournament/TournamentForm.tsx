@@ -11,7 +11,8 @@ import TournamentStructureSection from '@/components/tournament/TournamentStruct
 import AdditionalDetailsSection from '@/components/tournament/AdditionalDetailsSection';
 import FormActions from '@/components/tournament/FormActions';
 import { TournamentFormData, tournamentFormSchema } from '@/components/tournament/TournamentFormSchema';
-import { tournamentService, clubService } from '@/services/tournament.service';
+import { tournamentService } from '@/services/tournament.service';
+import { clubService } from '@/services/club.service';
 import { Tournament } from '@/lib/supabase';
 
 interface TournamentFormProps {
