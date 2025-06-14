@@ -107,10 +107,15 @@ export const EventForm: React.FC<EventFormProps> = ({
       alert("Data/hora deve ser futura.");
       return;
     }
-    // Remove eventId/eventName before submit if ScheduleEvent doesn't have these fields,
-    // or adapt (add to db if you want relationship!)
+
+    // Assegura que os campos buyIn e rebuys são números
+    const buyIn = typeof data.buyIn === "string" ? parseFloat(data.buyIn) : data.buyIn;
+    const rebuys = typeof data.rebuys === "string" ? parseInt(data.rebuys as any, 10) : data.rebuys;
+
     onSubmit({
       ...data,
+      buyIn: isNaN(buyIn) ? 0 : buyIn,
+      rebuys: isNaN(rebuys) ? 0 : rebuys,
       eventId: data.eventId,
       eventName: data.eventName,
     } as Omit<ScheduleEvent, "id">);
@@ -267,5 +272,3 @@ export const EventForm: React.FC<EventFormProps> = ({
     </form>
   );
 };
-
-// ALERTA: Este arquivo está ficando longo, considere pedir uma refatoração para dividi-lo em componentes menores!
