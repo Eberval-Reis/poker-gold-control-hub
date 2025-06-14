@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,14 @@ import { useQuery } from "@tanstack/react-query";
 import { tournamentService } from "@/services/tournament.service";
 import { QuickEventModal } from "./QuickEventModal";
 import { useAgendaEventList } from "@/hooks/useAgendaEventList";
+// Importa componentes de dropdown do shadcn/ui
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface EventFormProps {
   onSubmit: (event: Omit<ScheduleEvent, "id">) => void;
@@ -63,6 +72,7 @@ export const EventForm: React.FC<EventFormProps> = ({
     },
   });
 
+  // Quando o torneioId muda, busca o nome do torneio e atualiza no form
   useEffect(() => {
     const selectedId = watch("tournamentId");
     const found = tournaments?.find((t: any) => t.id === selectedId);
@@ -130,23 +140,42 @@ export const EventForm: React.FC<EventFormProps> = ({
         onAddEvent={handleAddQuickEvent}
       />
 
-      {/* Campo Torneio já existente */}
+      {/* Campo Torneio já existente - agora como Select do banco */}
       <div>
-        <label className="block text-poker-gold font-semibold mb-1">Nome do Torneio</label>
-        <select
-          {...register("tournamentId", { required: true })}
-          className={cn(
-            "w-full rounded p-2 text-white bg-background border border-input outline-none",
-            errors.tournamentId && "border-red-500"
+        <label className="block text-poker-gold font-semibold mb-1">
+          Nome do Torneio
+        </label>
+        <Controller
+          name="tournamentId"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <Select
+              value={field.value}
+              onValueChange={value => {
+                field.onChange(value);
+                // acha o nome correspondente e salva no form também!
+                const found = tournaments.find((t: any) => t.id === value);
+                setValue("tournamentName", found?.name ?? "");
+              }}
+              disabled={tournaments.length === 0}
+            >
+              <SelectTrigger className={cn("w-full", errors.tournamentId && "border-red-500")}>
+                <SelectValue placeholder="Selecione..." />
+              </SelectTrigger>
+              <SelectContent>
+                {tournaments.map((t: any) => (
+                  <SelectItem value={t.id} key={t.id}>
+                    {t.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
-        >
-          <option value="">Selecione...</option>
-          {tournaments.map((t: any) => (
-            <option value={t.id} key={t.id}>
-              {t.name}
-            </option>
-          ))}
-        </select>
+        />
+        {errors.tournamentId && (
+          <span className="text-red-500 text-xs">{errors.tournamentId.message}</span>
+        )}
       </div>
       <div className="flex gap-2">
         <div className="flex-1">
