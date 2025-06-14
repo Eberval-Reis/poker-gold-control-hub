@@ -15,7 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 interface QuickEventModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddEvent: (eventoSalvo: { id: string; name: string; date: string }) => void;
+  onAddEvent: (eventoSalvo: { id: string; name: string; date?: string | null }) => void;
 }
 
 export const QuickEventModal: React.FC<QuickEventModalProps> = ({
@@ -41,7 +41,7 @@ export const QuickEventModal: React.FC<QuickEventModalProps> = ({
     const fullName = `${nome} - ${cidade}`;
     const { data: inserted, error } = await supabase
       .from("schedule_events")
-      .insert([{ name: fullName, date }])
+      .insert([{ name: fullName, date: data }])
       .select()
       .maybeSingle();
     setLoading(false);

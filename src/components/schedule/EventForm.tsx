@@ -32,10 +32,9 @@ export const EventForm: React.FC<EventFormProps> = ({
   const [selectedQuick, setSelectedQuick] = useState("");
 
   // Atualiza sempre que há evento novo cadastrado
-  const handleAddQuickEvent = (e: { id: string; name: string; date: string }) => {
-    setSelectedQuick(e.name); // Seleciona imediatamente o novo evento pelo nome
-    // Poderia haver um refetch de eventos se usar react-query ou um custom hook para recarregar se preferir.
-    // Como useAgendaEventList faz o fetch no mount, só recarrega ao dar refresh na página, mas para este contexto funciona.
+  const handleAddQuickEvent = (eventoSalvo: { id: string; name: string; date?: string | null }) => {
+    setSelectedQuick(eventoSalvo.name); // Seleciona imediatamente o novo evento pelo nome
+    // O hook useAgendaEventList recarrega ao montar; refresh manual aqui não é necessário para exibição em tempo real.
   };
 
   // Torneios vindos do banco

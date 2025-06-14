@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 export interface AgendaEvent {
   id: string;
   name: string;
+  date?: string | null;
 }
 export function useAgendaEventList() {
   const [events, setEvents] = useState<AgendaEvent[]>([]);
@@ -14,7 +15,7 @@ export function useAgendaEventList() {
     setLoading(true);
     supabase
       .from("schedule_events")
-      .select("id, name")
+      .select("id, name, date")
       .then(({ data }) => {
         setEvents(data || []);
         setLoading(false);

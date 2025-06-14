@@ -54,13 +54,13 @@ const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form 
   }, [agendaEvents]);
 
   // Lógica para adicionar novo evento localmente
-  const handleAddEvent = (novoEvento: { nome: string; data: string; cidade: string }) => {
+  const handleAddEvent = (eventoSalvo: { id: string; name: string; date?: string | null }) => {
     const newEvent = {
-      id: `${Date.now()}`, // Pode substituir por ID real quando retornar do banco
-      name: novoEvento.nome,
+      id: eventoSalvo.id ?? `${Date.now()}`, // Use ID vindo do banco
+      name: eventoSalvo.name,
+      date: eventoSalvo.date,
     };
     setLocalEvents((prev) => [...prev, newEvent]);
-    // Define o evento recém-criado como selecionado
     form.setValue('event_id', newEvent.id);
   };
 
