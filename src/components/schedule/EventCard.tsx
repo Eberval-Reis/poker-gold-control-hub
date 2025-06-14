@@ -1,3 +1,4 @@
+
 import { Pencil, Trash2, Check, X, Calendar as CalendarIcon, CircleDollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -24,7 +25,7 @@ export const EventCard: React.FC<EventCardProps> = ({
   const isNotDone = event.status === "not_done";
 
   return (
-    <div className="bg-[#131313] rounded-lg shadow p-4 flex flex-col gap-2 relative animate-fade-in">
+    <div className="bg-card rounded-lg shadow-poker p-4 flex flex-col gap-2 relative animate-fade-in border border-poker-gold/10">
       <div className="flex gap-2 items-center justify-between">
         <div className="flex gap-2 items-center">
           <CircleDollarSign className="text-green-500" />
@@ -33,7 +34,7 @@ export const EventCard: React.FC<EventCardProps> = ({
         <div className="flex gap-1">
           <button
             onClick={() => onEdit(event)}
-            className="text-blue-400 hover:text-blue-300 p-1 rounded transition-all"
+            className="text-blue-500 hover:text-blue-400 p-1 rounded transition-all"
           >
             <Pencil size={18} />
           </button>
@@ -45,26 +46,26 @@ export const EventCard: React.FC<EventCardProps> = ({
           </button>
         </div>
       </div>
-      <div className="flex items-center gap-2 text-sm text-gray-200">
-        <CalendarIcon className="w-4 h-4 text-gray-400" />
+      <div className="flex items-center gap-2 text-sm text-foreground">
+        <CalendarIcon className="w-4 h-4 text-muted-foreground" />
         <span>
           {event.date.replace(/(\d{4})-(\d{2})-(\d{2})/, "$3/$2/$1")} - {event.time}
         </span>
       </div>
       <div className="flex items-center gap-2 text-sm">
         <Badge
-          className="bg-green-900/50 border-green-600 text-green-300"
+          className="bg-poker-gold/90 text-white font-bold border-none"
         >Buy-in: R$ {event.buyIn.toFixed(2)}</Badge>
-        <Badge className="bg-gray-900 border-gray-700 text-gray-200">Rebuys: {event.rebuys}</Badge>
+        <Badge className="bg-blue-700/90 text-white font-bold border-none">Rebuys: {event.rebuys}</Badge>
       </div>
       <div className="flex items-center gap-3 mt-2">
         <span
           className={twMerge(
             "flex items-center gap-1 text-xs font-semibold",
             isDone
-              ? "text-green-400"
+              ? "text-green-600"
               : isNotDone
-              ? "text-red-400"
+              ? "text-red-500"
               : "text-poker-gold"
           )}
         >
@@ -81,7 +82,7 @@ export const EventCard: React.FC<EventCardProps> = ({
           onCheckedChange={() => onToggleStatus(event)}
           className={isDone ? "bg-green-600" : isNotDone ? "bg-red-600" : ""}
         />
-        <span className="text-xs text-gray-500">Marcar como Cumprido</span>
+        <span className="text-xs text-muted-foreground">Marcar como Cumprido</span>
       </div>
       {isNotDone && (
         <div className="mt-2">
@@ -90,7 +91,7 @@ export const EventCard: React.FC<EventCardProps> = ({
             placeholder="Motivo"
             value={event.reason || ""}
             onChange={(e) => onChangeReason && onChangeReason(event.id, e.target.value)}
-            className="w-full p-2 rounded bg-gray-800 text-white border border-gray-700 outline-none"
+            className="w-full p-2 rounded bg-background text-foreground border border-border outline-none"
           />
         </div>
       )}
