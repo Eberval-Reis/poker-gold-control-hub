@@ -2,9 +2,11 @@
 import React from "react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
+import BackerSelectWithModal from "./BackerSelectWithModal"; // NOVO COMPONENTE
 
 const VenderAcoesSection = () => {
   const [percent, setPercent] = React.useState(5);
+  const [backerId, setBackerId] = React.useState<string | null>(null);
 
   // Placeholder values
   const buyin = 10000;
@@ -26,17 +28,7 @@ const VenderAcoesSection = () => {
         </span>
       </div>
       <form className="flex flex-col gap-5 bg-white/90 rounded-xl px-5 py-6 shadow border border-gray-100">
-        <div className="flex flex-col gap-1">
-          <label className="block text-poker-gold font-semibold mb-1">
-            Nome do Backer*
-          </label>
-          <input
-            required
-            className="w-full p-2 rounded border border-input bg-background text-base"
-            placeholder="Nome ou selecione cadastrado"
-            style={{ minHeight: 42 }}
-          />
-        </div>
+        <BackerSelectWithModal value={backerId} onChange={setBackerId} />
         <div className="flex flex-col gap-0">
           <label className="block text-poker-gold font-semibold mb-1">
             % da ação *
