@@ -5,171 +5,154 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DatePicker } from '@/components/ui/date-picker';
-import Header from '@/components/Header';
-import Sidebar from '@/components/Sidebar';
 
 const Report = () => {
   const navigate = useNavigate();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [period, setPeriod] = useState('month');
   const [reportType, setReportType] = useState('performance');
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
 
   const handleGenerateReport = () => {
     alert('Funcionalidade de relatórios será implementada em breve!');
   };
 
   return (
-    <div className="min-h-screen bg-poker-background">
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <Header onMenuClick={toggleSidebar} />
-          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-poker-background">
-            <div className="container mx-auto p-6">
-              <div className="mb-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <FileText className="h-6 w-6 text-[#d4af37]" />
-                  <h1 className="text-2xl font-bold text-poker-text-dark">Relatórios</h1>
-                </div>
-                <p className="text-gray-600">Gere relatórios detalhados sobre seu desempenho</p>
+    <div className="container mx-auto p-6">
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-2">
+          <FileText className="h-6 w-6 text-[#d4af37]" />
+          <h1 className="text-2xl font-bold text-poker-text-dark">Relatórios</h1>
+        </div>
+        <p className="text-gray-600">Gere relatórios detalhados sobre seu desempenho</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Report Configuration */}
+        <div className="lg:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>Configurações do Relatório</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Tipo de Relatório</label>
+                <Select value={reportType} onValueChange={setReportType}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="performance">Desempenho em Torneios</SelectItem>
+                    <SelectItem value="financial">Análise Financeira</SelectItem>
+                    <SelectItem value="expenses">Relatório de Despesas</SelectItem>
+                    <SelectItem value="roi">Análise de ROI</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Report Configuration */}
-                <div className="lg:col-span-1">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Configurações do Relatório</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Tipo de Relatório</label>
-                        <Select value={reportType} onValueChange={setReportType}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="performance">Desempenho em Torneios</SelectItem>
-                            <SelectItem value="financial">Análise Financeira</SelectItem>
-                            <SelectItem value="expenses">Relatório de Despesas</SelectItem>
-                            <SelectItem value="roi">Análise de ROI</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Período</label>
-                        <Select value={period} onValueChange={setPeriod}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="week">Esta Semana</SelectItem>
-                            <SelectItem value="month">Este Mês</SelectItem>
-                            <SelectItem value="quarter">Este Trimestre</SelectItem>
-                            <SelectItem value="year">Este Ano</SelectItem>
-                            <SelectItem value="custom">Período Personalizado</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {period === 'custom' && (
-                        <>
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Data Inicial</label>
-                            <DatePicker 
-                              date={startDate}
-                              onDateChange={setStartDate}
-                              placeholder="Selecione a data inicial"
-                            />
-                          </div>
-                          <div>
-                            <label className="text-sm font-medium mb-2 block">Data Final</label>
-                            <DatePicker 
-                              date={endDate}
-                              onDateChange={setEndDate}
-                              placeholder="Selecione a data final"
-                            />
-                          </div>
-                        </>
-                      )}
-
-                      <Button 
-                        onClick={handleGenerateReport}
-                        className="w-full bg-[#d4af37] text-white hover:bg-[#d4af37]/90"
-                      >
-                        Gerar Relatório
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                {/* Report Preview */}
-                <div className="lg:col-span-2">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Prévia do Relatório</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-center py-12">
-                        <FileText className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">
-                          Selecione as configurações e gere seu relatório
-                        </h3>
-                        <p className="text-gray-500">
-                          O relatório será exibido aqui após a geração
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Período</label>
+                <Select value={period} onValueChange={setPeriod}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="week">Esta Semana</SelectItem>
+                    <SelectItem value="month">Este Mês</SelectItem>
+                    <SelectItem value="quarter">Este Trimestre</SelectItem>
+                    <SelectItem value="year">Este Ano</SelectItem>
+                    <SelectItem value="custom">Período Personalizado</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              {/* Quick Reports */}
-              <div className="mt-8">
-                <h2 className="text-lg font-semibold mb-4">Relatórios Rápidos</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Card className="cursor-pointer hover:shadow-md transition-shadow">
-                    <CardContent className="p-4 text-center">
-                      <TrendingUp className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
-                      <h3 className="font-medium">ROI Mensal</h3>
-                      <p className="text-sm text-gray-500">Análise do retorno sobre investimento</p>
-                    </CardContent>
-                  </Card>
+              {period === 'custom' && (
+                <>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Data Inicial</label>
+                    <DatePicker 
+                      date={startDate}
+                      onDateChange={setStartDate}
+                      placeholder="Selecione a data inicial"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Data Final</label>
+                    <DatePicker 
+                      date={endDate}
+                      onDateChange={setEndDate}
+                      placeholder="Selecione a data final"
+                    />
+                  </div>
+                </>
+              )}
 
-                  <Card className="cursor-pointer hover:shadow-md transition-shadow">
-                    <CardContent className="p-4 text-center">
-                      <Calendar className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
-                      <h3 className="font-medium">Atividade Semanal</h3>
-                      <p className="text-sm text-gray-500">Torneios jogados na semana</p>
-                    </CardContent>
-                  </Card>
+              <Button 
+                onClick={handleGenerateReport}
+                className="w-full bg-[#d4af37] text-white hover:bg-[#d4af37]/90"
+              >
+                Gerar Relatório
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
 
-                  <Card className="cursor-pointer hover:shadow-md transition-shadow">
-                    <CardContent className="p-4 text-center">
-                      <DollarSign className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
-                      <h3 className="font-medium">Despesas Mensais</h3>
-                      <p className="text-sm text-gray-500">Gastos relacionados ao poker</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="cursor-pointer hover:shadow-md transition-shadow">
-                    <CardContent className="p-4 text-center">
-                      <Trophy className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
-                      <h3 className="font-medium">Melhores Resultados</h3>
-                      <p className="text-sm text-gray-500">Top 10 performances</p>
-                    </CardContent>
-                  </Card>
-                </div>
+        {/* Report Preview */}
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Prévia do Relatório</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-12">
+                <FileText className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Selecione as configurações e gere seu relatório
+                </h3>
+                <p className="text-gray-500">
+                  O relatório será exibido aqui após a geração
+                </p>
               </div>
-            </div>
-          </main>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Quick Reports */}
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold mb-4">Relatórios Rápidos</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="cursor-pointer hover:shadow-md transition-shadow">
+            <CardContent className="p-4 text-center">
+              <TrendingUp className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
+              <h3 className="font-medium">ROI Mensal</h3>
+              <p className="text-sm text-gray-500">Análise do retorno sobre investimento</p>
+            </CardContent>
+          </Card>
+
+          <Card className="cursor-pointer hover:shadow-md transition-shadow">
+            <CardContent className="p-4 text-center">
+              <Calendar className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
+              <h3 className="font-medium">Atividade Semanal</h3>
+              <p className="text-sm text-gray-500">Torneios jogados na semana</p>
+            </CardContent>
+          </Card>
+
+          <Card className="cursor-pointer hover:shadow-md transition-shadow">
+            <CardContent className="p-4 text-center">
+              <DollarSign className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
+              <h3 className="font-medium">Despesas Mensais</h3>
+              <p className="text-sm text-gray-500">Gastos relacionados ao poker</p>
+            </CardContent>
+          </Card>
+
+          <Card className="cursor-pointer hover:shadow-md transition-shadow">
+            <CardContent className="p-4 text-center">
+              <Trophy className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
+              <h3 className="font-medium">Melhores Resultados</h3>
+              <p className="text-sm text-gray-500">Top 10 performances</p>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
