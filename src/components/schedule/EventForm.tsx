@@ -1,5 +1,4 @@
-
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -7,10 +6,17 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { useForm, Controller } from "react-hook-form";
 import { ScheduleEvent } from "@/hooks/useScheduleEvents";
-import { Check, X } from "lucide-react";
+import { Check, X, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { tournamentService } from "@/services/tournament.service";
+import { QuickEventModal } from "./QuickEventModal";
+
+interface QuickEvent {
+  nome: string;
+  data: string;
+  cidade: string;
+}
 
 interface EventFormProps {
   onSubmit: (event: Omit<ScheduleEvent, "id">) => void;
@@ -25,6 +31,17 @@ export const EventForm: React.FC<EventFormProps> = ({
   initialData,
   existingEvents,
 }) => {
+  // Modal de Evento rápido
+  const [quickEvents, setQuickEvents] = useState<QuickEvent[]>(() =>
+    JSON.parse(localStorage.getItem("quickEvents") || "[]")
+  );
+  const [quickModalOpen, setQuickModalOpen] = useState(false);
+  const [selectedQuick, setSelectedQuick] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem("quickEvents", JSON.stringify(quickEvents));
+  }, [quickEvents]);
+
   // Torneios vindos do banco
   const { data: tournaments = [] } = useQuery({
     queryKey: ["tournaments"],
@@ -85,17 +102,54 @@ export const EventForm: React.FC<EventFormProps> = ({
     onSubmit(data);
   };
 
+  // Adiciona evento local à lista
+  const handleAddQuickEvent = (novo: QuickEvent) => {
+    setQuickEvents((prev) => [...prev, novo]);
+    setSelectedQuick(novo.nome);
+  };
+
   return (
     <form
       onSubmit={handleSubmit(submit)}
-      className="bg-[#181d23] p-4 rounded-lg flex flex-col gap-2 animate-fade-in border border-poker-gold/10 max-w-md mx-auto"
+      className="bg-card p-4 rounded-lg flex flex-col gap-2 animate-fade-in border border-poker-gold/10 max-w-md mx-auto"
     >
+      {/* Campo Evento com ícone */}
+      <div className="flex gap-2 items-end mb-1">
+        <div className="flex-1">
+          <label className="block text-poker-gold font-semibold mb-1">Evento</label>
+          <select
+            value={selectedQuick}
+            onChange={e => setSelectedQuick(e.target.value)}
+            className={cn(
+              "w-full rounded p-2 text-white bg-background border border-input outline-none"
+            )}
+          >
+            <option value="">Selecione...</option>
+            {quickEvents.map((ev, i) => (
+              <option key={i} value={ev.nome}>
+                {ev.nome} {ev.cidade ? `- ${ev.cidade}` : ""} {ev.data ? `(${ev.data})` : ""}
+              </option>
+            ))}
+          </select>
+        </div>
+        <Button type="button" variant="outline" size="icon" onClick={() => setQuickModalOpen(true)}>
+          <Plus className="text-poker-gold" />
+        </Button>
+      </div>
+
+      <QuickEventModal
+        open={quickModalOpen}
+        onOpenChange={setQuickModalOpen}
+        onAddEvent={handleAddQuickEvent}
+      />
+
+      {/* Campo Torneio já existente */}
       <div>
         <label className="block text-poker-gold font-semibold mb-1">Nome do Torneio</label>
         <select
           {...register("tournamentId", { required: true })}
           className={cn(
-            "w-full rounded p-2 text-white bg-[#23272b] border border-gray-700 outline-none",
+            "w-full rounded p-2 text-white bg-background border border-input outline-none",
             errors.tournamentId && "border-red-500"
           )}
         >
