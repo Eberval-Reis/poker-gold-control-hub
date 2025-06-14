@@ -1,10 +1,8 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
 import { useForm, Controller } from "react-hook-form";
 import { ScheduleEvent } from "@/hooks/useScheduleEvents";
 import { Check, X, Plus } from "lucide-react";
@@ -13,14 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import { tournamentService } from "@/services/tournament.service";
 import { QuickEventModal } from "./QuickEventModal";
 import { useAgendaEventList } from "@/hooks/useAgendaEventList";
-// Importa componentes de dropdown do shadcn/ui
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
+import { EventDropdown } from "./EventDropdown";
+import { TournamentDropdown } from "./TournamentDropdown";
 
 interface EventFormProps {
   onSubmit: (event: Omit<ScheduleEvent, "id">) => void;
@@ -42,8 +34,7 @@ export const EventForm: React.FC<EventFormProps> = ({
 
   // Atualiza sempre que há evento novo cadastrado
   const handleAddQuickEvent = (eventoSalvo: { id: string; name: string; date?: string | null }) => {
-    setSelectedQuick(eventoSalvo.name); // Seleciona imediatamente o novo evento pelo nome
-    // O hook useAgendaEventList recarrega ao montar; refresh manual aqui não é necessário para exibição em tempo real.
+    setSelectedQuick(eventoSalvo.name);
   };
 
   // Torneios vindos do banco
@@ -72,7 +63,7 @@ export const EventForm: React.FC<EventFormProps> = ({
     },
   });
 
-  // Quando o torneioId muda, busca o nome do torneio e atualiza no form
+  // Atualiza tournamentName quando tournamentId muda
   useEffect(() => {
     const selectedId = watch("tournamentId");
     const found = tournaments?.find((t: any) => t.id === selectedId);
@@ -110,24 +101,16 @@ export const EventForm: React.FC<EventFormProps> = ({
       onSubmit={handleSubmit(submit)}
       className="bg-card p-4 rounded-lg flex flex-col gap-2 animate-fade-in border border-poker-gold/10 max-w-md mx-auto"
     >
-      {/* Campo Evento com ícone */}
+      {/* Campo Evento (dropdown base evento) */}
       <div className="flex gap-2 items-end mb-1">
         <div className="flex-1">
           <label className="block text-poker-gold font-semibold mb-1">Evento</label>
-          <select
+          <EventDropdown
+            events={agendaEvents}
             value={selectedQuick}
-            onChange={e => setSelectedQuick(e.target.value)}
-            className={cn(
-              "w-full rounded p-2 text-white bg-background border border-input outline-none"
-            )}
-          >
-            <option value="">Selecione...</option>
-            {agendaEvents.map((ev) => (
-              <option key={ev.id} value={ev.name}>
-                {ev.name} {ev.date ? `(${ev.date})` : ""}
-              </option>
-            ))}
-          </select>
+            onChange={setSelectedQuick}
+            disabled={loadingAgenda}
+          />
         </div>
         <Button type="button" variant="outline" size="icon" onClick={() => setQuickModalOpen(true)}>
           <Plus className="text-poker-gold" />
@@ -140,43 +123,30 @@ export const EventForm: React.FC<EventFormProps> = ({
         onAddEvent={handleAddQuickEvent}
       />
 
-      {/* Campo Torneio já existente - agora como Select do banco */}
+      {/* Campo Torneio (dropdown base torneio) */}
       <div>
-        <label className="block text-poker-gold font-semibold mb-1">
-          Nome do Torneio
-        </label>
+        <label className="block text-poker-gold font-semibold mb-1">Nome do Torneio</label>
         <Controller
           name="tournamentId"
           control={control}
           rules={{ required: true }}
           render={({ field }) => (
-            <Select
+            <TournamentDropdown
+              tournaments={tournaments}
               value={field.value}
-              onValueChange={value => {
-                field.onChange(value);
-                // acha o nome correspondente e salva no form também!
-                const found = tournaments.find((t: any) => t.id === value);
-                setValue("tournamentName", found?.name ?? "");
+              onChange={(id, name) => {
+                field.onChange(id);
+                setValue("tournamentName", name);
               }}
-              disabled={tournaments.length === 0}
-            >
-              <SelectTrigger className={cn("w-full", errors.tournamentId && "border-red-500")}>
-                <SelectValue placeholder="Selecione..." />
-              </SelectTrigger>
-              <SelectContent>
-                {tournaments.map((t: any) => (
-                  <SelectItem value={t.id} key={t.id}>
-                    {t.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              error={Boolean(errors.tournamentId)}
+            />
           )}
         />
         {errors.tournamentId && (
           <span className="text-red-500 text-xs">{errors.tournamentId.message}</span>
         )}
       </div>
+      {/* Campos restantes */}
       <div className="flex gap-2">
         <div className="flex-1">
           <label className="block text-poker-gold font-semibold mb-1">Data</label>
