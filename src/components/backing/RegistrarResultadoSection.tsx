@@ -1,12 +1,29 @@
 
 import React from "react";
+import { saveBackingResult } from "@/services/backing-result.service";
+import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabase";
 
 const RegistrarResultadoSection = () => {
   const [prize, setPrize] = React.useState<number | string>("");
   const [status, setStatus] = React.useState("busto");
-  const buyin = 10000;
-  const markup = 1.5;
-  const vendidos = 70;
+  const [loading, setLoading] = React.useState(false);
+
+  // Busca backing_offer para teste (pega o primeiro do banco)
+  const [offer, setOffer] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    supabase.from("backing_offers").select("*").limit(1).then(({ data }) => {
+      if (data && data.length > 0) setOffer(data[0]);
+    });
+  }, []);
+
+  // Para preview, usa os dados do offer buscado, senão defaults
+  const buyin = offer?.buy_in_amount ?? 10000;
+  const markup = offer?.markup_percentage ?? 1.5;
+  const vendidos = offer?.available_percentage
+    ? 100 - offer.available_percentage
+    : 70;
 
   const premLiq =
     typeof prize === "number" && !isNaN(prize)
@@ -23,10 +40,37 @@ const RegistrarResultadoSection = () => {
       ? (premLiq > 0 ? premLiq * ((100 - vendidos) / 100) : 0)
       : 0;
 
+  async function handleSave() {
+    if (!offer) {
+      toast({ title: "Erro", description: "Nenhum backing offer encontrado.", variant: "destructive" });
+      return;
+    }
+    if (!prize || isNaN(Number(prize)) || Number(prize) < 0) {
+      toast({ title: "Erro", description: "Informe um valor de prêmio válido.", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    try {
+      await saveBackingResult({
+        backingOfferId: offer.id,
+        prizeAmount: Number(prize),
+        netPrize: premLiq,
+        playerProfit: jogadorValor,
+        resultType: status,
+      });
+      toast({ title: "Resultado salvo com sucesso!" });
+      setPrize("");
+      setStatus("busto");
+    } catch (err: any) {
+      toast({ title: "Erro ao salvar resultado", description: err.message, variant: "destructive" });
+    }
+    setLoading(false);
+  }
+
   return (
     <div className="space-y-6 max-w-lg">
       <h2 className="text-xl font-semibold">Registrar Resultado</h2>
-      <form className="space-y-4">
+      <form className="space-y-4" onSubmit={e => { e.preventDefault(); }}>
         <div>
           <label className="block text-poker-gold font-semibold mb-1">Status</label>
           <select
@@ -52,6 +96,14 @@ const RegistrarResultadoSection = () => {
             placeholder="Ex: 50000"
           />
         </div>
+        <button
+          className="mt-4 bg-poker-gold text-white px-6 py-2 rounded hover:bg-poker-gold/90 font-bold"
+          type="button"
+          onClick={handleSave}
+          disabled={loading || !offer}
+        >
+          {loading ? "Salvando..." : "Salvar Resultado"}
+        </button>
       </form>
       <div className="bg-muted p-4 rounded space-y-2">
         <div>
@@ -67,9 +119,6 @@ const RegistrarResultadoSection = () => {
           <span>R$ {jogadorValor.toLocaleString()}</span>
         </div>
       </div>
-      <button className="mt-4 bg-poker-gold text-white px-6 py-2 rounded hover:bg-poker-gold/90 font-bold" type="button">
-        Salvar Resultado
-      </button>
     </div>
   );
 };
