@@ -21,13 +21,12 @@ const SchedulePage = () => {
   // Filtra e ordena eventos para exibição
   const filteredEvents = useMemo(() => {
     return events
-      .filter((e) =>
-        filterStatus === "all"
-          ? true
-          : filterStatus === "done"
-          ? e.status === "done"
-          : e.status === "not_done"
-      )
+      .filter((e) => {
+        if (filterStatus === "all") return true;
+        if (filterStatus === "done") return e.status === "done";
+        if (filterStatus === "not_done") return e.status === "not_done" || e.status === "pending";
+        return false;
+      })
       .filter((e) =>
         e.tournamentName.toLowerCase().includes(search.toLowerCase())
       )
