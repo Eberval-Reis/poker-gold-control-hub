@@ -26,18 +26,19 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
 import { Tournament } from '@/lib/supabase';
+import { tournamentService } from '@/services/tournament.service';
 
 const TournamentList = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
-  
-  // Fetch tournaments
-  const { data: tournaments = [], isLoading, error } = useQuery({
+
+  // Fetch tournaments, type as Tournament[]
+  const { data: tournaments = [], isLoading, error } = useQuery<Tournament[]>({
     queryKey: ['tournaments'],
     queryFn: tournamentService.getTournaments,
   });
-  
+
   // Delete tournament mutation
   const deleteTournament = useMutation({
     mutationFn: (id: string) => tournamentService.deleteTournament(id),
@@ -56,18 +57,18 @@ const TournamentList = () => {
       });
     },
   });
-  
+
   // Filter tournaments based on search term
-  const filteredTournaments = tournaments.filter((tournament: any) => 
+  const filteredTournaments = tournaments.filter((tournament) => 
     tournament.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     tournament.clubs?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tournament.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
   const handleDelete = (id: string) => {
     deleteTournament.mutate(id);
   };
-  
+
   return (
     <div className="container mx-auto p-6">
       {/* Header */}
@@ -150,7 +151,7 @@ const TournamentList = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredTournaments.map((tournament: any) => (
+              {filteredTournaments.map((tournament) => (
                 <TableRow key={tournament.id}>
                   <TableCell className="font-medium">{tournament.name}</TableCell>
                   <TableCell>{tournament.clubs?.name || '-'}</TableCell>
