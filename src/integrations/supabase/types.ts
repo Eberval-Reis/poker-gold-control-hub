@@ -272,6 +272,36 @@ export type Database = {
           },
         ]
       }
+      financiadores: {
+        Row: {
+          cpf: string | null
+          created_at: string
+          id: string
+          name: string
+          nickname: string | null
+          updated_at: string
+          whatsapp: string
+        }
+        Insert: {
+          cpf?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          nickname?: string | null
+          updated_at?: string
+          whatsapp: string
+        }
+        Update: {
+          cpf?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          nickname?: string | null
+          updated_at?: string
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       schedule_events: {
         Row: {
           created_at: string

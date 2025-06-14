@@ -52,16 +52,21 @@ export default function BackerSelectWithModal({
   async function fetchBackers() {
     setIsLoading(true);
     const { data, error } = await supabase
-      .from("financiadores" as any)
+      .from("financiadores")
       .select("id, name, whatsapp, cpf, nickname")
       .order("name", { ascending: true });
     setIsLoading(false);
 
-    // Only populate state with entries that are valid Backers
+    // Defensive: Only set valid backers (avoid errors if data is not right)
     if (!error && Array.isArray(data)) {
-      setBackers((data as any[]).filter(isBacker));
+      const validBackers = data.filter(isBacker);
+      setBackers(validBackers);
     } else {
       setBackers([]);
+      if (error) {
+        // Optionally, you can log or toast the error here
+        console.error("Erro ao buscar financiadores:", error);
+      }
     }
   }
 
@@ -72,20 +77,21 @@ export default function BackerSelectWithModal({
   async function onSubmit(form: FormValues) {
     setModalLoading(true);
     const { data, error } = await supabase
-      .from("financiadores" as any)
+      .from("financiadores")
       .insert([form])
       .select()
-      .single();
+      .maybeSingle();
     setModalLoading(false);
     if (!error && data && data.id) {
       await fetchBackers();
       onChange(data.id);
       setOpen(false);
       reset();
+    } else if (error) {
+      console.error("Erro ao adicionar financiador:", error);
     }
   }
 
-  // Defensive: only try to find by id if all backers have id 
   const selected = backers.find((b) => b.id === value);
 
   return (
@@ -96,7 +102,7 @@ export default function BackerSelectWithModal({
         </label>
         <Select
           value={value ?? ""}
-          onValueChange={v => onChange(v)}
+          onValueChange={(v) => onChange(v)}
         >
           <SelectTrigger>
             <SelectValue placeholder={isLoading ? "Carregando..." : "Selecione ou busque um financiador"} />
