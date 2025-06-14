@@ -1,7 +1,7 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import MetricCard from "@/components/dashboard/MetricCard";
-import DashboardFilters from "@/components/dashboard/DashboardFilters";
 import TournamentBarChart from "@/components/dashboard/TournamentBarChart";
 import MonthlyPerformanceChart from "@/components/dashboard/MonthlyPerformanceChart";
 import ExpenseDistributionChart from "@/components/dashboard/ExpenseDistributionChart";
@@ -12,21 +12,22 @@ const Index = () => {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
-  const { data: tournaments, isLoading } = useQuery({
-    queryKey: ["tournaments", selectedYear, selectedMonth],
+  // Carrega as performances dos torneios
+  const { data: performances, isLoading: isLoadingPerformances } = useQuery({
+    queryKey: ["tournament_performance", selectedYear, selectedMonth],
     queryFn: async () => {
       let query = supabase
-        .from("tournaments")
+        .from("tournament_performance")
         .select("*")
-        .order("date", { ascending: false });
+        .order("created_at", { ascending: false });
 
       if (selectedYear) {
-        query = query.gte("date", `${selectedYear}-01-01`).lte("date", `${selectedYear}-12-31`);
+        query = query.gte("created_at", `${selectedYear}-01-01`).lte("created_at", `${selectedYear}-12-31`);
       }
 
       if (selectedMonth) {
         const month = String(selectedMonth).padStart(2, '0');
-        query = query.gte("date", `${selectedYear}-${month}-01`).lte("date", `${selectedYear}-${month}-31`);
+        query = query.gte("created_at", `${selectedYear}-${month}-01`).lte("created_at", `${selectedYear}-${month}-31`);
       }
 
       const { data } = await query;
@@ -34,6 +35,7 @@ const Index = () => {
     },
   });
 
+  // Carrega as despesas
   const { data: expenses } = useQuery({
     queryKey: ["expenses", selectedYear, selectedMonth],
     queryFn: async () => {
@@ -56,8 +58,9 @@ const Index = () => {
     },
   });
 
+  // Calcula métricas para o dashboard
   const calculateDashboardData = () => {
-    if (!tournaments || !expenses) {
+    if (!performances || !expenses) {
       return {
         totalTournaments: 0,
         totalProfit: 0,
@@ -73,51 +76,89 @@ const Index = () => {
       };
     }
 
-    const totalTournaments = tournaments.length;
-    const totalProfit = tournaments.reduce((sum, t) => sum + (t.prize || 0) - (t.buy_in || 0), 0);
-    const totalBuyIn = tournaments.reduce((sum, t) => sum + (t.buy_in || 0), 0);
-    const roi = totalBuyIn === 0 ? 0 : (totalProfit / totalBuyIn) * 100;
-    const itmRate = totalTournaments === 0 ? 0 : (tournaments.filter(t => t.prize && t.prize > 0).length / totalTournaments) * 100;
+    const totalTournaments = performances.length;
+    const totalProfit = performances.reduce((sum, p) => {
+      const buyin = Number(p.buyin_amount || 0);
+      const rebuy = Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0);
+      const addon = p.addon_enabled ? Number(p.addon_amount || 0) : 0;
+      const invested = buyin + rebuy + addon;
+      const prize = Number(p.prize_amount || 0);
+      return sum + (prize - invested);
+    }, 0);
 
-    // Dados para o gráfico de barras de torneios mensais
+    const totalInvested = performances.reduce((sum, p) => {
+      const buyin = Number(p.buyin_amount || 0);
+      const rebuy = Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0);
+      const addon = p.addon_enabled ? Number(p.addon_amount || 0) : 0;
+      return sum + buyin + rebuy + addon;
+    }, 0);
+
+    const roi = totalInvested === 0 ? 0 : (totalProfit / totalInvested) * 100;
+    const itmRate = totalTournaments === 0
+      ? 0
+      : (performances.filter(p => p.prize_amount && Number(p.prize_amount) > 0).length / totalTournaments) * 100;
+
+    // Dados para gráfico mensal de profit
     const monthlyData: { month: string; profit: number }[] = [];
     for (let i = 1; i <= 12; i++) {
-      const month = String(i).padStart(2, '0');
-      const monthlyTournaments = tournaments.filter(t => t.date.startsWith(`${selectedYear}-${month}`));
-      const monthlyProfit = monthlyTournaments.reduce((sum, t) => sum + (t.prize || 0) - (t.buy_in || 0), 0);
+      const month = String(i).padStart(2, "0");
+      const monthlyPerformances = performances.filter((p) =>
+        p.created_at.startsWith(`${selectedYear}-${month}`)
+      );
+      const monthlyProfit = monthlyPerformances.reduce((sum, p) => {
+        const buyin = Number(p.buyin_amount || 0);
+        const rebuy = Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0);
+        const addon = p.addon_enabled ? Number(p.addon_amount || 0) : 0;
+        const invested = buyin + rebuy + addon;
+        const prize = Number(p.prize_amount || 0);
+        return sum + (prize - invested);
+      }, 0);
       monthlyData.push({ month: `${selectedYear}-${month}`, profit: monthlyProfit });
     }
 
-    // Dados para o gráfico de distribuição de despesas
+    // Gráfico de despesas por type
     const expenseData = expenses.reduce((acc: { category: string; amount: number }[], expense) => {
-      const category = expense.category || 'Outros';
-      const existingCategory = acc.find(item => item.category === category);
-      if (existingCategory) {
-        existingCategory.amount += expense.amount;
+      const type = expense.type || "Outro";
+      const existing = acc.find((item) => item.category === type);
+      if (existing) {
+        existing.amount += Number(expense.amount);
       } else {
-        acc.push({ category, amount: expense.amount });
+        acc.push({ category: type, amount: Number(expense.amount) });
       }
       return acc;
     }, []);
 
-    // Dados para a tabela de torneios recentes
-    const recentTournaments = tournaments.slice(0, 5);
+    // Recentes (últimos torneios/performance para tabela)
+    const recentTournaments = performances.slice(0, 5);
 
-    // Cálculo das tendências (simples, comparando com o mês anterior)
-    const previousMonth = String(selectedMonth ? selectedMonth - 1 : 12).padStart(2, '0');
-    const previousYear = selectedMonth ? selectedYear : selectedYear - 1;
+    // Tendências: compara com mês anterior
+    const prevMonth = selectedMonth ? (selectedMonth === 1 ? 12 : selectedMonth - 1) : 12;
+    const prevYear = selectedMonth && selectedMonth === 1 ? selectedYear - 1 : selectedYear;
+    const prevMonthStr = String(prevMonth).padStart(2, '0');
+    const prevMonthPerformances = performances.filter(p =>
+      p.created_at.startsWith(`${prevYear}-${prevMonthStr}`)
+    );
 
-    const previousMonthTournaments = tournaments.filter(t => t.date.startsWith(`${previousYear}-${previousMonth}`));
-    const previousMonthProfit = previousMonthTournaments.reduce((sum, t) => sum + (t.prize || 0) - (t.buy_in || 0), 0);
-    const previousMonthBuyIn = previousMonthTournaments.reduce((sum, t) => sum + (t.buy_in || 0), 0);
-    const previousMonthRoi = previousMonthBuyIn === 0 ? 0 : (previousMonthProfit / previousMonthBuyIn) * 100;
-    const previousMonthTotalTournaments = previousMonthTournaments.length;
-    const previousMonthItmRate = previousMonthTotalTournaments === 0 ? 0 : (previousMonthTournaments.filter(t => t.prize && t.prize > 0).length / previousMonthTotalTournaments) * 100;
-
-    const tournamentsTrend = totalTournaments - previousMonthTotalTournaments;
-    const profitTrend = totalProfit - previousMonthProfit;
-    const roiTrend = roi - previousMonthRoi;
-    const itmTrend = itmRate - previousMonthItmRate;
+    // Tendências (comparações com mês anterior)
+    const prevTotalTournaments = prevMonthPerformances.length;
+    const prevProfit = prevMonthPerformances.reduce((sum, p) => {
+      const buyin = Number(p.buyin_amount || 0);
+      const rebuy = Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0);
+      const addon = p.addon_enabled ? Number(p.addon_amount || 0) : 0;
+      const invested = buyin + rebuy + addon;
+      const prize = Number(p.prize_amount || 0);
+      return sum + (prize - invested);
+    }, 0);
+    const prevInvested = prevMonthPerformances.reduce((sum, p) => {
+      const buyin = Number(p.buyin_amount || 0);
+      const rebuy = Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0);
+      const addon = p.addon_enabled ? Number(p.addon_amount || 0) : 0;
+      return sum + buyin + rebuy + addon;
+    }, 0);
+    const prevROI = prevInvested === 0 ? 0 : (prevProfit / prevInvested) * 100;
+    const prevITMRate = prevTotalTournaments === 0
+      ? 0
+      : (prevMonthPerformances.filter(p => p.prize_amount && Number(p.prize_amount) > 0).length / prevTotalTournaments) * 100;
 
     return {
       totalTournaments,
@@ -127,16 +168,16 @@ const Index = () => {
       monthlyData,
       expenseData,
       recentTournaments,
-      tournamentsTrend,
-      profitTrend,
-      roiTrend,
-      itmTrend,
+      tournamentsTrend: totalTournaments - prevTotalTournaments,
+      profitTrend: totalProfit - prevProfit,
+      roiTrend: roi - prevROI,
+      itmTrend: itmRate - prevITMRate,
     };
   };
 
   const dashboardData = calculateDashboardData();
 
-  if (isLoading) {
+  if (isLoadingPerformances) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
@@ -154,17 +195,20 @@ const Index = () => {
         <p className="text-gray-600">Visão geral das suas performances no poker</p>
       </div>
 
+      {/* Filtros de ano/mês podem ser implementados aqui se desejar futuramente */}
+      {/* 
       <DashboardFilters
         selectedYear={selectedYear}
         selectedMonth={selectedMonth}
         onYearChange={setSelectedYear}
         onMonthChange={setSelectedMonth}
       />
+      */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <MetricCard
           title="Total de Torneios"
-          value={dashboardData.totalTournaments}
+          value={dashboardData.totalTournaments.toString()}
           icon="trophy"
           trend={dashboardData.tournamentsTrend}
         />

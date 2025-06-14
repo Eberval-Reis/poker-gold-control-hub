@@ -1,58 +1,13 @@
 
-import { useMemo } from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { calculateTotalInvested, calculateProfitLoss, calculateROI } from '@/components/tournament-performance/TournamentPerformanceFormSchema';
 
 interface RecentTournamentsTableProps {
-  performances: any[];
-  tournaments: any[];
+  data: any[];
 }
 
-const RecentTournamentsTable = ({ performances, tournaments }: RecentTournamentsTableProps) => {
-  const tableData = useMemo(() => {
-    // Get the 5 most recent performances
-    return [...performances]
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      .slice(0, 5)
-      .map(performance => {
-        // Access the tournament name directly from the nested structure
-        const tournamentName = performance.tournament_id?.name || 'Torneio desconhecido';
-        
-        const buyinAmount = Number(performance.buyin_amount || 0);
-        const rebuyAmount = Number(performance.rebuy_amount || 0);
-        const rebuyQuantity = Number(performance.rebuy_quantity || 0);
-        const addonEnabled = Boolean(performance.addon_enabled);
-        const addonAmount = Number(performance.addon_amount || 0);
-        const prizeAmount = Number(performance.prize_amount || 0);
-        
-        const totalInvested = calculateTotalInvested(
-          buyinAmount, 
-          rebuyAmount, 
-          rebuyQuantity, 
-          addonEnabled, 
-          addonAmount
-        );
-        
-        const profitLoss = calculateProfitLoss(prizeAmount, totalInvested);
-        const roi = calculateROI(profitLoss, totalInvested);
-        
-        const date = new Date(performance.created_at).toLocaleDateString('pt-BR');
-        
-        return {
-          date,
-          tournamentName,
-          buyinAmount,
-          rebuyTotal: rebuyAmount * rebuyQuantity,
-          prizeAmount,
-          profitLoss,
-          roi,
-          id: performance.id
-        };
-      });
-  }, [performances, tournaments]);
-
+const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {
   // Helper to format currency
-  const formatCurrency = (value) => {
+  const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
       currency: 'BRL'
@@ -65,44 +20,48 @@ const RecentTournamentsTable = ({ performances, tournaments }: RecentTournaments
         <thead>
           <tr className="border-b">
             <th className="text-left p-2">Data</th>
-            <th className="text-left p-2">Torneio</th>
-            <th className="text-right p-2">Buy-in</th>
-            <th className="text-right p-2">Prêmio</th>
-            <th className="text-right p-2">Resultado</th>
-            <th className="text-right p-2">ROI</th>
+            <th className="text-left p-2">Buy-in</th>
+            <th className="text-left p-2">Rebuy</th>
+            <th className="text-left p-2">Addon</th>
+            <th className="text-left p-2">Prêmio</th>
+            <th className="text-left p-2">Resultado</th>
           </tr>
         </thead>
         <tbody>
-          {tableData.length > 0 ? (
-            tableData.map((item, index) => (
-              <tr key={item.id} className={`hover:bg-gray-50 ${index < tableData.length - 1 ? 'border-b' : ''}`}>
-                <td className="p-2 text-sm">{item.date}</td>
-                <td className="p-2 text-sm font-medium">{item.tournamentName}</td>
-                <td className="p-2 text-sm text-right">{formatCurrency(item.buyinAmount)}</td>
-                <td className="p-2 text-sm text-right">{formatCurrency(item.prizeAmount)}</td>
-                <td className="p-2 text-sm text-right font-medium">
-                  <div className="flex items-center justify-end gap-1">
-                    {item.profitLoss >= 0 ? (
-                      <TrendingUp className="h-4 w-4 text-[#006400]" />
-                    ) : (
-                      <TrendingDown className="h-4 w-4 text-[#8b0000]" />
-                    )}
-                    <span className={item.profitLoss >= 0 ? 'text-[#006400]' : 'text-[#8b0000]'}>
-                      {formatCurrency(item.profitLoss)}
-                    </span>
-                  </div>
-                </td>
-                <td className="p-2 text-sm text-right">
-                  <span className={item.roi >= 0 ? 'text-[#006400]' : 'text-[#8b0000]'}>
-                    {item.roi.toFixed(0)}%
-                  </span>
-                </td>
-              </tr>
-            ))
+          {data.length > 0 ? (
+            data.map((p, idx) => {
+              const buyin = Number(p.buyin_amount || 0);
+              const rebuy = Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0);
+              const addon = p.addon_enabled ? Number(p.addon_amount || 0) : 0;
+              const invested = buyin + rebuy + addon;
+              const prize = Number(p.prize_amount || 0);
+              const result = prize - invested;
+              return (
+                <tr key={p.id || idx} className="hover:bg-gray-50">
+                  <td className="p-2 text-sm">{p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR') : "-"}</td>
+                  <td className="p-2 text-sm">{formatCurrency(buyin)}</td>
+                  <td className="p-2 text-sm">{formatCurrency(rebuy)}</td>
+                  <td className="p-2 text-sm">{formatCurrency(addon)}</td>
+                  <td className="p-2 text-sm">{formatCurrency(prize)}</td>
+                  <td className="p-2 text-sm">
+                    <div className="flex items-center gap-1">
+                      {result >= 0 ? (
+                        <TrendingUp className="h-4 w-4 text-[#006400]" />
+                      ) : (
+                        <TrendingDown className="h-4 w-4 text-[#8b0000]" />
+                      )}
+                      <span className={result >= 0 ? 'text-[#006400]' : 'text-[#8b0000]'}>
+                        {formatCurrency(result)}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })
           ) : (
             <tr>
               <td colSpan={6} className="p-4 text-center text-gray-500">
-                Nenhum registro de torneio encontrado
+                Nenhum registro de performance encontrado
               </td>
             </tr>
           )}
