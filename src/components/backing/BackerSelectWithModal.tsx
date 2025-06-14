@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -87,7 +86,9 @@ export default function BackerSelectWithModal({
   }
 
   // Defensive: only try to find by id if all backers have id 
-  const selected = backers.find((b) => b.id === value);
+  const selected = backers.find((b) => 
+    isBacker(b) && b.id === value
+  );
 
   return (
     <div className="flex items-end gap-2">
@@ -106,7 +107,7 @@ export default function BackerSelectWithModal({
             {backers.length === 0 && !isLoading && (
               <div className="px-4 py-2 text-muted-foreground text-sm">Nenhum financiador encontrado</div>
             )}
-            {backers.map((b) => (
+            {backers.filter(isBacker).map((b) => (
               <SelectItem key={b.id} value={b.id}>
                 {b.name}
                 {b.nickname ? ` (${b.nickname})` : ""}
