@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from "react";
 import { Plus, List, Grid2x2 } from "lucide-react";
 import { EventForm } from "@/components/schedule/EventForm";
@@ -208,18 +207,19 @@ const SchedulePage = () => {
         </div>
       )}
       {/* Botão flutuante de adicionar */}
-      <Button
-        className="fixed bottom-8 right-8 bg-poker-gold text-white hover:bg-poker-gold/90 rounded-full p-0 size-16 shadow-lg text-3xl flex items-center justify-center z-50 animate-scale-in"
-        onClick={() => {
-          setEditEvent(null);
-          setShowForm(true);
-        }}
-      >
-        <Plus size={34} />
-      </Button>
+      {!showForm && (
+        <Button
+          className="fixed bottom-8 right-8 bg-poker-gold text-white hover:bg-poker-gold/90 rounded-full p-0 size-16 shadow-lg text-3xl flex items-center justify-center z-50 animate-scale-in"
+          onClick={() => {
+            setEditEvent(null);
+            setShowForm(true);
+          }}
+        >
+          <Plus size={34} />
+        </Button>
+      )}
     </div>
   );
 };
 
 export default SchedulePage;
-
