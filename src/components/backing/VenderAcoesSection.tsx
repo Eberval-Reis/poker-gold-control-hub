@@ -12,45 +12,60 @@ const VenderAcoesSection = () => {
   const disponivel = 70;
 
   return (
-    <div className="space-y-6 max-w-lg">
-      <h2 className="text-xl font-semibold">Vender Ações</h2>
-      <div className="bg-muted p-3 rounded flex flex-col gap-2">
-        <span className="font-medium">
-          Torneio: <b>WSOP Main Event</b>
+    <div className="space-y-7 max-w-lg mx-auto">
+      <h2 className="text-2xl font-bold text-poker-gold mb-1">Vender Ações</h2>
+      <div className="bg-muted rounded-xl p-5 flex flex-col gap-1 border border-poker-gold/10 shadow-sm">
+        <span className="font-medium text-gray-900 text-base">
+          Torneio: <span className="font-bold">WSOP Main Event</span>
         </span>
-        <span>Buy-in: <b>R$ {buyin.toLocaleString()}</b></span>
-        <span>Ações Disponíveis: <b>{disponivel}%</b></span>
+        <span className="text-gray-700">
+          Buy-in: <span className="font-bold">R$ {buyin.toLocaleString()}</span>
+        </span>
+        <span className="text-gray-700">
+          Ações Disponíveis: <span className="font-bold">{disponivel}%</span>
+        </span>
       </div>
-      <form className="space-y-4">
-        <div>
-          <label className="block text-poker-gold font-semibold mb-1">Nome do Backer*</label>
+      <form className="flex flex-col gap-5 bg-white/90 rounded-xl px-5 py-6 shadow border border-gray-100">
+        <div className="flex flex-col gap-1">
+          <label className="block text-poker-gold font-semibold mb-1">
+            Nome do Backer*
+          </label>
           <input
             required
             className="w-full p-2 rounded border border-input bg-background text-base"
             placeholder="Nome ou selecione cadastrado"
+            style={{ minHeight: 42 }}
           />
         </div>
-        <div>
-          <label className="block text-poker-gold font-semibold mb-1">% da ação *</label>
+        <div className="flex flex-col gap-0">
+          <label className="block text-poker-gold font-semibold mb-1">
+            % da ação *
+          </label>
           <Slider
             min={5}
             max={disponivel}
             value={[percent]}
             onValueChange={(vals) => setPercent(vals[0])}
             step={5}
-            className="mb-2"
+            className="mb-2 mt-2"
           />
-          <span>{percent}%</span>
+          <span className="text-base">{percent}%</span>
         </div>
-        <div>
-          <label className="block text-poker-gold font-semibold mb-1">Valor com mark-up</label>
+        <div className="flex flex-col gap-1">
+          <label className="block text-poker-gold font-semibold mb-1">
+            Valor com mark-up
+          </label>
           <input
             readOnly
             value={`R$ ${(buyin * (percent / 100) * markup).toLocaleString()}`}
             className="w-full p-2 rounded border border-input bg-background text-base"
+            style={{ minHeight: 42 }}
           />
         </div>
-        <Button type="submit" className="bg-poker-gold hover:bg-poker-gold/90 w-full">
+        <Button
+          type="submit"
+          className="w-full bg-poker-gold hover:bg-poker-gold/90 text-white py-3 text-base font-bold rounded mt-2 shadow transition"
+        >
           Adicionar Backer
         </Button>
       </form>
