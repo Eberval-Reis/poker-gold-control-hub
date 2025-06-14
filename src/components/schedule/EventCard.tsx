@@ -1,5 +1,4 @@
-
-import { Pencil, Trash2, Check, X, Calendar as CalendarIcon, Chip } from "lucide-react";
+import { Pencil, Trash2, Check, X, Calendar as CalendarIcon, CircleDollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import React from "react";
@@ -28,7 +27,7 @@ export const EventCard: React.FC<EventCardProps> = ({
     <div className="bg-[#131313] rounded-lg shadow p-4 flex flex-col gap-2 relative animate-fade-in">
       <div className="flex gap-2 items-center justify-between">
         <div className="flex gap-2 items-center">
-          <Chip className="text-green-500" />
+          <CircleDollarSign className="text-green-500" />
           <span className="text-lg font-bold text-poker-gold">{event.tournamentName}</span>
         </div>
         <div className="flex gap-1">
