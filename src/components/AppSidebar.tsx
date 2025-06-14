@@ -9,7 +9,8 @@ import {
   FileText, 
   Home, 
   Trophy, 
-  Users
+  Users,
+  DollarSign, // novo ícone para cavalagem
 } from 'lucide-react';
 import {
   Sidebar,
@@ -28,11 +29,12 @@ const AppSidebar = () => {
   const menuItems = [
     { path: '/', icon: Home, label: 'Dashboard' },
     { path: '/tournaments', icon: Calendar, label: 'Torneios' },
-    { path: '/schedule', icon: Calendar, label: 'Agenda' }, // ADDED "Agenda" (uses Calendar icon as well)
+    { path: '/schedule', icon: Calendar, label: 'Agenda' },
     { path: '/clubs', icon: Building2, label: 'Clubes' },
     { path: '/tournament-performances', icon: Trophy, label: 'Performances' },
     { path: '/expenses', icon: CreditCard, label: 'Despesas' },
     { path: '/final-tables', icon: Users, label: 'Final Tables' },
+    { path: '/backing-management', icon: DollarSign, label: 'Gestão Cavalagem' }, // ADICIONADO AQUI
     { path: '/report', icon: FileText, label: 'Relatórios' },
   ];
 
