@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,11 @@ import { QuickEventModal } from "./QuickEventModal";
 import { useAgendaEventList } from "@/hooks/useAgendaEventList";
 import { EventDropdown } from "./EventDropdown";
 import { TournamentDropdown } from "./TournamentDropdown";
+
+interface EventFormFields extends Omit<ScheduleEvent, "id"> {
+  eventId: string;
+  eventName?: string | null;
+}
 
 interface EventFormProps {
   onSubmit: (event: Omit<ScheduleEvent, "id">) => void;
@@ -30,11 +36,11 @@ export const EventForm: React.FC<EventFormProps> = ({
   // -------- INTEGRAÇÃO BASE DE DADOS --------
   const { events: agendaEvents, loading: loadingAgenda } = useAgendaEventList();
   const [quickModalOpen, setQuickModalOpen] = useState(false);
-  const [selectedQuick, setSelectedQuick] = useState("");
 
-  // Atualiza sempre que há evento novo cadastrado
+  // Ao cadastrar evento rápido, seleciona o recém-cadastrado
   const handleAddQuickEvent = (eventoSalvo: { id: string; name: string; date?: string | null }) => {
-    setSelectedQuick(eventoSalvo.name);
+    setValue("eventId", eventoSalvo.id);
+    setValue("eventName", eventoSalvo.name);
   };
 
   // Torneios vindos do banco
@@ -50,17 +56,25 @@ export const EventForm: React.FC<EventFormProps> = ({
     watch,
     setValue,
     formState: { errors },
-  } = useForm<Omit<ScheduleEvent, "id">>({
-    defaultValues: initialData || {
-      tournamentId: "",
-      tournamentName: "",
-      date: "",
-      time: "",
-      buyIn: 0,
-      rebuys: 0,
-      status: "pending",
-      reason: "",
-    },
+  } = useForm<EventFormFields>({
+    defaultValues: initialData
+      ? {
+          ...initialData,
+          eventId: initialData.eventId ?? "",
+          eventName: initialData.eventName ?? "",
+        }
+      : {
+          eventId: "",
+          eventName: "",
+          tournamentId: "",
+          tournamentName: "",
+          date: "",
+          time: "",
+          buyIn: 0,
+          rebuys: 0,
+          status: "pending",
+          reason: "",
+        },
   });
 
   // Atualiza tournamentName quando tournamentId muda
@@ -83,7 +97,7 @@ export const EventForm: React.FC<EventFormProps> = ({
     );
   }
 
-  const submit = (data: Omit<ScheduleEvent, "id">) => {
+  const submit = (data: EventFormFields) => {
     if (!validateUnique(data)) {
       alert("Evento já cadastrado para este torneio nesta data e horário.");
       return;
@@ -93,7 +107,13 @@ export const EventForm: React.FC<EventFormProps> = ({
       alert("Data/hora deve ser futura.");
       return;
     }
-    onSubmit(data);
+    // Remove eventId/eventName before submit if ScheduleEvent doesn't have these fields,
+    // or adapt (add to db if you want relationship!)
+    onSubmit({
+      ...data,
+      eventId: data.eventId,
+      eventName: data.eventName,
+    } as Omit<ScheduleEvent, "id">);
   };
 
   return (
@@ -105,12 +125,25 @@ export const EventForm: React.FC<EventFormProps> = ({
       <div className="flex gap-2 items-end mb-1">
         <div className="flex-1">
           <label className="block text-poker-gold font-semibold mb-1">Evento</label>
-          <EventDropdown
-            events={agendaEvents}
-            value={selectedQuick}
-            onChange={setSelectedQuick}
-            disabled={loadingAgenda}
+          <Controller
+            name="eventId"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <EventDropdown
+                events={agendaEvents}
+                value={field.value}
+                onChange={(eventId, eventName) => {
+                  field.onChange(eventId);
+                  setValue("eventName", eventName || "");
+                }}
+                disabled={loadingAgenda}
+              />
+            )}
           />
+          {errors.eventId && (
+            <span className="text-red-500 text-xs">Selecione um evento</span>
+          )}
         </div>
         <Button type="button" variant="outline" size="icon" onClick={() => setQuickModalOpen(true)}>
           <Plus className="text-poker-gold" />
@@ -234,3 +267,5 @@ export const EventForm: React.FC<EventFormProps> = ({
     </form>
   );
 };
+
+// ALERTA: Este arquivo está ficando longo, considere pedir uma refatoração para dividi-lo em componentes menores!
