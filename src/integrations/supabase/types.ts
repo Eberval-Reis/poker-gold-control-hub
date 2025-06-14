@@ -272,6 +272,27 @@ export type Database = {
           },
         ]
       }
+      schedule_events: {
+        Row: {
+          created_at: string
+          date: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          date?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       tournament_performance: {
         Row: {
           addon_amount: number | null
