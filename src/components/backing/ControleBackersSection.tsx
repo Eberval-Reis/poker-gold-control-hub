@@ -1,9 +1,9 @@
-
 import React from "react";
 import { useBackingInvestments } from "@/hooks/useBackingInvestments";
 import { Loader2 } from "lucide-react";
 import BackersOfferHeader from "./BackersOfferHeader";
 import BackersInvestmentsTable from "./BackersInvestmentsTable";
+import BackersPayoutTable from "./BackersPayoutTable";
 
 type InvestmentGroup = {
   offer: any;
@@ -75,6 +75,10 @@ const ControleBackersSection = () => {
           </div>
         );
       })}
+      <div className="mt-16">
+        <h3 className="font-bold text-lg mb-3">Geral - Investimento & Retorno por Backer</h3>
+        <BackersPayoutTable />
+      </div>
     </div>
   );
 };
