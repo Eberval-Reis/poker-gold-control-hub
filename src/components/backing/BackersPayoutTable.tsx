@@ -16,8 +16,8 @@ interface PayoutRow {
   roi: number | null;
 }
 
+// Corrigir a relação: backer_payouts!backing_investment_id(*)
 async function fetchBackersPayoutTable(): Promise<PayoutRow[]> {
-  // Busca todos os investimentos, com ofertas, torneio e payouts
   const { data, error } = await supabase
     .from("backing_investments")
     .select(`
@@ -29,7 +29,7 @@ async function fetchBackersPayoutTable(): Promise<PayoutRow[]> {
         ),
         player_name
       ),
-      backer_payouts:payouts(*)
+      backer_payouts:backer_payouts!backing_investment_id(*)
     `);
 
   if (error) throw error;
