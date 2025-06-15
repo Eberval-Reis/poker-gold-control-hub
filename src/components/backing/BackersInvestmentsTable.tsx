@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import EditInvestmentModal from "./EditInvestmentModal";
 import { useUpdatePaymentStatus } from "@/hooks/useUpdatePaymentStatus";
 import { toast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Helper hook para buscar se existem payouts vinculados a cada investimento
 function useInvestmentsWithPayouts(investments: { id: string }[]) {
@@ -101,6 +102,8 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
   const [editing, setEditing] = React.useState<null | Investment>(null);
   const [updating, setUpdating] = React.useState(false);
 
+  const queryClient = useQueryClient();
+
   // Buscar oferta relacionada ao investimento para o modal de edição
   function getOfferValues(inv: Investment) {
     // Aqui pegamos o buy_in e markup do investimento, exemplo usando (offer) se disponível
@@ -134,21 +137,18 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
 
       if (error) throw error;
       toast({ title: "Investimento editado com sucesso!" });
-      // Recomende-se atualizar react-query ou recarregar (forçando apenas update rápido)
-      window.dispatchEvent(new Event('backing_investments_updated'));
+
+      // Atualiza a query de investimentos para refletir mudanças instantaneamente
+      await queryClient.invalidateQueries({
+        queryKey: ["backing_investments"],
+      });
+
       setEditing(null);
     } catch (e: any) {
       toast({ title: "Erro ao editar investimento", description: e.message, variant: "destructive" });
     }
     setUpdating(false);
   }
-
-  // Trigger refresh externo sempre que invest atualizado
-  React.useEffect(() => {
-    const reload = () => { window.location.reload(); };
-    window.addEventListener('backing_investments_updated', reload);
-    return () => window.removeEventListener('backing_investments_updated', reload);
-  }, []);
 
   return (
     <div className="border border-gray-200 rounded-b-md bg-white w-full">
