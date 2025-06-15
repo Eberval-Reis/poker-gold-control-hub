@@ -5,11 +5,13 @@ import { Button } from "@/components/ui/button";
 import BackerSelectWithModal from "./BackerSelectWithModal";
 import { useBackingOfferList, BackingOffer } from "@/hooks/useBackingOfferList";
 import { toast } from "@/hooks/use-toast";
+import { Switch } from "@/components/ui/switch";
 
 const VenderAcoesSection = () => {
   const [percent, setPercent] = React.useState(5);
   const [backerId, setBackerId] = React.useState<string | null>(null);
   const [selectedOfferId, setSelectedOfferId] = React.useState<string | null>(null);
+  const [isPaid, setIsPaid] = React.useState(false);
 
   const { data: offers, isLoading, error } = useBackingOfferList();
   const selectedOffer: BackingOffer | undefined = offers?.find(o => o.id === selectedOfferId);
@@ -26,6 +28,11 @@ const VenderAcoesSection = () => {
     if (selectedOffer) {
       setPercent(Math.min(5, selectedOffer.available_percentage));
     }
+  }, [selectedOfferId]);
+
+  // Resetar toggle ao selecionar nova oferta ou adicionar backer
+  React.useEffect(() => {
+    setIsPaid(false);
   }, [selectedOfferId]);
 
   if (isLoading) {
@@ -91,6 +98,7 @@ const VenderAcoesSection = () => {
         percentage_bought: percent,
         amount_paid: Number((selectedOffer.buy_in_amount * (percent / 100) * selectedOffer.markup_percentage).toFixed(2)),
         backer_name: backerName,
+        payment_status: isPaid ? "paid" : "pending",
       }]);
 
     if (error) {
@@ -102,9 +110,9 @@ const VenderAcoesSection = () => {
 
     // Resetar campos e atualizar disponibilidade
     setBackerId(null);
-    // Atualizar disponibilidade: simples reload dos dados (triggera o hook)
     setSelectedOfferId(null);
     setPercent(5);
+    setIsPaid(false);
   }
 
   return (
@@ -123,7 +131,6 @@ const VenderAcoesSection = () => {
         >
           {offers?.map(offer =>
             <option key={offer.id} value={offer.id}>
-              {/* Agora mostra evento, nome do torneio, jogador, buy-in, data */}
               {offer.event_name ? `${offer.event_name} | ` : ""}
               {offer.tournament_name || "—"}
               {offer.player_name ? ` (${offer.player_name})` : ""}
@@ -191,6 +198,12 @@ const VenderAcoesSection = () => {
             style={{ minHeight: 42 }}
           />
         </div>
+        <div className="flex items-center gap-3 mt-2 mb-1">
+          <Switch id="toggle-payment" checked={isPaid} onCheckedChange={setIsPaid} />
+          <label htmlFor="toggle-payment" className="text-base font-medium text-poker-gold cursor-pointer">
+            Marcar como Pago
+          </label>
+        </div>
         <Button
           type="submit"
           className="w-full bg-poker-gold hover:bg-poker-gold/90 text-white py-3 text-base font-bold rounded mt-2 shadow transition"
@@ -204,3 +217,4 @@ const VenderAcoesSection = () => {
 };
 
 export default VenderAcoesSection;
+
