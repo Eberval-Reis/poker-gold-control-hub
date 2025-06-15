@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -95,7 +94,7 @@ export default function BackerSelectWithModal({
   const selected = backers.find((b) => b.id === value);
 
   return (
-    <div className="flex items-end gap-2">
+    <div className="flex items-center gap-2">
       <div className="flex-1">
         <label className="block text-poker-gold font-semibold mb-1 text-base">
           Nome do Financiador*
