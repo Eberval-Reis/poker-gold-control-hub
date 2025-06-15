@@ -87,13 +87,13 @@ function renderCustomizedLabel(
   );
 }
 
-const ExpenseReportChart: React.FC<{ data: any[] }> = ({ data }) => {
+// Memoização: só renderiza novamente se os dados realmente mudarem
+const ExpenseReportChart: React.FC<{ data: any[] }> = React.memo(({ data }) => {
   if (!data || data.length === 0) {
     return null;
   }
 
   // Responsividade do tamanho do gráfico
-  // Usa largura mínima menor em dispositivos menores
   const chartHeight = typeof window !== "undefined" && window.innerWidth < 640 ? 250 : 400;
 
   return (
@@ -138,6 +138,7 @@ const ExpenseReportChart: React.FC<{ data: any[] }> = ({ data }) => {
       </ResponsiveContainer>
     </div>
   );
-};
+});
 
+ExpenseReportChart.displayName = "ExpenseReportChart";
 export default ExpenseReportChart;

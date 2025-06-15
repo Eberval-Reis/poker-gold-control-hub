@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -13,7 +12,8 @@ interface MetricCardProps {
   loading?: boolean;
 }
 
-const MetricCard: React.FC<MetricCardProps> = ({
+// Memoização: previne re-renderizações desnecessárias para métricas
+const MetricCard: React.FC<MetricCardProps> = React.memo(({
   title,
   value,
   icon,
@@ -51,6 +51,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
       </CardContent>
     </Card>
   );
-};
+});
 
+MetricCard.displayName = "MetricCard";
 export default MetricCard;

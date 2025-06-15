@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import AppSidebar from './AppSidebar';
 import AppHeader from './AppHeader';
+import ErrorBoundary from "@/components/common/ErrorBoundary";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,9 +15,11 @@ const Layout = ({ children }: LayoutProps) => {
         <AppSidebar />
         <SidebarInset className="flex-1">
           <AppHeader />
-          <main className="flex-1 overflow-auto bg-gray-50">
-            {children}
-          </main>
+          <ErrorBoundary>
+            <main className="flex-1 overflow-auto bg-gray-50">
+              {children}
+            </main>
+          </ErrorBoundary>
         </SidebarInset>
       </div>
     </SidebarProvider>

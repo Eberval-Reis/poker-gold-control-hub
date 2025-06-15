@@ -13,7 +13,8 @@ interface ExpenseReportTableProps {
   expenses: Expense[];
 }
 
-const ExpenseReportTable: React.FC<ExpenseReportTableProps> = ({ expenses }) => {
+// Memoização: só recria se props.expenses mudar (performance)
+const ExpenseReportTable: React.FC<ExpenseReportTableProps> = React.memo(({ expenses }) => {
   if (expenses.length === 0) {
     return <div className="text-gray-500">Nenhuma despesa encontrada no período.</div>;
   }
@@ -46,6 +47,7 @@ const ExpenseReportTable: React.FC<ExpenseReportTableProps> = ({ expenses }) => 
       </table>
     </div>
   );
-};
-export default ExpenseReportTable;
+});
 
+ExpenseReportTable.displayName = "ExpenseReportTable";
+export default ExpenseReportTable;

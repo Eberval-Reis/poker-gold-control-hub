@@ -131,7 +131,7 @@ const Report = () => {
                   </h3>
                   {/* Centraliza verticalmente o gráfico em relação à tabela */}
                   <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-8">
-                    <div className="w-full md:w-1/3 flex items-center justify-center md:min-h-[380px]">
+                    <div className="w-full md:w-1/3 flex items-center justify-center min-h-[220px] md:min-h-[380px]">
                       <ExpenseReportChart data={reportData.expenseSumByCategory} />
                     </div>
                     <div className="w-full md:w-2/3">

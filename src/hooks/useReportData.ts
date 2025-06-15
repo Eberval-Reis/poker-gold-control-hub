@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { expenseService } from "@/services/expense.service";
 import { tournamentPerformanceService } from "@/services/tournament-performance.service";
+import { useMemo } from "react";
 
 export type ReportType = "expenses" | "performance" | "financial" | "roi";
 export type PeriodType = "week" | "month" | "quarter" | "year" | "custom";
@@ -85,35 +86,51 @@ export function useReportData({ reportType, period, startDate, endDate }: UseRep
     queryFn: tournamentPerformanceService.getTournamentPerformances,
   });
 
-  // Filtro por período (para despesas e performances)
-  const filteredExpenses = expenses.filter((exp: any) => {
-    if (!exp.date) return false;
-    const d = new Date(exp.date);
-    return d >= start && d <= end;
-  });
+  // Memoização para performance!
+  const filteredExpenses = useMemo(() => {
+    return expenses.filter((exp: any) => {
+      if (!exp.date) return false;
+      const d = new Date(exp.date);
+      return d >= start && d <= end;
+    });
+    // eslint-disable-next-line
+  }, [expenses, start.getTime(), end.getTime()]);
 
-  const filteredPerformances = performances.filter((pf: any) => {
-    if (!pf.created_at) return false;
-    const d = new Date(pf.created_at);
-    return d >= start && d <= end;
-  });
+  const filteredPerformances = useMemo(() => {
+    return performances.filter((pf: any) => {
+      if (!pf.created_at) return false;
+      const d = new Date(pf.created_at);
+      return d >= start && d <= end;
+    });
+    // eslint-disable-next-line
+  }, [performances, start.getTime(), end.getTime()]);
 
-  // Dados prontos para relatório de despesas
-  const expenseCategories = Array.from(
+  const expenseCategories = useMemo(() => Array.from(
     new Set(filteredExpenses.map((exp: any) => exp.type || "Outro"))
-  );
-  const expenseSumByCategory = expenseCategories.map((cat) => ({
-    category: translateExpenseCategory(cat),
-    amount: filteredExpenses
-      .filter((exp: any) => (exp.type || "Outro") === cat)
-      .reduce((sum, exp) => sum + Number(exp.amount), 0),
-  }));
+  ), [filteredExpenses]);
 
-  // Atualize as despesas para mostrar categoria traduzida também
-  const translatedExpenses = filteredExpenses.map((exp: any) => ({
-    ...exp,
-    type: translateExpenseCategory(exp.type || "Outro"),
-  }));
+  const expenseSumByCategory = useMemo(() =>
+    expenseCategories.map((cat) => ({
+      category: translateExpenseCategory(cat),
+      amount: filteredExpenses
+        .filter((exp: any) => (exp.type || "Outro") === cat)
+        .reduce((sum, exp) => sum + Number(exp.amount), 0),
+    })),
+    [expenseCategories, filteredExpenses]
+  );
+
+  const translatedExpenses = useMemo(() =>
+    filteredExpenses.map((exp: any) => ({
+      ...exp,
+      type: translateExpenseCategory(exp.type || "Outro"),
+    })), [filteredExpenses]
+  );
+
+  // Logs para debugar performance
+  if (process.env.NODE_ENV === "development") {
+    // eslint-disable-next-line no-console
+    console.log("useReportData", { reportType, period, start, end, expenseSumByCategory });
+  }
 
   return {
     loading: expensesLoading || performancesLoading,
