@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -122,13 +123,21 @@ const VenderAcoesSection = () => {
         >
           {offers?.map(offer =>
             <option key={offer.id} value={offer.id}>
-              {offer.player_name} - R$ {offer.buy_in_amount.toLocaleString()} - {offer.tournament_date}
+              {/* Agora mostra o nome do torneio, jogador e extras */}
+              {offer.tournament_name || "—"} 
+              {offer.player_name ? ` (${offer.player_name})` : ""}
+              {" - R$ "}{offer.buy_in_amount.toLocaleString()}
+              {" - "}{offer.tournament_date}
             </option>
           )}
         </select>
       </div>
+      {/* Card de informações do torneio */}
       <div className="bg-muted rounded-xl p-5 flex flex-col gap-1 border border-poker-gold/10 shadow-sm">
-        <span className="font-medium text-gray-900 text-base">
+        <span className="font-medium text-poker-gold text-lg">
+          {selectedOffer?.tournament_name || "-"}
+        </span>
+        <span className="text-gray-900 font-medium text-base">
           Jogador: <span className="font-bold">{selectedOffer?.player_name ?? "-"}</span>
         </span>
         <span className="font-medium text-gray-900 text-base">
