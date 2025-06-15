@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, TrendingUp, Calendar, DollarSign, Trophy } from 'lucide-react';
@@ -49,7 +48,8 @@ const quickReports: {
 
 const Report = () => {
   const navigate = useNavigate();
-  // Correct the types for useState accordingly
+  // Ajustar para "all" ao invés de ""
+  const [selectedCategory, setSelectedCategory] = useState("all");
   const [period, setPeriod] = useState<PeriodType>("month");
   const [reportType, setReportType] = useState<ReportType>("performance");
   const [startDate, setStartDate] = useState<Date>();
@@ -59,9 +59,6 @@ const Report = () => {
   const [reportReady, setReportReady] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  // Filtro extra de categoria para despesas
-  const [selectedCategory, setSelectedCategory] = useState("");
-
   const reportData = useReportData({
     reportType,
     period,
@@ -69,20 +66,21 @@ const Report = () => {
     endDate,
   });
 
-  // Aplica filtro de categoria SOMENTE em despesas
+  // Atualizar filtro: só aplica categoria se não for "all" e tipo for "expenses"
   const filteredExpenses =
-    reportType === "expenses" && selectedCategory
+    reportType === "expenses" && selectedCategory !== "all"
       ? reportData.expenses.filter((e: any) => e.type === selectedCategory)
       : reportData.expenses;
 
+  const filteredExpenseSumByCategory =
+    reportType === "expenses" && selectedCategory !== "all"
+      ? reportData.expenseSumByCategory.filter((c: any) => c.category === selectedCategory)
+      : reportData.expenseSumByCategory;
+
   const filteredReportData = {
     ...reportData,
-    // Só filtra expenseSumByCategory se foi filtrado
-    expenses: filteredExpenses,
-    expenseSumByCategory:
-      reportType === "expenses" && selectedCategory
-        ? reportData.expenseSumByCategory.filter((c: any) => c.category === selectedCategory)
-        : reportData.expenseSumByCategory,
+    expenses: reportType === "expenses" ? filteredExpenses : reportData.expenses,
+    expenseSumByCategory: reportType === "expenses" ? filteredExpenseSumByCategory : reportData.expenseSumByCategory,
   };
 
   // Novo: gerar reportReady de comparação com validação simples

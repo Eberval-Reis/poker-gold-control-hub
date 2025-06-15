@@ -21,7 +21,7 @@ const ExpenseAdvancedFilters: React.FC<ExpenseAdvancedFiltersProps> = ({
           <SelectValue placeholder="Todas" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">Todas</SelectItem>
+          <SelectItem value="all">Todas</SelectItem>
           {categories.map(cat => (
             <SelectItem key={cat} value={cat}>{cat}</SelectItem>
           ))}
