@@ -157,25 +157,24 @@ export function useDashboardData({
 
     console.log("Dados finais do gráfico:", tournamentPrizeData);
 
-    // Gráfico de despesas: garantir todas categorias aparecem/tradução
-    // 1. Agrega valores por categoria original (ingles)
+    // Gráfico de despesas: garantir todas categorias traduzidas, mas exibir apenas com movimentação
     const expenseSum: Record<string, number> = {};
     expenses.forEach((exp) => {
       const key = (exp.type || "outro").toLowerCase();
       expenseSum[key] = (expenseSum[key] || 0) + Number(exp.amount);
     });
 
-    // LOG: Soma de despesas por categoria (antes da formatação final)
-    console.log("Soma por categoria do tipo (chave original):", expenseSum);
+    // Gera lista traduzida SÓ com movimentação (>0)
+    const expenseData = CATEGORY_KEYS
+      .map((key) => ({
+        category: EXPENSE_CATEGORY_MAP[key],
+        amount: expenseSum[key] ?? 0,
+      }))
+      .filter(e => e.amount > 0);
 
-    // 2. Gera lista completa traduzida (não filtra por valor)
-    const expenseData = CATEGORY_KEYS.map((key) => ({
-      category: EXPENSE_CATEGORY_MAP[key],
-      amount: expenseSum[key] ?? 0,
-    }));
-    // 3. Inclui qualquer categoria extra encontrada nos dados mas não no padrão
+    // Inclui qualquer categoria extra (custom) encontrada nos dados mas não no padrão
     Object.keys(expenseSum).forEach((key) => {
-      if (!CATEGORY_KEYS.includes(key)) {
+      if (!CATEGORY_KEYS.includes(key) && expenseSum[key] > 0) {
         expenseData.push({
           category: key.charAt(0).toUpperCase() + key.slice(1),
           amount: expenseSum[key],

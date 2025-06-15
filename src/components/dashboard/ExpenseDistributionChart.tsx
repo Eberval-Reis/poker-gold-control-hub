@@ -5,6 +5,7 @@ interface ExpenseDistributionChartProps {
   data: { category: string; amount: number }[];
 }
 
+// Mantive as cores
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#d4af37'];
 
 const formatCurrency = (value: number) => {
@@ -25,16 +26,30 @@ const ExpenseDistributionChart = ({ data }: ExpenseDistributionChartProps) => {
             <BarChart
               data={data}
               layout="vertical"
-              margin={{ top: 5, right: 30, left: 100, bottom: 5 }}
+              margin={{ top: 10, right: 30, left: 150, bottom: 10 }} // aumenta o left para mais espaço nos labels
+              barSize={32}
             >
-              <XAxis type="number" tickFormatter={formatCurrency} />
-              <YAxis dataKey="category" type="category" scale="band" width={120} />
+              <XAxis
+                type="number"
+                tickFormatter={formatCurrency}
+                axisLine={false}
+                tick={{ fontSize: 15, fill: "#4B5563" }}
+              />
+              <YAxis
+                dataKey="category"
+                type="category"
+                scale="band"
+                width={140} // mais espaço para texto da categoria
+                tick={{ fontSize: 16, fill: "#374151", fontWeight: 600 }}
+                axisLine={false}
+              />
               <Tooltip
                 formatter={(value: number) =>
                   [formatCurrency(value), "Total acumulado"]
                 }
+                wrapperClassName="!rounded-lg !shadow"
               />
-              <Bar dataKey="amount" fill="#8884d8">
+              <Bar dataKey="amount" radius={[6, 6, 6, 6]}>
                 {data.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
@@ -52,3 +67,4 @@ const ExpenseDistributionChart = ({ data }: ExpenseDistributionChartProps) => {
 };
 
 export default ExpenseDistributionChart;
+
