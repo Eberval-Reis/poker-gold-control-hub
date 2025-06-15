@@ -20,7 +20,7 @@ const ExpenseReportTable: React.FC<ExpenseReportTableProps> = ({ expenses }) => 
 
   return (
     <div className="overflow-x-auto rounded-lg shadow border">
-      <table className="w-full text-sm">
+      <table className="w-full min-w-[440px] text-sm">
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 text-left">Data</th>
@@ -33,7 +33,6 @@ const ExpenseReportTable: React.FC<ExpenseReportTableProps> = ({ expenses }) => 
           {expenses.map((exp) => (
             <tr key={exp.id} className="even:bg-gray-50">
               <td className="px-4 py-2">
-                {/* Exibe a data no formato dd/mm/yyyy */}
                 {exp.date
                   ? new Date(exp.date).toLocaleDateString("pt-BR")
                   : "-"}

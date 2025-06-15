@@ -35,7 +35,7 @@ const Report = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-3 sm:p-4 md:p-6">
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
           <FileText className="h-6 w-6 text-[#d4af37]" />
@@ -116,7 +116,7 @@ const Report = () => {
         </CardContent>
       </Card>
 
-      {/* Report Preview - now full width */}
+      {/* Report Preview - agora 100% responsivo */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Prévia do Relatório</CardTitle>
@@ -129,8 +129,9 @@ const Report = () => {
                   <h3 className="text-lg font-semibold mb-2 text-poker-text-dark">
                     Relatório de Despesas
                   </h3>
-                  <div className="flex flex-col md:flex-row gap-8">
-                    <div className="w-full md:w-1/3 flex items-center justify-center h-full min-h-[200px]">
+                  {/* Corrigido: agora empilha gráfico + tabela no mobile */}
+                  <div className="flex flex-col gap-8 md:gap-8 md:flex-row">
+                    <div className="w-full md:w-1/3 flex items-center justify-center h-full min-h-[180px] md:min-h-[200px]">
                       <ExpenseReportChart data={reportData.expenseSumByCategory} />
                     </div>
                     <div className="w-full md:w-2/3">
@@ -192,7 +193,7 @@ const Report = () => {
       {/* Quick Reports */}
       <div className="mt-8">
         <h2 className="text-lg font-semibold mb-4">Relatórios Rápidos</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="cursor-pointer hover:shadow-md transition-shadow">
             <CardContent className="p-4 text-center">
               <TrendingUp className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />

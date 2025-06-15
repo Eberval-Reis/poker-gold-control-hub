@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   PieChart,
@@ -35,20 +34,21 @@ function truncateLabel(str: string, max: number = 40) {
   return str.slice(0, max - 1) + "…";
 }
 
-// Recebe idx para pegar cor
+// Ajusta tamanho e fonte do label conforme tela
 function renderCustomizedLabel(
   props: PieLabelRenderProps & { category?: string; idx?: number; colors?: string[] }
 ) {
   const RADIAN = Math.PI / 180;
   const cx = typeof props.cx === "number" ? props.cx : Number(props.cx) || 0;
   const cy = typeof props.cy === "number" ? props.cy : Number(props.cy) || 0;
-  const outerRadius =
-    typeof props.outerRadius === "number"
-      ? props.outerRadius
-      : Number(props.outerRadius) || 0;
+  const outerRadius = typeof props.outerRadius === "number"
+    ? props.outerRadius
+    : Number(props.outerRadius) || 0;
   const { midAngle, percent, category, idx, colors } = props;
 
-  const radius = outerRadius + 70; // mais longe para dar espaço
+  // Diminui distância no mobile
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+  const radius = outerRadius + (isMobile ? 40 : 70);
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
@@ -56,7 +56,7 @@ function renderCustomizedLabel(
     ? colors[idx % colors.length]
     : "#222";
 
-  const showText = category ? truncateLabel(category) : "";
+  const showText = category ? truncateLabel(category, isMobile ? 18 : 40) : "";
   const percentText = ` (${(percent * 100).toFixed(0)}%)`;
 
   return (
@@ -68,7 +68,7 @@ function renderCustomizedLabel(
         textAnchor={x > cx ? "start" : "end"}
         alignmentBaseline="middle"
         style={{
-          fontSize: 14,
+          fontSize: isMobile ? 10 : 14,
           fontWeight: 600,
           pointerEvents: "auto",
           userSelect: "none",
@@ -87,18 +87,21 @@ function renderCustomizedLabel(
   );
 }
 
-const ExpenseReportChart: React.FC<ExpenseReportChartProps> = ({ data }) => {
+const ExpenseReportChart: React.FC<{ data: any[] }> = ({ data }) => {
   if (!data || data.length === 0) {
     return null;
   }
 
-  // Envia idx e a paleta para cada label
+  // Responsividade do tamanho do gráfico
+  // Usa largura mínima menor em dispositivos menores
+  const chartHeight = typeof window !== "undefined" && window.innerWidth < 640 ? 250 : 400;
+
   return (
     <div
-      className="flex flex-col items-center justify-center w-full px-2"
-      style={{ minHeight: 400 }}
+      className="flex flex-col items-center justify-center w-full px-1 sm:px-2"
+      style={{ minHeight: chartHeight }}
     >
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer width="100%" height={chartHeight}>
         <PieChart>
           <Pie
             data={data}
@@ -106,7 +109,7 @@ const ExpenseReportChart: React.FC<ExpenseReportChartProps> = ({ data }) => {
             nameKey="category"
             cx="50%"
             cy="50%"
-            outerRadius={80}
+            outerRadius={70}
             fill="#d4af37"
             label={(props) =>
               renderCustomizedLabel({
