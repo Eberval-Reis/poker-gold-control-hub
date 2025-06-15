@@ -48,7 +48,7 @@ const RegistrarResultadoSection = () => {
 
   async function handleSave() {
     if (!offer) {
-      toast({ title: "Erro", description: "Nenhum backing offer selecionado.", variant: "destructive" });
+      toast({ title: "Erro", description: "Nenhuma oferta de backing selecionada.", variant: "destructive" });
       return;
     }
     if (!prize || isNaN(Number(prize)) || Number(prize) < 0) {
@@ -68,7 +68,21 @@ const RegistrarResultadoSection = () => {
       setPrize("");
       setStatus("busto");
     } catch (err: any) {
-      toast({ title: "Erro ao salvar resultado", description: err.message, variant: "destructive" });
+      // Busca erro de constraint referente ao result_type
+      const dbConstraintMsg = typeof err.message === "string" && err.message.includes("backing_results_result_type_check");
+      if (dbConstraintMsg) {
+        toast({
+          title: "Erro ao salvar",
+          description: "O status informado não é permitido. Só é possível: busto, itm, ft ou campeão.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Erro ao salvar resultado",
+          description: err?.message || "Ocorreu um erro inesperado ao salvar.",
+          variant: "destructive",
+        });
+      }
     }
     setLoading(false);
   }
@@ -166,3 +180,4 @@ const RegistrarResultadoSection = () => {
 };
 
 export default RegistrarResultadoSection;
+
