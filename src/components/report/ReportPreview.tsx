@@ -6,6 +6,7 @@ import ExpenseReportTable from "@/components/report/ExpenseReportTable";
 import PerformanceReportPreview from "@/components/report/PerformanceReportPreview";
 import FinancialReportPreview from "@/components/report/FinancialReportPreview";
 import RoiReportPreview from "@/components/report/RoiReportPreview";
+import ExportButtons from "@/components/report/ExportButtons";
 import { ReportType } from "@/hooks/useReportData";
 
 interface ReportPreviewProps {
@@ -13,6 +14,13 @@ interface ReportPreviewProps {
   reportType: ReportType;
   reportData: any;
 }
+
+const expenseTableColumns = [
+  { label: "Data", key: "date" },
+  { label: "Torneio", key: "tournament" },
+  { label: "Categoria", key: "type" },
+  { label: "Valor (R$)", key: "amount" }
+];
 
 const ReportPreview: React.FC<ReportPreviewProps> = ({ reportReady, reportType, reportData }) => {
   if (!reportReady) {
@@ -36,6 +44,17 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportReady, reportType, 
           <h3 className="text-lg font-semibold mb-2 text-poker-text-dark">
             Relatório de Despesas
           </h3>
+          {/* Exportação */}
+          <ExportButtons
+            tableData={reportData.expenses.map((e: any) => ({
+              date: e.date ? new Date(e.date).toLocaleDateString("pt-BR") : "-",
+              tournament: e.tournaments?.name || "-",
+              type: e.type,
+              amount: Number(e.amount).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+            }))}
+            columns={expenseTableColumns}
+            filePrefix="despesas"
+          />
           <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-8">
             <div className="w-full md:w-1/3 flex items-center justify-center min-h-[220px] md:min-h-[380px]">
               <ExpenseReportChart data={reportData.expenseSumByCategory} />
@@ -54,11 +73,37 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportReady, reportType, 
           periodRange={{ start: reportData.start, end: reportData.end }}
         />
       ) : reportType === "financial" ? (
-        <FinancialReportPreview
-          performances={reportData.performances}
-          expenses={reportData.expenses}
-          periodRange={{ start: reportData.start, end: reportData.end }}
-        />
+        <>
+          {/* Exportação para financeiro também */}
+          <ExportButtons
+            tableData={[
+              ...reportData.performances.map((perf: any) => ({
+                tipo: "Prêmio",
+                data: perf.created_at ? new Date(perf.created_at).toLocaleDateString("pt-BR") : "-",
+                torneio: perf.tournaments?.name ?? "-",
+                valor: Number(perf.prize_amount ?? 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+              })),
+              ...reportData.expenses.map((exp: any) => ({
+                tipo: "Despesa",
+                data: exp.date ? new Date(exp.date).toLocaleDateString("pt-BR") : "-",
+                torneio: exp.tournaments?.name || "-",
+                valor: Number(exp.amount).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
+              }))
+            ]}
+            columns={[
+              { label: "Tipo", key: "tipo" },
+              { label: "Data", key: "data" },
+              { label: "Torneio", key: "torneio" },
+              { label: "Valor (R$)", key: "valor" }
+            ]}
+            filePrefix="financeiro"
+          />
+          <FinancialReportPreview
+            performances={reportData.performances}
+            expenses={reportData.expenses}
+            periodRange={{ start: reportData.start, end: reportData.end }}
+          />
+        </>
       ) : reportType === "roi" ? (
         <RoiReportPreview
           performances={reportData.performances}

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, TrendingUp, Calendar, DollarSign, Trophy } from 'lucide-react';
@@ -6,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ReportConfigForm from "@/components/report/ReportConfigForm";
 import ReportPreview from "@/components/report/ReportPreview";
 import { useReportData, ReportType, PeriodType } from "@/hooks/useReportData";
+import ExpenseAdvancedFilters from "@/components/report/ExpenseAdvancedFilters";
 
 const quickReports: {
   title: string,
@@ -54,12 +54,31 @@ const Report = () => {
   const [reportReady, setReportReady] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
+  // Filtro extra de categoria para despesas
+  const [selectedCategory, setSelectedCategory] = useState("");
+
   const reportData = useReportData({
     reportType,
     period,
     startDate,
     endDate,
   });
+
+  // Aplica filtro de categoria SOMENTE em despesas
+  const filteredExpenses =
+    reportType === "expenses" && selectedCategory
+      ? reportData.expenses.filter((e: any) => e.type === selectedCategory)
+      : reportData.expenses;
+
+  const filteredReportData = {
+    ...reportData,
+    // Só filtra expenseSumByCategory se foi filtrado
+    expenses: filteredExpenses,
+    expenseSumByCategory:
+      reportType === "expenses" && selectedCategory
+        ? reportData.expenseSumByCategory.filter((c: any) => c.category === selectedCategory)
+        : reportData.expenseSumByCategory,
+  };
 
   const handleGenerateReport = () => {
     // Validação para período customizado
@@ -95,6 +114,11 @@ const Report = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Busca todas categorias possíveis (no período!)
+  const allCategories = Array.from(
+    new Set((reportData.expenseSumByCategory || []).map((c: any) => c.category))
+  );
+
   return (
     <div className="container mx-auto p-3 sm:p-4 md:p-6">
       <div className="mb-6">
@@ -119,6 +143,15 @@ const Report = () => {
         formError={formError}
       />
 
+      {/* Filtro Avançado para Despesas */}
+      {reportType === "expenses" && reportReady && (
+        <ExpenseAdvancedFilters
+          categories={allCategories}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+        />
+      )}
+
       {/* Report Preview */}
       <Card className="mb-8">
         <CardHeader>
@@ -128,7 +161,7 @@ const Report = () => {
           <ReportPreview 
             reportReady={reportReady}
             reportType={reportType}
-            reportData={reportData}
+            reportData={filteredReportData}
           />
         </CardContent>
       </Card>
