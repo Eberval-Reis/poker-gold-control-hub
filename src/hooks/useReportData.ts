@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { expenseService } from "@/services/expense.service";
 import { tournamentPerformanceService } from "@/services/tournament-performance.service";
@@ -11,6 +10,20 @@ export interface UseReportDataOptions {
   period: PeriodType;
   startDate?: Date;
   endDate?: Date;
+}
+
+const EXPENSE_CATEGORY_TRANSLATIONS: Record<string, string> = {
+  transport: "Transporte",
+  food: "Alimentação",
+  accommodation: "Hospedagem",
+  entry: "Inscrição",
+  other: "Outros",
+  outro: "Outros", // para compatibilidade, 'Outro' já transliterado
+};
+
+function translateExpenseCategory(cat: string) {
+  const key = cat.toLowerCase();
+  return EXPENSE_CATEGORY_TRANSLATIONS[key] || cat.charAt(0).toUpperCase() + cat.slice(1);
 }
 
 function getPeriodRange(period: PeriodType, startDate?: Date, endDate?: Date) {
@@ -90,16 +103,22 @@ export function useReportData({ reportType, period, startDate, endDate }: UseRep
     new Set(filteredExpenses.map((exp: any) => exp.type || "Outro"))
   );
   const expenseSumByCategory = expenseCategories.map((cat) => ({
-    category: cat.charAt(0).toUpperCase() + cat.slice(1),
+    category: translateExpenseCategory(cat),
     amount: filteredExpenses
       .filter((exp: any) => (exp.type || "Outro") === cat)
       .reduce((sum, exp) => sum + Number(exp.amount), 0),
   }));
 
+  // Atualize as despesas para mostrar categoria traduzida também
+  const translatedExpenses = filteredExpenses.map((exp: any) => ({
+    ...exp,
+    type: translateExpenseCategory(exp.type || "Outro"),
+  }));
+
   return {
     loading: expensesLoading || performancesLoading,
     error: expensesError || performancesError,
-    expenses: filteredExpenses,
+    expenses: translatedExpenses,
     performances: filteredPerformances,
     expenseSumByCategory,
     start,

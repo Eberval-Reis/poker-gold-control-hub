@@ -1,4 +1,3 @@
-
 import React from "react";
 
 interface Expense {
@@ -46,5 +45,4 @@ const ExpenseReportTable: React.FC<ExpenseReportTableProps> = ({ expenses }) => 
     </div>
   );
 };
-
 export default ExpenseReportTable;

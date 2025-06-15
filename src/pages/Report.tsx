@@ -51,7 +51,7 @@ const Report = () => {
             <CardContent className="space-y-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">Tipo de Relatório</label>
-                <Select value={reportType} onValueChange={setReportType}>
+                <Select value={reportType} onValueChange={(value) => setReportType(value as ReportType)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -66,7 +66,7 @@ const Report = () => {
 
               <div>
                 <label className="text-sm font-medium mb-2 block">Período</label>
-                <Select value={period} onValueChange={setPeriod}>
+                <Select value={period} onValueChange={(value) => setPeriod(value as PeriodType)}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
