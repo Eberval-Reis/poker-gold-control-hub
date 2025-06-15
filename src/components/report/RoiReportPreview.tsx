@@ -1,5 +1,6 @@
 
 import React from "react";
+import RoiLineChart from "./RoiLineChart";
 
 interface RoiReportPreviewProps {
   performances: any[];
@@ -35,6 +36,12 @@ const RoiReportPreview: React.FC<RoiReportPreviewProps> = ({
         <span>Total em Prêmios Recebidos: <strong>{totalPremios.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong></span>
         <span>ROI do Período: <strong>{roi.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}%</strong></span>
       </div>
+
+      {/* Gráfico de evolução do ROI */}
+      <div className="mb-4">
+        <RoiLineChart performances={performances} />
+      </div>
+
       <div className="bg-muted p-4 rounded text-muted-foreground text-center">
         (Evolução do ROI e mais detalhes em breve!)
       </div>
