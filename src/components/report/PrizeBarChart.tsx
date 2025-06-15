@@ -1,4 +1,3 @@
-
 import React from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
@@ -7,7 +6,7 @@ interface PrizeBarChartProps {
   performances: any[];
 }
 
-const colors = ['#d4af37', '#57b846', '#0088FE', '#FF8042', '#9259a5'];
+const colors = ['#FFD700', '#FF8C42', '#FF6B6B', '#8B4B8C', '#2C1810'];
 
 const PrizeBarChart: React.FC<PrizeBarChartProps> = ({ performances }) => {
   if (!performances || performances.length === 0) {
