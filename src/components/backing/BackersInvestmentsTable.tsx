@@ -1,10 +1,12 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, Check, AlertTriangle, Edit, Trash2 } from "lucide-react";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { useBackerInvestmentDelete } from "@/hooks/useBackerInvestmentDelete";
 import { supabase } from "@/lib/supabase";
+import EditInvestmentModal from "./EditInvestmentModal";
+import { useUpdatePaymentStatus } from "@/hooks/useUpdatePaymentStatus";
+import { toast } from "@/hooks/use-toast";
 
 // Helper hook para buscar se existem payouts vinculados a cada investimento
 function useInvestmentsWithPayouts(investments: { id: string }[]) {
@@ -93,8 +95,56 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
 
   const investmentsWithPayouts = useInvestmentsWithPayouts(investments);
 
+  // Controle modal edição
+  const [editing, setEditing] = React.useState<null | Investment>(null);
+  const [updating, setUpdating] = React.useState(false);
+
+  // Alternativa: utilize a mutation (por simplicidade faremos simples update direto + reload)
+  const { updatePaymentStatus } = useUpdatePaymentStatus();
+
+  async function handleEditSubmit(values: { percentage_bought: number; amount_paid: number; payment_status: string }) {
+    if (!editing) return;
+    setUpdating(true);
+    const { id } = editing;
+    try {
+      // Update no Supabase: só nos campos editáveis
+      const { error } = await supabase
+        .from("backing_investments")
+        .update({
+          percentage_bought: values.percentage_bought,
+          amount_paid: values.amount_paid,
+          payment_status: values.payment_status,
+        })
+        .eq("id", id);
+
+      if (error) throw error;
+      toast({ title: "Investimento editado com sucesso!" });
+      // Recomende-se atualizar react-query ou recarregar (forçando apenas update rápido)
+      window.dispatchEvent(new Event('backing_investments_updated'));
+      setEditing(null);
+    } catch (e: any) {
+      toast({ title: "Erro ao editar investimento", description: e.message, variant: "destructive" });
+    }
+    setUpdating(false);
+  }
+
+  // Trigger refresh externo sempre que invest atualizado
+  React.useEffect(() => {
+    const reload = () => { window.location.reload(); };
+    window.addEventListener('backing_investments_updated', reload);
+    return () => window.removeEventListener('backing_investments_updated', reload);
+  }, []);
+
   return (
     <div className="border border-gray-200 rounded-b-md bg-white w-full">
+      {/* Modal de edição */}
+      <EditInvestmentModal
+        open={!!editing}
+        onOpenChange={(v) => !v && setEditing(null)}
+        investment={editing}
+        onSubmit={handleEditSubmit}
+        isUpdating={updating}
+      />
       <table className="w-full table-fixed text-sm text-gray-900">
         <colgroup>
           <col style={{ width: "32%" }} />
@@ -158,6 +208,17 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
                           ? "Não é possível editar pois já existem resultados vinculados a este investimento."
                           : "Editar investimento"
                       }
+                      onClick={
+                        hasPayouts
+                          ? undefined
+                          : () => setEditing({
+                              id: b.id,
+                              percentage_bought: b.percentage_bought,
+                              amount_paid: b.amount_paid,
+                              payment_status: b.payment_status,
+                              backer_name: b.backer_name,
+                            })
+                      }
                     >
                       <Edit size={15} />
                     </Button>
@@ -219,4 +280,3 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
 };
 
 export default BackersInvestmentsTable;
-
