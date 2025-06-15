@@ -5,16 +5,30 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DatePicker } from '@/components/ui/date-picker';
+import ExpenseReportTable from "@/components/report/ExpenseReportTable";
+import ExpenseReportChart from "@/components/report/ExpenseReportChart";
+import { useReportData, ReportType, PeriodType } from "@/hooks/useReportData";
 
 const Report = () => {
   const navigate = useNavigate();
-  const [period, setPeriod] = useState('month');
-  const [reportType, setReportType] = useState('performance');
+  const [period, setPeriod] = useState<PeriodType>("month");
+  const [reportType, setReportType] = useState<ReportType>("performance");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
 
+  // Estado se relatório foi gerado
+  const [reportReady, setReportReady] = useState(false);
+
+  // Hook dos dados de relatório
+  const reportData = useReportData({
+    reportType,
+    period,
+    startDate,
+    endDate,
+  });
+
   const handleGenerateReport = () => {
-    alert('Funcionalidade de relatórios será implementada em breve!');
+    setReportReady(true);
   };
 
   return (
@@ -104,15 +118,54 @@ const Report = () => {
               <CardTitle>Prévia do Relatório</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-center py-12">
-                <FileText className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Selecione as configurações e gere seu relatório
-                </h3>
-                <p className="text-gray-500">
-                  O relatório será exibido aqui após a geração
-                </p>
-              </div>
+              {reportReady ? (
+                <div className="space-y-4">
+                  {/* Relatório de Despesas */}
+                  {reportType === "expenses" ? (
+                    <>
+                      <h3 className="text-lg font-semibold mb-2 text-poker-text-dark">
+                        Relatório de Despesas
+                      </h3>
+                      <div className="flex flex-col md:flex-row gap-8">
+                        <div className="w-full md:w-1/2">
+                          <ExpenseReportChart data={reportData.expenseSumByCategory} />
+                        </div>
+                        <div className="w-full md:w-1/2">
+                          <ExpenseReportTable expenses={reportData.expenses} />
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-3 text-right">
+                        Período: {reportData.start.toLocaleDateString()} a {reportData.end.toLocaleDateString()}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="py-12 text-center text-muted-foreground">
+                      Relatório para este tipo ainda não implementado.
+                    </div>
+                  )}
+                  {reportData.loading && (
+                    <div className="flex items-center justify-center gap-2 text-yellow-700">
+                      <span className="animate-spin h-5 w-5 rounded-full border-2 border-current border-t-transparent"></span>
+                      Carregando dados do relatório...
+                    </div>
+                  )}
+                  {reportData.error && (
+                    <div className="text-red-600 py-4">
+                      Erro ao carregar dados do relatório: {String(reportData.error)}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <FileText className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                    Selecione as configurações e gere seu relatório
+                  </h3>
+                  <p className="text-gray-500">
+                    O relatório será exibido aqui após a geração
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
