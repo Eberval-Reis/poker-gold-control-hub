@@ -90,7 +90,10 @@ const ExpenseList = () => {
             className="pl-10"
           />
         </div>
-        <Button onClick={() => navigate('/register-expense')} className="shrink-0">
+        <Button
+          onClick={() => navigate('/register-expense')}
+          className="bg-poker-gold hover:bg-poker-gold/90 text-white shrink-0"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Nova Despesa
         </Button>
@@ -109,9 +112,9 @@ const ExpenseList = () => {
                   {searchTerm ? 'Nenhuma despesa encontrada para sua busca.' : 'Nenhuma despesa cadastrada ainda.'}
                 </p>
                 {!searchTerm && (
-                  <Button 
-                    onClick={() => navigate('/register-expense')} 
-                    className="mt-4"
+                  <Button
+                    onClick={() => navigate('/register-expense')}
+                    className="mt-4 bg-poker-gold hover:bg-poker-gold/90 text-white"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Cadastrar primeira despesa
