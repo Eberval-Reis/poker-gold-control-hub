@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   BarChart3, 
   Building2, 
@@ -22,10 +22,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 const AppSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   const menuItems = [
     { path: '/', icon: Home, label: 'Dashboard' },
@@ -38,6 +41,18 @@ const AppSidebar = () => {
     { path: '/backing-management', icon: DollarSign, label: 'Gestão Cavalagem' },
     { path: '/report', icon: FileText, label: 'Relatórios' },
   ];
+
+  // Handler para fechar o menu mobile após o clique (se for mobile)
+  const handleMenuClick = (path: string) => (event: React.MouseEvent) => {
+    event.preventDefault();
+    if (location.pathname !== path) {
+      navigate(path);
+    }
+    // Fecha o menu se for mobile
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   return (
     <Sidebar>
@@ -57,11 +72,19 @@ const AppSidebar = () => {
                 
                 return (
                   <SidebarMenuItem key={item.path}>
-                    <SidebarMenuButton asChild isActive={isActive}>
-                      <Link to={item.path} className="flex items-center gap-3">
+                    <SidebarMenuButton 
+                      asChild 
+                      isActive={isActive}
+                      // Adiciona onClick customizado ao Link do menu
+                    >
+                      <a 
+                        href={item.path}
+                        onClick={handleMenuClick(item.path)}
+                        className="flex items-center gap-3"
+                      >
                         <Icon className="w-5 h-5" />
                         <span>{item.label}</span>
-                      </Link>
+                      </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
