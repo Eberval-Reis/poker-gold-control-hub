@@ -1,9 +1,8 @@
 
-import React, { useState } from "react";
-import { Calendar } from "lucide-react"; // Corrigido aqui!
+import React from "react";
+import { Calendar } from "lucide-react";
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
-// Remover import incorreto de CalendarIcon!
 import {
   Popover,
   PopoverContent,
@@ -12,12 +11,13 @@ import {
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { PeriodType, ReportType } from "@/hooks/useReportData";
 
 export interface ReportConfigFormProps {
-  period: string;
-  setPeriod: (period: string) => void;
-  reportType: string;
-  setReportType: (reportType: string) => void;
+  period: PeriodType;
+  setPeriod: (period: PeriodType) => void;
+  reportType: ReportType;
+  setReportType: (reportType: ReportType) => void;
   startDate?: Date;
   setStartDate: (startDate?: Date) => void;
   endDate?: Date;
@@ -63,7 +63,7 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
         <select
           className="border rounded px-2 py-1"
           value={reportType}
-          onChange={e => setReportType(e.target.value as any)}
+          onChange={e => setReportType(e.target.value as ReportType)}
         >
           {REPORT_TYPE_OPTIONS.map(opt => (
             <option key={opt.value} value={opt.value}>
@@ -97,7 +97,7 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
       {/* Seletor de período */}
       <div className="mb-2">
         <label className="block text-sm font-medium mb-1">Período</label>
-        <Select value={period} onValueChange={setPeriod}>
+        <Select value={period} onValueChange={v => setPeriod(v as PeriodType)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Selecione o período" />
           </SelectTrigger>
@@ -171,7 +171,6 @@ function DateRangePicker({
   date: DateRange | undefined;
   setDate: (date: DateRange | undefined) => void;
 }) {
-  // Remover @ts-expect-error, agora não é mais necessário
   return (
     <div className="border rounded-md p-2">
       <div className="relative">
@@ -195,3 +194,4 @@ function DateRangePicker({
 }
 
 import { DayPicker } from "react-day-picker";
+
