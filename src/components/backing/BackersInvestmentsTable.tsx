@@ -38,22 +38,22 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
         <thead>
           <tr className="bg-muted">
             <th className="py-2 px-3 text-left">Nome</th>
-            <th className="py-2 px-3">% Ação</th>
-            <th className="py-2 px-3">Valor Pago</th>
-            <th className="py-2 px-3">Status</th>
-            <th className="py-2 px-3">Ações</th>
+            <th className="py-2 px-3 text-center">% Ação</th>
+            <th className="py-2 px-3 text-center">Valor Pago</th>
+            <th className="py-2 px-3 text-center">Status</th>
+            <th className="py-2 px-3 text-right">Ações</th>
           </tr>
         </thead>
         <tbody>
           {investments.map((b) => (
             <tr key={b.id} className="border-t last:border-b-0">
-              <td className="py-2 px-3">{b.backer_name}</td>
-              <td className="py-2 px-3">{b.percentage_bought}%</td>
-              <td className="py-2 px-3">
+              <td className="py-2 px-3 text-left align-middle">{b.backer_name}</td>
+              <td className="py-2 px-3 text-center align-middle">{b.percentage_bought}%</td>
+              <td className="py-2 px-3 text-center align-middle">
                 R$ {b.amount_paid.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </td>
-              <td className="py-2 px-3">{statusLabel(b.payment_status)}</td>
-              <td className="py-2 px-3 flex gap-1">
+              <td className="py-2 px-3 text-center align-middle">{statusLabel(b.payment_status)}</td>
+              <td className="py-2 px-3 text-right align-middle flex justify-end gap-1">
                 <Button size="sm" variant="ghost" className="text-poker-gold hover:bg-gray-100 p-1">
                   <Edit size={15} />
                 </Button>
