@@ -1,4 +1,3 @@
-
 import React from "react";
 import { FileText } from "lucide-react";
 import ExpenseReportChart from "@/components/report/ExpenseReportChart";
@@ -8,11 +7,15 @@ import FinancialReportPreview from "@/components/report/FinancialReportPreview";
 import RoiReportPreview from "@/components/report/RoiReportPreview";
 import ExportButtons from "@/components/report/ExportButtons";
 import { ReportType } from "@/hooks/useReportData";
+import ComparisonReport from "@/components/report/ComparisonReport";
+import { useReportComparisonData } from "@/hooks/useReportComparisonData";
 
 interface ReportPreviewProps {
   reportReady: boolean;
   reportType: ReportType;
   reportData: any;
+  comparisonA?: { period: { start?: Date; end?: Date } };
+  comparisonB?: { period: { start?: Date; end?: Date } };
 }
 
 const expenseTableColumns = [
@@ -22,7 +25,7 @@ const expenseTableColumns = [
   { label: "Valor (R$)", key: "amount" }
 ];
 
-const ReportPreview: React.FC<ReportPreviewProps> = ({ reportReady, reportType, reportData }) => {
+const ReportPreview: React.FC<ReportPreviewProps> = ({ reportReady, reportType, reportData, comparisonA, comparisonB }) => {
   if (!reportReady) {
     return (
       <div className="text-center py-12">
@@ -35,6 +38,27 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportReady, reportType, 
         </p>
       </div>
     );
+  }
+
+  if (reportType === "comparison") {
+    const { kpisA, kpisB, loading, error } = useReportComparisonData(
+      {
+        reportType: "performance",
+        period: "custom",
+        startDate: comparisonA?.period.start,
+        endDate: comparisonA?.period.end,
+      },
+      {
+        reportType: "performance",
+        period: "custom",
+        startDate: comparisonB?.period.start,
+        endDate: comparisonB?.period.end,
+      }
+    );
+    if (loading) return <div className="py-8 text-center">Carregando comparação...</div>;
+    if (error) return <div className="text-red-700 py-4">Erro ao carregar dados: {String(error)}</div>;
+
+    return <ComparisonReport dataA={kpisA} dataB={kpisB} />;
   }
 
   return (

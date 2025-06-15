@@ -51,6 +51,8 @@ const Report = () => {
   const [reportType, setReportType] = useState<ReportType>("performance");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
+  const [comparisonStart, setComparisonStart] = useState<Date>();
+  const [comparisonEnd, setComparisonEnd] = useState<Date>();
   const [reportReady, setReportReady] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -80,20 +82,29 @@ const Report = () => {
         : reportData.expenseSumByCategory,
   };
 
+  // Novo: gerar reportReady de comparação com validação simples
   const handleGenerateReport = () => {
-    // Validação para período customizado
-    if (period === "custom") {
-      if (!startDate || !endDate) {
-        setFormError("Selecione datas inicial e final.");
+    if (reportType === "comparison") {
+      if (!comparisonStart || !comparisonEnd || !startDate || !endDate) {
+        setFormError("Preencha os dois períodos!");
+        setReportReady(false);
+        return;
+      }
+      if (comparisonStart > comparisonEnd) {
+        setFormError("Período A: início não pode ser após o fim.");
         setReportReady(false);
         return;
       }
       if (startDate > endDate) {
-        setFormError("A data inicial não pode ser após a final.");
+        setFormError("Período B: início não pode ser após o fim.");
         setReportReady(false);
         return;
       }
+      setFormError(null);
+      setReportReady(true);
+      return;
     }
+    // ...existing validation...
     setFormError(null);
     setReportReady(true);
   };
@@ -141,6 +152,10 @@ const Report = () => {
         setEndDate={setEndDate}
         onGenerate={handleGenerateReport}
         formError={formError}
+        comparisonStart={comparisonStart}
+        setComparisonStart={setComparisonStart}
+        comparisonEnd={comparisonEnd}
+        setComparisonEnd={setComparisonEnd}
       />
 
       {/* Filtro Avançado para Despesas */}
@@ -162,6 +177,8 @@ const Report = () => {
             reportReady={reportReady}
             reportType={reportType}
             reportData={filteredReportData}
+            comparisonA={{ period: { start: comparisonStart, end: comparisonEnd } }}
+            comparisonB={{ period: { start: startDate, end: endDate } }}
           />
         </CardContent>
       </Card>
