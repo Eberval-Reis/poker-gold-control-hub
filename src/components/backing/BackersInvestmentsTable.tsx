@@ -108,7 +108,7 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
             <th className="py-2 px-3 text-left align-middle">Nome</th>
             <th className="py-2 px-3 text-center align-middle">% Ação</th>
             <th className="py-2 px-3 text-center align-middle">Valor Pago</th>
-            <th className="py-2 px-3 text-center align-middle">Status</th>
+            <th className="py-2 px-3 text-center align-middle">Status Pag.</th>
             <th className="py-2 px-3 text-right align-middle">Ações</th>
           </tr>
         </thead>
