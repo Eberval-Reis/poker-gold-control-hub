@@ -129,9 +129,9 @@ const Report = () => {
                   <h3 className="text-lg font-semibold mb-2 text-poker-text-dark">
                     Relatório de Despesas
                   </h3>
-                  {/* Corrigido: agora empilha gráfico + tabela no mobile */}
-                  <div className="flex flex-col gap-8 md:gap-8 md:flex-row">
-                    <div className="w-full md:w-1/3 flex items-center justify-center h-full min-h-[180px] md:min-h-[200px]">
+                  {/* Centraliza verticalmente o gráfico em relação à tabela */}
+                  <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-8">
+                    <div className="w-full md:w-1/3 flex items-center justify-center md:min-h-[380px]">
                       <ExpenseReportChart data={reportData.expenseSumByCategory} />
                     </div>
                     <div className="w-full md:w-2/3">
