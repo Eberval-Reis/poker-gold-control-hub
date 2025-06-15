@@ -1,8 +1,9 @@
+
 import React, { useState } from "react";
-import { Calendar } from "lucide-react";
+import { Calendar } from "lucide-react"; // Corrigido aqui!
 import { DateRange } from "react-day-picker";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon } from "@/components/ui/calendar";
+// Remover import incorreto de CalendarIcon!
 import {
   Popover,
   PopoverContent,
@@ -123,7 +124,7 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
                   !startDate && "text-muted-foreground"
                 )}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
+                <Calendar className="mr-2 h-4 w-4" />
                 {startDate ? (
                   endDate ? (
                     `${startDate?.toLocaleDateString()} - ${endDate?.toLocaleDateString()}`
@@ -136,7 +137,6 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="center">
-              {/* @ts-expect-error */}
               <DateRangePicker
                 date={startDate && endDate ? { from: startDate, to: endDate } : undefined}
                 setDate={(date: DateRange) => {
@@ -163,6 +163,7 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
 
 export default ReportConfigForm;
 
+// Corrigir DateRangePicker - Use DayPicker de 'react-day-picker'
 function DateRangePicker({
   date,
   setDate,
@@ -170,6 +171,7 @@ function DateRangePicker({
   date: DateRange | undefined;
   setDate: (date: DateRange | undefined) => void;
 }) {
+  // Remover @ts-expect-error, agora não é mais necessário
   return (
     <div className="border rounded-md p-2">
       <div className="relative">
@@ -177,8 +179,7 @@ function DateRangePicker({
           <Calendar className="h-4 w-4 opacity-70" />
         </div>
         <div className="ml-8">
-          {/* @ts-expect-error */}
-          <ReactDayPicker
+          <DayPicker
             mode="range"
             defaultMonth={date?.from}
             selected={date}
@@ -193,4 +194,4 @@ function DateRangePicker({
   );
 }
 
-import ReactDayPicker from "react-day-picker";
+import { DayPicker } from "react-day-picker";

@@ -4,14 +4,14 @@ import { FileText, TrendingUp, Calendar, DollarSign, Trophy } from 'lucide-react
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ReportConfigForm from "@/components/report/ReportConfigForm";
 import ReportPreview from "@/components/report/ReportPreview";
-import { useReportData, ReportType, PeriodType } from "@/hooks/useReportData";
+import { useReportData, PeriodType } from "@/hooks/useReportData";
 import ExpenseAdvancedFilters from "@/components/report/ExpenseAdvancedFilters";
 
 const quickReports: {
   title: string,
   description: string,
   icon: JSX.Element,
-  reportType: ReportType,
+  reportType: string,
   period: PeriodType,
   extra?: { startDate?: Date, endDate?: Date },
 }[] = [
@@ -47,8 +47,8 @@ const quickReports: {
 
 const Report = () => {
   const navigate = useNavigate();
-  const [period, setPeriod] = useState<PeriodType>("month");
-  const [reportType, setReportType] = useState<ReportType>("performance");
+  const [period, setPeriod] = useState<string>("month");
+  const [reportType, setReportType] = useState<string>("performance");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [comparisonStart, setComparisonStart] = useState<Date>();
