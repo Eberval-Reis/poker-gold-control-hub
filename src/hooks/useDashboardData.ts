@@ -1,5 +1,28 @@
 import { useMemo } from "react";
 
+// Tabela de tradução de categorias
+const EXPENSE_CATEGORY_MAP: Record<string, string> = {
+  food: "Alimentação",
+  transport: "Transporte",
+  hospedagem: "Hospedagem",
+  lazer: "Lazer",
+  bebida: "Bebida",
+  taxi: "Táxi",
+  estacionamento: "Estacionamento",
+  outro: "Outro",
+};
+
+const CATEGORY_KEYS = [
+  "food",
+  "transport",
+  "hospedagem",
+  "lazer",
+  "bebida",
+  "taxi",
+  "estacionamento",
+  "outro",
+];
+
 interface Performance {
   buyin_amount: number;
   rebuy_amount?: number;
@@ -25,7 +48,7 @@ interface DashboardData {
   roi: number;
   itmRate: number;
   monthlyData: { month: string; profit: number }[];
-  tournamentPrizeData: { month: string; profit: number }[]; // Nova propriedade para premiação por torneio
+  tournamentPrizeData: { month: string; profit: number }[];
   expenseData: { category: string; amount: number }[];
   recentTournaments: any[];
   tournamentsTrend: number;
@@ -131,17 +154,29 @@ export function useDashboardData({
 
     console.log("Dados finais do gráfico:", tournamentPrizeData);
 
-    // Gráfico de despesas por type
-    const expenseData = expenses.reduce((acc: { category: string; amount: number }[], expense) => {
-      const type = expense.type || "Outro";
-      const existing = acc.find((item) => item.category === type);
-      if (existing) {
-        existing.amount += Number(expense.amount);
-      } else {
-        acc.push({ category: type, amount: Number(expense.amount) });
+    // Gráfico de despesas: garantir todas categorias aparecem/tradução
+    // 1. Agrega valores por categoria original (ingles)
+    const expenseSum: Record<string, number> = {};
+    expenses.forEach((exp) => {
+      const key = (exp.type || "outro").toLowerCase();
+      expenseSum[key] = (expenseSum[key] || 0) + Number(exp.amount);
+    });
+
+    // 2. Gera lista completa traduzida (zera se não houver valor)
+    const expenseData = CATEGORY_KEYS.map((key) => ({
+      category: EXPENSE_CATEGORY_MAP[key],
+      amount: expenseSum[key] ?? 0,
+    })).filter(e => e.amount > 0); // Se quiser sempre mostrar até as de valor zero, tire esse filtro
+
+    // 3. Inclui qualquer categoria extra encontrada nos dados mas não no padrão
+    Object.keys(expenseSum).forEach((key) => {
+      if (!CATEGORY_KEYS.includes(key)) {
+        expenseData.push({
+          category: key.charAt(0).toUpperCase() + key.slice(1),
+          amount: expenseSum[key],
+        });
       }
-      return acc;
-    }, []);
+    });
 
     // Recentes (últimos torneios/performance para tabela)
     const recentTournaments = performances.slice(0, 5);
