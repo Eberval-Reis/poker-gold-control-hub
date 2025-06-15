@@ -132,7 +132,7 @@ const Report = () => {
   );
 
   return (
-    <div className="container mx-auto p-3 sm:p-4 md:p-6">
+    <div className="container mx-auto p-3 sm:p-4 md:p-6 overflow-x-hidden">
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
           <FileText className="h-6 w-6 text-[#d4af37]" />
@@ -191,7 +191,7 @@ const Report = () => {
           {quickReports.map((item, idx) => (
             <Card
               key={item.title}
-              className="cursor-pointer hover:shadow-md transition-shadow"
+              className="cursor-pointer hover:shadow-md transition-shadow min-w-0"
               onClick={() => handleQuickReport(item)}
               tabIndex={0}
               onKeyDown={e => {

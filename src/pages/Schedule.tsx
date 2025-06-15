@@ -81,8 +81,8 @@ const SchedulePage = () => {
 
   // Layout do filtro de status e modo de visualização
   const FilterBar = (
-    <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between mb-4">
-      <div className="flex gap-2">
+    <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between mb-4 flex-wrap overflow-x-auto">
+      <div className="flex gap-2 flex-wrap min-w-0">
         <Button
           variant={filterStatus === "all" ? "default" : "outline"}
           className={
@@ -117,12 +117,12 @@ const SchedulePage = () => {
           <span className="text-red-500">❌</span> Não Cumpridos
         </Button>
       </div>
-      <div className="flex gap-2 mt-2 sm:mt-0">
+      <div className="flex gap-2 mt-2 sm:mt-0 w-full sm:w-auto flex-wrap min-w-0">
         <Input
           placeholder="Buscar por torneio..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-48"
+          className="w-full sm:w-48"
         />
         <Button
           size="icon"
@@ -153,7 +153,7 @@ const SchedulePage = () => {
   );
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 py-6 relative">
+    <div className="container mx-auto px-2 sm:px-6 py-6 relative overflow-x-hidden">
       <h1 className="text-2xl font-bold text-poker-gold mb-2">Agenda de Eventos</h1>
       <p className="mb-6 text-muted-foreground">
         Gerencie seus agendamentos de torneios de poker de forma visual e prática.
