@@ -49,56 +49,28 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
   comparisonEnd, setComparisonEnd,
 }) => {
 
-  return (
-    <form
-      onSubmit={e => {
-        e.preventDefault();
-        onGenerate();
-      }}
-      className="space-y-4"
-    >
-      {/* Seletor de tipo de relatório */}
-      <div className="mb-2">
+  // Define campos base para filtros principais (tipo/período)
+  const FiltrosPrincipais = (
+    <>
+      {/* Tipo de Relatório */}
+      <div className="flex-1 min-w-[180px]">
         <label className="block text-sm font-medium mb-1">Tipo de Relatório</label>
-        <select
-          className="border rounded px-2 py-1"
-          value={reportType}
-          onChange={e => setReportType(e.target.value as ReportType)}
-        >
-          {REPORT_TYPE_OPTIONS.map(opt => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+        <Select value={reportType} onValueChange={v => setReportType(v as ReportType)}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Tipo de relatório" />
+          </SelectTrigger>
+          <SelectContent>
+            {REPORT_TYPE_OPTIONS.map(opt => (
+              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
-
-      {/* Inputs customizados para relatório comparativo */}
-      {reportType === "comparison" ? (
-        <>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div>
-              <label className="text-xs font-semibold">Período A - Início</label>
-              <input type="date" value={comparisonStart ? comparisonStart.toISOString().slice(0,10) : ''}
-                onChange={e => setComparisonStart?.(e.target.value ? new Date(e.target.value) : undefined)}
-                className="border rounded px-2 py-1" />
-            </div>
-            <div>
-              <label className="text-xs font-semibold">Período A - Fim</label>
-              <input type="date" value={comparisonEnd ? comparisonEnd.toISOString().slice(0,10) : ''}
-                onChange={e => setComparisonEnd?.(e.target.value ? new Date(e.target.value) : undefined)}
-                className="border rounded px-2 py-1" />
-            </div>
-            {/* Período B pode ser os campos padrão do formulário existentes */}
-          </div>
-        </>
-      ) : null}
-
-      {/* Seletor de período */}
-      <div className="mb-2">
+      {/* Período */}
+      <div className="flex-1 min-w-[180px]">
         <label className="block text-sm font-medium mb-1">Período</label>
         <Select value={period} onValueChange={v => setPeriod(v as PeriodType)}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Selecione o período" />
           </SelectTrigger>
           <SelectContent>
@@ -110,6 +82,54 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
           </SelectContent>
         </Select>
       </div>
+    </>
+  );
+
+  return (
+    <form
+      onSubmit={e => {
+        e.preventDefault();
+        onGenerate();
+      }}
+      className="space-y-5 mb-5"
+    >
+      {/* Container flex para filtros principais e botão */}
+      <div className="flex flex-col sm:flex-row gap-4 items-end">
+        {FiltrosPrincipais}
+        <div className="min-w-[140px]">
+          <Button
+            type="submit"
+            className="w-full sm:w-auto bg-poker-gold text-white font-semibold mt-3 sm:mt-0"
+          >
+            Gerar Relatório
+          </Button>
+        </div>
+      </div>
+
+      {/* Inputs customizados para relatório comparativo */}
+      {reportType === "comparison" && (
+        <div className="flex flex-col sm:flex-row gap-3 mt-2">
+          <div className="flex-1 min-w-[140px]">
+            <label className="text-xs font-semibold">Período A - Início</label>
+            <input
+              type="date"
+              value={comparisonStart ? comparisonStart.toISOString().slice(0,10) : ''}
+              onChange={e => setComparisonStart?.(e.target.value ? new Date(e.target.value) : undefined)}
+              className="border rounded px-2 py-1 w-full"
+            />
+          </div>
+          <div className="flex-1 min-w-[140px]">
+            <label className="text-xs font-semibold">Período A - Fim</label>
+            <input
+              type="date"
+              value={comparisonEnd ? comparisonEnd.toISOString().slice(0,10) : ''}
+              onChange={e => setComparisonEnd?.(e.target.value ? new Date(e.target.value) : undefined)}
+              className="border rounded px-2 py-1 w-full"
+            />
+          </div>
+          {/* Período B usa os campos padrão */}
+        </div>
+      )}
 
       {/* Date Range Picker (Custom Period) */}
       {period === "custom" && (
@@ -148,12 +168,6 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
           </Popover>
         </div>
       )}
-      <button
-        type="submit"
-        className="bg-poker-green text-white font-semibold py-2 px-4 rounded hover:bg-green-600"
-      >
-        Gerar Relatório
-      </button>
       {formError && (
         <div className="text-red-700 mt-2">{formError}</div>
       )}
@@ -185,7 +199,7 @@ function DateRangePicker({
             onSelect={setDate}
             numberOfMonths={2}
             pagedNavigation
-            className="border-none shadow-none"
+            className="border-none shadow-none p-3 pointer-events-auto"
           />
         </div>
       </div>
@@ -194,4 +208,3 @@ function DateRangePicker({
 }
 
 import { DayPicker } from "react-day-picker";
-
