@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -131,11 +130,7 @@ const VenderAcoesSection = () => {
         >
           {offers?.map(offer =>
             <option key={offer.id} value={offer.id}>
-              {offer.event_name ? `${offer.event_name} | ` : ""}
               {offer.tournament_name || "—"}
-              {offer.player_name ? ` (${offer.player_name})` : ""}
-              {" - R$ "}{offer.buy_in_amount.toLocaleString()}
-              {" - "}{offer.tournament_date}
             </option>
           )}
         </select>
@@ -217,4 +212,3 @@ const VenderAcoesSection = () => {
 };
 
 export default VenderAcoesSection;
-
