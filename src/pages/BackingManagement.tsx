@@ -6,7 +6,6 @@ import VenderAcoesSection from "@/components/backing/VenderAcoesSection";
 import ControleBackersSection from "@/components/backing/ControleBackersSection";
 import RegistrarResultadoSection from "@/components/backing/RegistrarResultadoSection";
 import BackingDashboardSection from "@/components/backing/BackingDashboardSection";
-import { Select } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const tabOptions = [
@@ -18,11 +17,9 @@ const tabOptions = [
 ];
 
 const BackingManagement = () => {
-  // Em vez de defaultValue fixo, guardar o tab no state:
   const [currentTab, setCurrentTab] = React.useState("cadastro");
   const isMobile = useIsMobile();
 
-  // Sincronizar abas do select e tabs
   const handleTabSelect = (v: string) => setCurrentTab(v);
 
   return (
@@ -31,8 +28,8 @@ const BackingManagement = () => {
         Gestão de Cavalagem
       </h1>
 
-      {/* Seleção de abas mobile (select), desktop (tabs) */}
-      {isMobile ? (
+      {/* Menu mobile: Select como navegação */}
+      {isMobile && (
         <div className="mb-4">
           <label htmlFor="tab-select" className="sr-only">Selecionar seção</label>
           <select
@@ -48,26 +45,29 @@ const BackingManagement = () => {
             ))}
           </select>
         </div>
-      ) : (
-        <TabsList
-          className="mb-6 w-full max-w-full flex gap-1 bg-muted rounded-md overflow-x-auto"
-          style={{ minHeight: "40px", height: "auto", padding: "0.25rem 0.25rem", flexWrap: "nowrap" }}
-        >
-          {tabOptions.map(tab => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              className="px-2 py-1 text-sm min-w-[100px] h-8"
-              onClick={() => handleTabSelect(tab.value)}
-              data-active={currentTab === tab.value ? "true" : "false"}
-            >
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
       )}
 
+      {/* O Tabs e o TabsList sempre juntos */}
       <Tabs value={currentTab} onValueChange={handleTabSelect} className="w-full">
+        {/* TabsList só aparece em desktop */}
+        {!isMobile && (
+          <TabsList
+            className="mb-6 w-full max-w-full flex gap-1 bg-muted rounded-md overflow-x-auto"
+            style={{ minHeight: "40px", height: "auto", padding: "0.25rem 0.25rem", flexWrap: "nowrap" }}
+          >
+            {tabOptions.map(tab => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className="px-2 py-1 text-sm min-w-[100px] h-8"
+                data-active={currentTab === tab.value ? "true" : "false"}
+              >
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        )}
+
         <TabsContent value="cadastro">
           <CadastroTorneioSection />
         </TabsContent>
