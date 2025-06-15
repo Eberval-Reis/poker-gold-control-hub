@@ -1,3 +1,4 @@
+
 import React from "react";
 import { PieChart, Pie, Cell, Legend, Tooltip, ResponsiveContainer } from "recharts";
 
@@ -20,7 +21,7 @@ const ExpenseReportChart: React.FC<ExpenseReportChartProps> = ({ data }) => {
   }
 
   return (
-    <div className="w-full h-64 flex flex-col items-center">
+    <div className="w-full h-50 flex flex-col items-center">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -29,7 +30,7 @@ const ExpenseReportChart: React.FC<ExpenseReportChartProps> = ({ data }) => {
             nameKey="category"
             cx="50%"
             cy="50%"
-            outerRadius={80}
+            outerRadius={60}
             fill="#d4af37"
             label={({ category, percent }) =>
               `${category} (${(percent * 100).toFixed(0)}%)`
