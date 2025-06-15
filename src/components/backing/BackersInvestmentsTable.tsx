@@ -1,9 +1,9 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, Check, AlertTriangle, Edit, Trash2 } from "lucide-react";
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
 import { useBackerInvestmentDelete } from "@/hooks/useBackerInvestmentDelete";
-import { useUpdatePaymentStatus } from "@/hooks/useUpdatePaymentStatus";
 import { supabase } from "@/lib/supabase";
 
 // Helper hook para buscar se existem payouts vinculados a cada investimento
@@ -49,35 +49,23 @@ interface BackersInvestmentsTableProps {
   investments: Investment[];
 }
 
+// Apenas visualização, sem toggle/click
 const statusLabel = (
-  status: string | null,
-  onToggle?: (() => void) | null,
-  isLoading?: boolean
+  status: string | null
 ) => {
   const isPending =
     !status || status.toLowerCase() === "pending" || status === "Pendente";
   return (
-    <Button
-      size="sm"
-      variant={isPending ? "outline" : "ghost"}
+    <div
       className={
+        "px-2 py-1 rounded flex items-center gap-1 min-w-[80px] bg-white border " +
         (isPending
           ? "border-yellow-500 text-yellow-600"
-          : "border-green-500 text-green-600") +
-        " px-2 py-1 rounded flex items-center gap-1 min-w-[80px] bg-white"
+          : "border-green-500 text-green-600")
       }
-      style={{ cursor: onToggle ? "pointer" : undefined }}
-      onClick={onToggle ?? undefined}
-      disabled={!onToggle || isLoading}
-      title={
-        isPending
-          ? "Marcar como pago"
-          : "Marcar como pendente"
-      }
+      // não tem mais cursor pointer
     >
-      {isLoading ? (
-        <Loader2 size={15} className="animate-spin" />
-      ) : isPending ? (
+      {isPending ? (
         <>
           <AlertTriangle size={16} />
           Pendente
@@ -88,7 +76,7 @@ const statusLabel = (
           Pago
         </>
       )}
-    </Button>
+    </div>
   );
 };
 
@@ -104,14 +92,6 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
   } = useBackerInvestmentDelete();
 
   const investmentsWithPayouts = useInvestmentsWithPayouts(investments);
-  const [changingId, setChangingId] = React.useState<string | null>(null);
-  const { updatePaymentStatus, isUpdating } = useUpdatePaymentStatus();
-
-  // Dialog de confirmação de mudança:
-  const [confirmDialog, setConfirmDialog] = React.useState<{
-    id: string;
-    toStatus: string;
-  } | null>(null);
 
   return (
     <div className="border border-gray-200 rounded-b-md bg-white w-full">
@@ -136,22 +116,6 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
           {investments.map((b) => {
             const hasPayouts = investmentsWithPayouts[b.id];
 
-            // Determina status atual
-            const isPending =
-              !b.payment_status ||
-              b.payment_status.toLowerCase() === "pending" ||
-              b.payment_status === "Pendente";
-
-            // Desabilita troca de status se tiver payout já cadastrado
-            const canToggleStatus = !hasPayouts;
-
-            const handleToggleStatus = () => {
-              if (!canToggleStatus || isUpdating || changingId) return;
-              // Confirma antes de alterar status para Pago
-              const toStatus = isPending ? "Pago" : "Pendente";
-              setConfirmDialog({ id: b.id, toStatus });
-            };
-
             return (
               <tr key={b.id} className="border-t last:border-b-0">
                 <td className="py-2 px-3 text-left align-middle text-ellipsis whitespace-nowrap overflow-hidden">
@@ -168,18 +132,15 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
                 </td>
                 <td className="py-2 px-3 text-center align-middle">
                   <div className="flex items-center justify-center h-full w-full">
-                    {/* Status pode ser clicável para alternar, mas só se não há payout */}
-                    {statusLabel(
-                      b.payment_status,
-                      canToggleStatus ? handleToggleStatus : null,
-                      changingId === b.id && isUpdating
-                    )}
+                    {/* Status agora é apenas visual */}
+                    {statusLabel(b.payment_status)}
                   </div>
-                  {!canToggleStatus && (
-                    <span className="block mt-1 text-xs text-muted-foreground">
-                      (Não é possível alterar após cadastrar payout)
+                  {!hasPayouts && (
+                    <span className="block mt-1 text-xs invisible">
+                      {/* Não mostrar texto extra */}
                     </span>
                   )}
+                  {/* antes era: (Não é possível alterar após cadastrar payout) */}
                 </td>
                 <td
                   className="py-2 px-3 text-right align-middle flex justify-end gap-1"
@@ -253,55 +214,9 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
           })}
         </tbody>
       </table>
-      {/* Diálogo de confirmação de alteração de status */}
-      {confirmDialog && (
-        <AlertDialog open onOpenChange={() => setConfirmDialog(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                {confirmDialog.toStatus === "Pago"
-                  ? "Marcar como Pago?"
-                  : "Marcar como Pendente?"}
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                Tem certeza que deseja marcar este investimento como{" "}
-                <b>{confirmDialog.toStatus}</b>?<br />
-                {confirmDialog.toStatus === "Pago"
-                  ? "Ao confirmar, o status será alterado para Pago."
-                  : "O status voltará para Pendente."}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel
-                disabled={isUpdating}
-                onClick={() => setConfirmDialog(null)}
-              >
-                Cancelar
-              </AlertDialogCancel>
-              <AlertDialogAction
-                disabled={isUpdating}
-                className="bg-primary text-white"
-                onClick={async () => {
-                  setChangingId(confirmDialog.id);
-                  await updatePaymentStatus({
-                    id: confirmDialog.id,
-                    newStatus: confirmDialog.toStatus,
-                  });
-                  setChangingId(null);
-                  setConfirmDialog(null);
-                }}
-              >
-                {isUpdating && changingId === confirmDialog.id ? (
-                  <Loader2 size={16} className="animate-spin mr-2" />
-                ) : null}
-                Confirmar
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
     </div>
   );
 };
 
 export default BackersInvestmentsTable;
+
