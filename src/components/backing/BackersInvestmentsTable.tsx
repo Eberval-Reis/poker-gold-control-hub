@@ -77,8 +77,15 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
   const investmentsWithPayouts = useInvestmentsWithPayouts(investments);
 
   return (
-    <div className="overflow-x-auto border border-gray-200 rounded-b-md bg-white">
-      <table className="min-w-full text-sm text-gray-900">
+    <div className="border border-gray-200 rounded-b-md bg-white w-full">
+      <table className="w-full table-fixed text-sm text-gray-900">
+        <colgroup>
+          <col style={{ width: "32%" }} />
+          <col style={{ width: "13%" }} />
+          <col style={{ width: "20%" }} />
+          <col style={{ width: "17%" }} />
+          <col style={{ width: "18%" }} />
+        </colgroup>
         <thead>
           <tr className="bg-muted">
             <th className="py-2 px-3 text-left align-middle">Nome</th>
@@ -92,70 +99,73 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
           {investments.map((b) => {
             const hasPayouts = investmentsWithPayouts[b.id];
             return (
-            <tr key={b.id} className="border-t last:border-b-0">
-              <td className="py-2 px-3 text-left align-middle">{b.backer_name}</td>
-              <td className="py-2 px-3 text-center align-middle">{b.percentage_bought}%</td>
-              <td className="py-2 px-3 text-center align-middle">
-                R$ {b.amount_paid.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-              </td>
-              <td className="py-2 px-3 text-center align-middle">
-                <div className="flex items-center justify-center h-full w-full">{statusLabel(b.payment_status)}</div>
-              </td>
-              <td className="py-2 px-3 text-right align-middle flex justify-end gap-1" style={{ minWidth: 82 }}>
-                {/* Botão de edição é desabilitado ou ocultado se houver payouts */}
-                <div className="relative group">
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="text-poker-gold hover:bg-gray-100 p-1"
-                    disabled={!!hasPayouts}
-                    title={hasPayouts ? "Não é possível editar pois já existem resultados vinculados a este investimento." : "Editar investimento"}
-                  >
-                    <Edit size={15} />
-                  </Button>
-                  {/* Tooltip customizado para dar feedback do porquê está desabilitado */}
-                  {!!hasPayouts && (
-                    <span className="pointer-events-none absolute z-10 left-1/2 -translate-x-1/2 top-full mt-1 whitespace-nowrap bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      Só é possível editar enquanto não houver resultados/payouts cadastrado.
-                    </span>
-                  )}
-                </div>
-                {/* ALERT DIALOG PARA CONFIRMAR EXCLUSÃO */}
-                <AlertDialog open={deletingId === b.id} onOpenChange={(open) => !open && cancelDelete()}>
-                  <AlertDialogTrigger asChild>
+              <tr key={b.id} className="border-t last:border-b-0">
+                <td className="py-2 px-3 text-left align-middle text-ellipsis whitespace-nowrap overflow-hidden">
+                  {b.backer_name}
+                </td>
+                <td className="py-2 px-3 text-center align-middle">{b.percentage_bought}%</td>
+                <td className="py-2 px-3 text-center align-middle">
+                  R$ {b.amount_paid.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </td>
+                <td className="py-2 px-3 text-center align-middle">
+                  <div className="flex items-center justify-center h-full w-full">{statusLabel(b.payment_status)}</div>
+                </td>
+                <td className="py-2 px-3 text-right align-middle flex justify-end gap-1" style={{ minWidth: 82 }}>
+                  {/* Botão de edição é desabilitado ou ocultado se houver payouts */}
+                  <div className="relative group">
                     <Button
                       size="sm"
-                      variant="destructive"
-                      className="p-1"
-                      onClick={() => requestDelete(b.id)}
+                      variant="ghost"
+                      className="text-poker-gold hover:bg-gray-100 p-1"
+                      disabled={!!hasPayouts}
+                      title={hasPayouts ? "Não é possível editar pois já existem resultados vinculados a este investimento." : "Editar investimento"}
                     >
-                      <Trash2 size={15} />
+                      <Edit size={15} />
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Tem certeza que deseja excluir este investimento?<br />
-                        Esta ação não poderá ser desfeita.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={confirmDelete}
-                        disabled={isDeleting}
-                        className="bg-destructive text-white"
+                    {/* Tooltip customizado para dar feedback do porquê está desabilitado */}
+                    {!!hasPayouts && (
+                      <span className="pointer-events-none absolute z-10 left-1/2 -translate-x-1/2 top-full mt-1 whitespace-nowrap bg-black text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        Só é possível editar enquanto não houver resultados/payouts cadastrado.
+                      </span>
+                    )}
+                  </div>
+                  {/* ALERT DIALOG PARA CONFIRMAR EXCLUSÃO */}
+                  <AlertDialog open={deletingId === b.id} onOpenChange={(open) => !open && cancelDelete()}>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="p-1"
+                        onClick={() => requestDelete(b.id)}
                       >
-                        {isDeleting ? <Loader2 className="animate-spin mr-2" size={16} /> : null}
-                        Excluir
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </td>
-            </tr>
-          )})}
+                        <Trash2 size={15} />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Tem certeza que deseja excluir este investimento?<br />
+                          Esta ação não poderá ser desfeita.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={confirmDelete}
+                          disabled={isDeleting}
+                          className="bg-destructive text-white"
+                        >
+                          {isDeleting ? <Loader2 className="animate-spin mr-2" size={16} /> : null}
+                          Excluir
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -163,4 +173,3 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
 };
 
 export default BackersInvestmentsTable;
-
