@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Calendar } from "lucide-react";
 import { DateRange } from "react-day-picker";
@@ -56,9 +55,7 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
       <div className="flex-1 min-w-[180px]">
         <label className="block text-sm font-medium mb-1">Tipo de Relatório</label>
         <Select value={reportType} onValueChange={v => setReportType(v as ReportType)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Tipo de relatório" />
-          </SelectTrigger>
+          <SelectTrigger className="w-full h-11 text-base" /> 
           <SelectContent>
             {REPORT_TYPE_OPTIONS.map(opt => (
               <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
@@ -70,9 +67,7 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
       <div className="flex-1 min-w-[180px]">
         <label className="block text-sm font-medium mb-1">Período</label>
         <Select value={period} onValueChange={v => setPeriod(v as PeriodType)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Selecione o período" />
-          </SelectTrigger>
+          <SelectTrigger className="w-full h-11 text-base" /> 
           <SelectContent>
             <SelectItem value="week">Semana Atual</SelectItem>
             <SelectItem value="month">Mês Atual</SelectItem>
@@ -93,13 +88,17 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
       }}
       className="space-y-5 mb-5"
     >
-      {/* Container flex para filtros principais e botão */}
-      <div className="flex flex-col sm:flex-row gap-4 items-end">
-        {FiltrosPrincipais}
-        <div className="min-w-[140px]">
+      {/* Filtros e Botão: layout mobile empilhado, desktop em linha */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 items-stretch">
+        {/* Filtros principais */}
+        <div className="flex flex-col gap-3 w-full sm:flex-row sm:w-auto flex-1">
+          {FiltrosPrincipais}
+        </div>
+        {/* Botão centralizado/tela cheia no mobile */}
+        <div className="w-full sm:min-w-[140px] sm:w-auto">
           <Button
             type="submit"
-            className="w-full sm:w-auto bg-poker-gold text-white font-semibold mt-3 sm:mt-0"
+            className="w-full sm:w-auto bg-poker-gold text-white font-semibold h-12 text-base"
           >
             Gerar Relatório
           </Button>
@@ -108,14 +107,14 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
 
       {/* Inputs customizados para relatório comparativo */}
       {reportType === "comparison" && (
-        <div className="flex flex-col sm:flex-row gap-3 mt-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:gap-3 mt-2">
           <div className="flex-1 min-w-[140px]">
             <label className="text-xs font-semibold">Período A - Início</label>
             <input
               type="date"
               value={comparisonStart ? comparisonStart.toISOString().slice(0,10) : ''}
               onChange={e => setComparisonStart?.(e.target.value ? new Date(e.target.value) : undefined)}
-              className="border rounded px-2 py-1 w-full"
+              className="border rounded px-2 py-2 w-full h-11 text-base"
             />
           </div>
           <div className="flex-1 min-w-[140px]">
@@ -124,23 +123,22 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
               type="date"
               value={comparisonEnd ? comparisonEnd.toISOString().slice(0,10) : ''}
               onChange={e => setComparisonEnd?.(e.target.value ? new Date(e.target.value) : undefined)}
-              className="border rounded px-2 py-1 w-full"
+              className="border rounded px-2 py-2 w-full h-11 text-base"
             />
           </div>
-          {/* Período B usa os campos padrão */}
         </div>
       )}
 
       {/* Date Range Picker (Custom Period) */}
       {period === "custom" && (
         <div className="space-y-2">
-          <Label htmlFor="data">Período</Label>
+          <Label htmlFor="data" className="text-base">Período</Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant={"outline"}
                 className={cn(
-                  "w-[280px] justify-start text-left font-normal",
+                  "w-full sm:w-[280px] justify-start text-left font-normal h-11 text-base",
                   !startDate && "text-muted-foreground"
                 )}
               >
