@@ -11,7 +11,6 @@ import {
   Trophy, 
   Users,
   DollarSign,
-  Menu, // ícone hamburguer
 } from 'lucide-react';
 import {
   Sidebar,
@@ -22,7 +21,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger, // Importa o trigger do próprio sidebar UI
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 
 const AppSidebar = () => {
@@ -44,10 +43,8 @@ const AppSidebar = () => {
     <Sidebar>
       <SidebarHeader className="p-6 flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-800">Menu</h1>
-        {/* Trigger fixo SEMPRE visível aqui para desktop, mini, etc */}
-        <SidebarTrigger className="ml-2" aria-label="Colapsar/Expandir Menu">
-          <Menu className="w-6 h-6" />
-        </SidebarTrigger>
+        {/* Trigger SEM ícone manual, ele já inclui o ícone e comportamento */}
+        <SidebarTrigger className="ml-2" aria-label="Colapsar/Expandir Menu" />
       </SidebarHeader>
       
       <SidebarContent>
