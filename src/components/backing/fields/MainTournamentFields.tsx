@@ -38,10 +38,10 @@ export default function MainTournamentFields({
   setDate
 }: MainTournamentFieldsProps) {
   return (
-    <div className="flex flex-col gap-y-4 gap-x-6 lg:flex-row">
+    <div className="flex flex-col gap-y-3 gap-x-3 sm:gap-y-4 sm:gap-x-6 sm:flex-row">
       {/* Select Evento da Agenda */}
       <div className="w-full">
-        <label className="block text-poker-gold font-semibold mb-1">
+        <label className="block text-poker-gold font-semibold mb-1 text-sm">
           Evento da Agenda
         </label>
         <Select
@@ -49,7 +49,7 @@ export default function MainTournamentFields({
           onValueChange={setSelectedEvento}
           disabled={loadingAgenda}
         >
-          <SelectTrigger>
+          <SelectTrigger className="sm:h-10 h-9 text-sm">
             <SelectValue
               placeholder={loadingAgenda ? "Carregando..." : "Selecione..."}
             />
@@ -62,7 +62,7 @@ export default function MainTournamentFields({
             )}
             {agendaEvents.map((ev) => (
               <div key={ev.id} className="flex items-center justify-between pr-1">
-                <SelectItem value={ev.id} className="flex-1">
+                <SelectItem value={ev.id} className="flex-1 text-sm">
                   {ev.name}
                 </SelectItem>
                 <Button
@@ -83,7 +83,7 @@ export default function MainTournamentFields({
       </div>
       {/* Select Nome do Torneio */}
       <div className="w-full">
-        <label className="block text-poker-gold font-semibold mb-1">
+        <label className="block text-poker-gold font-semibold mb-1 text-sm">
           Nome do Torneio *
         </label>
         <Select
@@ -91,14 +91,14 @@ export default function MainTournamentFields({
           onValueChange={setSelectedTorneio}
           disabled={loadingTorneios}
         >
-          <SelectTrigger>
+          <SelectTrigger className="sm:h-10 h-9 text-sm">
             <SelectValue
               placeholder={loadingTorneios ? "Carregando..." : "Selecione..."}
             />
           </SelectTrigger>
           <SelectContent>
             {torneios.map((torneio) => (
-              <SelectItem key={torneio.id} value={torneio.id}>
+              <SelectItem key={torneio.id} value={torneio.id} className="text-sm">
                 {torneio.name}
               </SelectItem>
             ))}
@@ -107,14 +107,14 @@ export default function MainTournamentFields({
       </div>
       {/* Buy-in */}
       <div className="w-full">
-        <label className="block text-poker-gold font-semibold mb-1">
+        <label className="block text-poker-gold font-semibold mb-1 text-sm">
           Buy-in (R$) *
         </label>
         <input
           required
           type="number"
           step="0.01"
-          className="w-full p-2 rounded border border-input bg-background text-base"
+          className="w-full p-1.5 rounded border border-input bg-background text-base sm:text-base text-sm"
           placeholder="Valor do buy-in"
           value={buyIn}
           onChange={e => setBuyIn(e.target.value)}
@@ -122,13 +122,13 @@ export default function MainTournamentFields({
       </div>
       {/* Data */}
       <div className="w-full">
-        <label className="block text-poker-gold font-semibold mb-1">
+        <label className="block text-poker-gold font-semibold mb-1 text-sm">
           Data *
         </label>
         <input
           type="date"
           required
-          className="w-full p-2 rounded border border-input bg-background text-base"
+          className="w-full p-1.5 rounded border border-input bg-background text-base sm:text-base text-sm"
           value={date}
           onChange={e => setDate(e.target.value)}
         />

@@ -1,21 +1,14 @@
 import React from "react";
 import { Pen } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { useTorneioList } from "@/hooks/useTorneioList";
-import { useAgendaEventList } from "@/hooks/useAgendaEventList";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import PlayerInfoFields from "./fields/PlayerInfoFields";
 import MainTournamentFields from "./fields/MainTournamentFields";
 import CavFields from "./fields/CavFields";
+import { useTorneioList } from "@/hooks/useTorneioList";
+import { useAgendaEventList } from "@/hooks/useAgendaEventList";
+import { supabase } from "@/integrations/supabase/client";
 
 const CadastroTorneioSection = () => {
   // Estados dos campos de formulário
@@ -99,9 +92,13 @@ const CadastroTorneioSection = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-3xl w-full mx-auto px-2 overflow-x-hidden">
-      <h2 className="text-xl font-semibold">Cadastro do Torneio</h2>
-      <form className="space-y-4" onSubmit={handleSalvarTorneio} style={{ maxWidth: '100%', width: '100%' }}>
+    <div className="space-y-5 max-w-full w-full mx-auto px-0 sm:px-2 overflow-x-hidden">
+      <h2 className="text-lg sm:text-xl font-semibold text-center sm:text-left">Cadastro do Torneio</h2>
+      <form 
+        className="space-y-3 sm:space-y-4"
+        onSubmit={handleSalvarTorneio}
+        style={{ maxWidth: '100%', width: '100%' }}
+      >
         <MainTournamentFields
           selectedEvento={selectedEvento}
           setSelectedEvento={setSelectedEvento}
@@ -120,9 +117,9 @@ const CadastroTorneioSection = () => {
 
         <PlayerInfoFields playerName={playerName} setPlayerName={setPlayerName} />
 
-        <div className="flex items-center gap-3 mt-3 flex-wrap">
+        <div className="flex items-center gap-3 mt-2 flex-wrap">
           <Switch checked={cavEnable} onCheckedChange={setCavEnable} />
-          <span className="font-medium text-gray-800">
+          <span className="font-medium text-gray-800 text-sm sm:text-base">
             Habilitar Cavalagem?
           </span>
         </div>
@@ -131,7 +128,7 @@ const CadastroTorneioSection = () => {
         )}
         <div className="flex gap-3 mt-4">
           <button
-            className="bg-poker-gold text-white px-6 py-2 rounded hover:bg-poker-gold/90 font-bold w-full sm:w-auto"
+            className="bg-poker-gold text-white px-4 sm:px-6 py-2 rounded hover:bg-poker-gold/90 font-bold w-full sm:w-auto text-base sm:text-base"
             type="submit"
             disabled={saving}
           >
@@ -139,7 +136,7 @@ const CadastroTorneioSection = () => {
           </button>
         </div>
       </form>
-      {/* Modal simples de edição */}
+      {/* Modal de edição de evento */}
       {editModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="bg-white rounded-lg p-6 w-[94vw] max-w-xs shadow space-y-3 relative">
