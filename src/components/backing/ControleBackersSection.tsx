@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { useBackingInvestments } from "@/hooks/useBackingInvestments";
@@ -23,6 +22,13 @@ const statusLabel = (status: string | null) => {
       <Check size={16} /> Pago
     </span>
   );
+};
+
+// Add the type for our grouping structure
+type InvestmentGroup = {
+  offer: any; // You can refine this if you want to add a better type (e.g. BackingInvestment["offer"])
+  investments: any[]; // You can use BackingInvestment[] if you want:
+  // investments: BackingInvestment[];
 };
 
 const ControleBackersSection = () => {
@@ -50,12 +56,12 @@ const ControleBackersSection = () => {
     );
   }
 
-  // Agrupar por oferta para visualização destacada (evento, torneio, jogador)
-  // Exibiremos uma "seção" para cada backing_offer diferente
-  const grouped = Object.values(
-    data.reduce((acc: any, investment) => {
+  // Refine the reducer typing!
+  const grouped: InvestmentGroup[] = Object.values(
+    data.reduce<Record<string, InvestmentGroup>>((acc, investment) => {
       const offerId = investment.backing_offer_id;
-      if (!acc[offerId]) acc[offerId] = { offer: investment.offer, investments: [] };
+      if (!acc[offerId])
+        acc[offerId] = { offer: investment.offer, investments: [] };
       acc[offerId].investments.push(investment);
       return acc;
     }, {})
