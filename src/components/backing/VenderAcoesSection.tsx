@@ -1,9 +1,9 @@
-
 import React from "react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import BackerSelectWithModal from "./BackerSelectWithModal";
 import { useBackingOfferList, BackingOffer } from "@/hooks/useBackingOfferList";
+import { toast } from "@/hooks/use-toast";
 
 const VenderAcoesSection = () => {
   const [percent, setPercent] = React.useState(5);
@@ -41,6 +41,71 @@ const VenderAcoesSection = () => {
   const markup = selectedOffer?.markup_percentage ?? 1;
   const disponivel = selectedOffer?.available_percentage ?? 0;
 
+  // Lidar com envio do form para salvar investimento
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    // Validação simples
+    if (!selectedOffer) {
+      toast({ variant: "destructive", title: "Torneio não selecionado" });
+      return;
+    }
+    if (!backerId) {
+      toast({ variant: "destructive", title: "Financiador não selecionado" });
+      return;
+    }
+    if (!percent || percent < 5 || percent > selectedOffer.available_percentage) {
+      toast({
+        variant: "destructive",
+        title: "Percentual inválido",
+        description: `O percentual deve ser entre 5% e o disponível (${selectedOffer.available_percentage}%)`
+      });
+      return;
+    }
+
+    // Buscar nome do backer por id (opcional, para salvar no registro)
+    let backerName = "";
+    try {
+      const { data: backerData, error: backerError } = await 
+        (await import("@/lib/supabase")).supabase
+          .from("financiadores")
+          .select("name")
+          .eq("id", backerId)
+          .maybeSingle();
+      if (backerError || !backerData) {
+        throw new Error("Erro ao buscar nome do financiador");
+      }
+      backerName = backerData.name;
+    } catch (err) {
+      toast({ variant: "destructive", title: "Erro ao buscar financiador" });
+      return;
+    }
+
+    // Salvar na backing_investments
+    toast({ title: "Salvando investimento..." });
+    const { data, error } = await (await import("@/lib/supabase")).supabase
+      .from("backing_investments")
+      .insert([{
+        backing_offer_id: selectedOffer.id,
+        percentage_bought: percent,
+        amount_paid: Number((selectedOffer.buy_in_amount * (percent / 100) * selectedOffer.markup_percentage).toFixed(2)),
+        backer_name: backerName,
+      }]);
+
+    if (error) {
+      toast({ variant: "destructive", title: "Erro ao salvar", description: error.message });
+      return;
+    }
+
+    toast({ variant: "default", title: "Sucesso!", description: "Investimento adicionado!" });
+
+    // Resetar campos e atualizar disponibilidade
+    setBackerId(null);
+    // Atualizar disponibilidade: simples reload dos dados (triggera o hook)
+    setSelectedOfferId(null);
+    setPercent(5);
+  }
+
   return (
     <div className="space-y-7 max-w-lg mx-auto">
       <h2 className="text-2xl font-bold text-poker-gold mb-1">Vender Ações</h2>
@@ -76,7 +141,10 @@ const VenderAcoesSection = () => {
           Mark-up: <span className="font-bold">{markup}</span>
         </span>
       </div>
-      <form className="flex flex-col gap-5 bg-white/90 rounded-xl px-5 py-6 shadow border border-gray-100">
+      <form 
+        className="flex flex-col gap-5 bg-white/90 rounded-xl px-5 py-6 shadow border border-gray-100"
+        onSubmit={handleSubmit}
+      >
         <BackerSelectWithModal value={backerId} onChange={setBackerId} />
         <div className="flex flex-col gap-0">
           <label className="block text-poker-gold font-semibold mb-1">
