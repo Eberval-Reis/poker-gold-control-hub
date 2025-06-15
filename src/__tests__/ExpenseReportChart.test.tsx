@@ -1,8 +1,8 @@
-
 // Vitest Testing Library ambient types
 import { describe, it, expect } from "vitest";
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
+import { screen } from "@testing-library/dom";
 import ExpenseReportChart from "@/components/report/ExpenseReportChart";
 
 describe("ExpenseReportChart", () => {
@@ -24,4 +24,3 @@ describe("ExpenseReportChart", () => {
     expect(screen.getByText(/Alimentação/i)).toBeInTheDocument();
   });
 });
-
