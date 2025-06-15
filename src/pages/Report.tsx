@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, TrendingUp, Calendar, DollarSign, Trophy } from 'lucide-react';
@@ -44,151 +45,150 @@ const Report = () => {
         <p className="text-gray-600">Gere relatórios detalhados sobre seu desempenho</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Report Configuration */}
-        <div className="lg:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>Configurações do Relatório</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Tipo de Relatório</label>
-                <Select value={reportType} onValueChange={(value) => setReportType(value as ReportType)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="performance">Desempenho em Torneios</SelectItem>
-                    <SelectItem value="financial">Análise Financeira</SelectItem>
-                    <SelectItem value="expenses">Relatório de Despesas</SelectItem>
-                    <SelectItem value="roi">Análise de ROI</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+      {/* Report Configuration in horizontal flex */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Configurações do Relatório</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form
+            className="flex flex-col md:flex-row md:items-end md:gap-6 gap-4 w-full"
+            onSubmit={e => {
+              e.preventDefault();
+              handleGenerateReport();
+            }}
+          >
+            <div className="flex flex-col md:w-56">
+              <label className="text-sm font-medium mb-2 block">Tipo de Relatório</label>
+              <Select value={reportType} onValueChange={(value) => setReportType(value as ReportType)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="performance">Desempenho em Torneios</SelectItem>
+                  <SelectItem value="financial">Análise Financeira</SelectItem>
+                  <SelectItem value="expenses">Relatório de Despesas</SelectItem>
+                  <SelectItem value="roi">Análise de ROI</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex flex-col md:w-44">
+              <label className="text-sm font-medium mb-2 block">Período</label>
+              <Select value={period} onValueChange={(value) => setPeriod(value as PeriodType)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="week">Esta Semana</SelectItem>
+                  <SelectItem value="month">Este Mês</SelectItem>
+                  <SelectItem value="quarter">Este Trimestre</SelectItem>
+                  <SelectItem value="year">Este Ano</SelectItem>
+                  <SelectItem value="custom">Período Personalizado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {period === 'custom' && (
+              <>
+                <div className="flex flex-col md:w-44">
+                  <label className="text-sm font-medium mb-2 block">Data Inicial</label>
+                  <DatePicker 
+                    date={startDate}
+                    onDateChange={setStartDate}
+                    placeholder="Selecione a data inicial"
+                  />
+                </div>
+                <div className="flex flex-col md:w-44">
+                  <label className="text-sm font-medium mb-2 block">Data Final</label>
+                  <DatePicker 
+                    date={endDate}
+                    onDateChange={setEndDate}
+                    placeholder="Selecione a data final"
+                  />
+                </div>
+              </>
+            )}
+            <Button 
+              type="submit"
+              className="w-full md:w-auto bg-[#d4af37] text-white hover:bg-[#d4af37]/90 mt-2 md:mt-0"
+            >
+              Gerar Relatório
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
 
-              <div>
-                <label className="text-sm font-medium mb-2 block">Período</label>
-                <Select value={period} onValueChange={(value) => setPeriod(value as PeriodType)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="week">Esta Semana</SelectItem>
-                    <SelectItem value="month">Este Mês</SelectItem>
-                    <SelectItem value="quarter">Este Trimestre</SelectItem>
-                    <SelectItem value="year">Este Ano</SelectItem>
-                    <SelectItem value="custom">Período Personalizado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {period === 'custom' && (
+      {/* Report Preview - now full width */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Prévia do Relatório</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {reportReady ? (
+            <div className="space-y-4">
+              {reportType === "expenses" ? (
                 <>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Data Inicial</label>
-                    <DatePicker 
-                      date={startDate}
-                      onDateChange={setStartDate}
-                      placeholder="Selecione a data inicial"
-                    />
+                  <h3 className="text-lg font-semibold mb-2 text-poker-text-dark">
+                    Relatório de Despesas
+                  </h3>
+                  <div className="flex flex-col md:flex-row gap-8">
+                    <div className="w-full md:w-1/2">
+                      <ExpenseReportChart data={reportData.expenseSumByCategory} />
+                    </div>
+                    <div className="w-full md:w-1/2">
+                      <ExpenseReportTable expenses={reportData.expenses} />
+                    </div>
                   </div>
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Data Final</label>
-                    <DatePicker 
-                      date={endDate}
-                      onDateChange={setEndDate}
-                      placeholder="Selecione a data final"
-                    />
+                  <div className="text-xs text-muted-foreground mt-3 text-right">
+                    Período: {reportData.start.toLocaleDateString()} a {reportData.end.toLocaleDateString()}
                   </div>
                 </>
-              )}
-
-              <Button 
-                onClick={handleGenerateReport}
-                className="w-full bg-[#d4af37] text-white hover:bg-[#d4af37]/90"
-              >
-                Gerar Relatório
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Report Preview */}
-        <div className="lg:col-span-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>Prévia do Relatório</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {reportReady ? (
-                <div className="space-y-4">
-                  {reportType === "expenses" ? (
-                    <>
-                      <h3 className="text-lg font-semibold mb-2 text-poker-text-dark">
-                        Relatório de Despesas
-                      </h3>
-                      <div className="flex flex-col md:flex-row gap-8">
-                        <div className="w-full md:w-1/2">
-                          <ExpenseReportChart data={reportData.expenseSumByCategory} />
-                        </div>
-                        <div className="w-full md:w-1/2">
-                          <ExpenseReportTable expenses={reportData.expenses} />
-                        </div>
-                      </div>
-                      <div className="text-xs text-muted-foreground mt-3 text-right">
-                        Período: {reportData.start.toLocaleDateString()} a {reportData.end.toLocaleDateString()}
-                      </div>
-                    </>
-                  ) : reportType === "performance" ? (
-                    <PerformanceReportPreview
-                      performances={reportData.performances}
-                      periodRange={{ start: reportData.start, end: reportData.end }}
-                    />
-                  ) : reportType === "financial" ? (
-                    <FinancialReportPreview
-                      performances={reportData.performances}
-                      expenses={reportData.expenses}
-                      periodRange={{ start: reportData.start, end: reportData.end }}
-                    />
-                  ) : reportType === "roi" ? (
-                    <RoiReportPreview
-                      performances={reportData.performances}
-                      expenses={reportData.expenses}
-                      periodRange={{ start: reportData.start, end: reportData.end }}
-                    />
-                  ) : (
-                    <div className="py-12 text-center text-muted-foreground">
-                      Relatório para este tipo ainda não implementado.
-                    </div>
-                  )}
-                  {reportData.loading && (
-                    <div className="flex items-center justify-center gap-2 text-yellow-700">
-                      <span className="animate-spin h-5 w-5 rounded-full border-2 border-current border-t-transparent"></span>
-                      Carregando dados do relatório...
-                    </div>
-                  )}
-                  {reportData.error && (
-                    <div className="text-red-600 py-4">
-                      Erro ao carregar dados do relatório: {String(reportData.error)}
-                    </div>
-                  )}
-                </div>
+              ) : reportType === "performance" ? (
+                <PerformanceReportPreview
+                  performances={reportData.performances}
+                  periodRange={{ start: reportData.start, end: reportData.end }}
+                />
+              ) : reportType === "financial" ? (
+                <FinancialReportPreview
+                  performances={reportData.performances}
+                  expenses={reportData.expenses}
+                  periodRange={{ start: reportData.start, end: reportData.end }}
+                />
+              ) : reportType === "roi" ? (
+                <RoiReportPreview
+                  performances={reportData.performances}
+                  expenses={reportData.expenses}
+                  periodRange={{ start: reportData.start, end: reportData.end }}
+                />
               ) : (
-                <div className="text-center py-12">
-                  <FileText className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Selecione as configurações e gere seu relatório
-                  </h3>
-                  <p className="text-gray-500">
-                    O relatório será exibido aqui após a geração
-                  </p>
+                <div className="py-12 text-center text-muted-foreground">
+                  Relatório para este tipo ainda não implementado.
                 </div>
               )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+              {reportData.loading && (
+                <div className="flex items-center justify-center gap-2 text-yellow-700">
+                  <span className="animate-spin h-5 w-5 rounded-full border-2 border-current border-t-transparent"></span>
+                  Carregando dados do relatório...
+                </div>
+              )}
+              {reportData.error && (
+                <div className="text-red-600 py-4">
+                  Erro ao carregar dados do relatório: {String(reportData.error)}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <FileText className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                Selecione as configurações e gere seu relatório
+              </h3>
+              <p className="text-gray-500">
+                O relatório será exibido aqui após a geração
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Quick Reports */}
       <div className="mt-8">
@@ -232,3 +232,4 @@ const Report = () => {
 };
 
 export default Report;
+
