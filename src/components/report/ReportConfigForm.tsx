@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,6 +15,7 @@ interface ReportConfigFormProps {
   endDate?: Date;
   setEndDate: (date?: Date) => void;
   onGenerate: () => void;
+  formError?: string | null;
 }
 
 const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
@@ -27,7 +27,8 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
   setStartDate,
   endDate,
   setEndDate,
-  onGenerate
+  onGenerate,
+  formError,
 }) => {
   return (
     <Card className="mb-6">
@@ -95,6 +96,11 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
             Gerar Relatório
           </Button>
         </form>
+        {formError && (
+          <div className="text-red-600 mt-2 font-medium">
+            {formError}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

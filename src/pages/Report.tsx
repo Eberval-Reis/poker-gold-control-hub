@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, TrendingUp, Calendar, DollarSign, Trophy } from 'lucide-react';
@@ -6,6 +7,44 @@ import ReportConfigForm from "@/components/report/ReportConfigForm";
 import ReportPreview from "@/components/report/ReportPreview";
 import { useReportData, ReportType, PeriodType } from "@/hooks/useReportData";
 
+const quickReports: {
+  title: string,
+  description: string,
+  icon: JSX.Element,
+  reportType: ReportType,
+  period: PeriodType,
+  extra?: { startDate?: Date, endDate?: Date },
+}[] = [
+  {
+    title: "ROI Mensal",
+    description: "Análise do retorno sobre investimento",
+    icon: <TrendingUp className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+    reportType: "roi",
+    period: "month",
+  },
+  {
+    title: "Atividade Semanal",
+    description: "Torneios jogados na semana",
+    icon: <Calendar className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+    reportType: "performance",
+    period: "week",
+  },
+  {
+    title: "Despesas Mensais",
+    description: "Gastos relacionados ao poker",
+    icon: <DollarSign className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+    reportType: "expenses",
+    period: "month",
+  },
+  {
+    title: "Melhores Resultados",
+    description: "Top 10 performances",
+    icon: <Trophy className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+    reportType: "performance",
+    period: "month",
+  },
+];
+
 const Report = () => {
   const navigate = useNavigate();
   const [period, setPeriod] = useState<PeriodType>("month");
@@ -13,6 +52,7 @@ const Report = () => {
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [reportReady, setReportReady] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
 
   const reportData = useReportData({
     reportType,
@@ -22,7 +62,37 @@ const Report = () => {
   });
 
   const handleGenerateReport = () => {
+    // Validação para período customizado
+    if (period === "custom") {
+      if (!startDate || !endDate) {
+        setFormError("Selecione datas inicial e final.");
+        setReportReady(false);
+        return;
+      }
+      if (startDate > endDate) {
+        setFormError("A data inicial não pode ser após a final.");
+        setReportReady(false);
+        return;
+      }
+    }
+    setFormError(null);
     setReportReady(true);
+  };
+
+  const handleQuickReport = (item: typeof quickReports[0]) => {
+    setPeriod(item.period);
+    setReportType(item.reportType);
+    // Limpa datas se não for custom
+    if (item.period !== "custom") {
+      setStartDate(undefined);
+      setEndDate(undefined);
+    } else {
+      setStartDate(item.extra?.startDate);
+      setEndDate(item.extra?.endDate);
+    }
+    setFormError(null);
+    setReportReady(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
@@ -46,6 +116,7 @@ const Report = () => {
         endDate={endDate}
         setEndDate={setEndDate}
         onGenerate={handleGenerateReport}
+        formError={formError}
       />
 
       {/* Report Preview */}
@@ -66,34 +137,24 @@ const Report = () => {
       <div className="mt-8">
         <h2 className="text-lg font-semibold mb-4">Relatórios Rápidos</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="cursor-pointer hover:shadow-md transition-shadow">
-            <CardContent className="p-4 text-center">
-              <TrendingUp className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
-              <h3 className="font-medium">ROI Mensal</h3>
-              <p className="text-sm text-gray-500">Análise do retorno sobre investimento</p>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:shadow-md transition-shadow">
-            <CardContent className="p-4 text-center">
-              <Calendar className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
-              <h3 className="font-medium">Atividade Semanal</h3>
-              <p className="text-sm text-gray-500">Torneios jogados na semana</p>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:shadow-md transition-shadow">
-            <CardContent className="p-4 text-center">
-              <DollarSign className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
-              <h3 className="font-medium">Despesas Mensais</h3>
-              <p className="text-sm text-gray-500">Gastos relacionados ao poker</p>
-            </CardContent>
-          </Card>
-          <Card className="cursor-pointer hover:shadow-md transition-shadow">
-            <CardContent className="p-4 text-center">
-              <Trophy className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />
-              <h3 className="font-medium">Melhores Resultados</h3>
-              <p className="text-sm text-gray-500">Top 10 performances</p>
-            </CardContent>
-          </Card>
+          {quickReports.map((item, idx) => (
+            <Card
+              key={item.title}
+              className="cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => handleQuickReport(item)}
+              tabIndex={0}
+              onKeyDown={e => {
+                if (e.key === "Enter" || e.key === " ") handleQuickReport(item);
+              }}
+              aria-label={`Abrir relatório rápido: ${item.title}`}
+            >
+              <CardContent className="p-4 text-center">
+                {item.icon}
+                <h3 className="font-medium">{item.title}</h3>
+                <p className="text-sm text-gray-500">{item.description}</p>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     </div>
