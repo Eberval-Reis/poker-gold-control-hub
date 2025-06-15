@@ -1,3 +1,4 @@
+
 import React from "react";
 
 interface Expense {
@@ -5,7 +6,6 @@ interface Expense {
   type: string;
   amount: number;
   date: string;
-  description?: string;
   tournaments?: { name?: string };
 }
 
@@ -24,20 +24,23 @@ const ExpenseReportTable: React.FC<ExpenseReportTableProps> = ({ expenses }) => 
         <thead>
           <tr className="bg-gray-100">
             <th className="px-4 py-2 text-left">Data</th>
-            <th className="px-4 py-2 text-left">Categoria</th>
-            <th className="px-4 py-2 text-left">Descrição</th>
-            <th className="px-4 py-2 text-right">Valor (R$)</th>
             <th className="px-4 py-2 text-left">Torneio</th>
+            <th className="px-4 py-2 text-left">Categoria</th>
+            <th className="px-4 py-2 text-right">Valor (R$)</th>
           </tr>
         </thead>
         <tbody>
           {expenses.map((exp) => (
             <tr key={exp.id} className="even:bg-gray-50">
-              <td className="px-4 py-2">{exp.date}</td>
-              <td className="px-4 py-2">{exp.type}</td>
-              <td className="px-4 py-2">{exp.description || "-"}</td>
-              <td className="px-4 py-2 text-right">{Number(exp.amount).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</td>
+              <td className="px-4 py-2">
+                {/* Exibe a data no formato dd/mm/yyyy */}
+                {exp.date
+                  ? new Date(exp.date).toLocaleDateString("pt-BR")
+                  : "-"}
+              </td>
               <td className="px-4 py-2">{exp.tournaments?.name || "-"}</td>
+              <td className="px-4 py-2">{exp.type}</td>
+              <td className="px-4 py-2 text-right">{Number(exp.amount).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</td>
             </tr>
           ))}
         </tbody>
@@ -46,3 +49,4 @@ const ExpenseReportTable: React.FC<ExpenseReportTableProps> = ({ expenses }) => 
   );
 };
 export default ExpenseReportTable;
+
