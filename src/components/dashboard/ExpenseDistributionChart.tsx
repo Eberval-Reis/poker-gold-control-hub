@@ -1,19 +1,15 @@
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts';
 
 interface ExpenseDistributionChartProps {
   data: { category: string; amount: number }[];
 }
 
-// Mantive as cores
+// Mesmas cores do gráfico de premiação
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#d4af37'];
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    notation: 'compact'
-  }).format(value);
+  return `R$ ${Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 };
 
 const ExpenseDistributionChart = ({ data }: ExpenseDistributionChartProps) => {
@@ -24,34 +20,38 @@ const ExpenseDistributionChart = ({ data }: ExpenseDistributionChartProps) => {
         {data.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
-              data={data}
               layout="vertical"
-              margin={{ top: 10, right: 30, left: 150, bottom: 10 }} // aumenta o left para mais espaço nos labels
-              barSize={32}
+              data={data}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }} // Igual ao gráfico de premiação
+              barSize={38}
             >
+              <CartesianGrid strokeDasharray="3 3" horizontal={false} />
               <XAxis
                 type="number"
                 tickFormatter={formatCurrency}
+                tick={{ fill: "#4B5563", fontSize: 15 }}
                 axisLine={false}
-                tick={{ fontSize: 15, fill: "#4B5563" }}
+                tickLine={false}
               />
               <YAxis
                 dataKey="category"
                 type="category"
-                scale="band"
-                width={140} // mais espaço para texto da categoria
-                tick={{ fontSize: 16, fill: "#374151", fontWeight: 600 }}
+                width={120}
+                tick={{ fontSize: 14, fill: "#374151" }}
                 axisLine={false}
+                tickLine={false}
               />
               <Tooltip
-                formatter={(value: number) =>
-                  [formatCurrency(value), "Total acumulado"]
-                }
+                formatter={(value) => [formatCurrency(value as number), "Total acumulado"]}
+                labelFormatter={label => label}
                 wrapperClassName="!rounded-lg !shadow"
               />
-              <Bar dataKey="amount" radius={[6, 6, 6, 6]}>
+              <Bar dataKey="amount" minPointSize={2} radius={[6, 6, 6, 6]}>
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Bar>
             </BarChart>
