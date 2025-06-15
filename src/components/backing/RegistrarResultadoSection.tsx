@@ -90,86 +90,91 @@ const RegistrarResultadoSection = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-lg">
-      <h2 className="text-xl font-semibold">Registrar Resultado</h2>
-
-      {loadingOffers ? (
-        <div className="py-8 text-center">Carregando ofertas abertas...</div>
-      ) : offers.length === 0 ? (
-        <div className="bg-muted border border-dashed rounded p-6 text-center space-y-2">
-          <div className="font-bold text-muted-foreground">Nenhuma oferta de backing aberta.</div>
-          <div className="text-muted-foreground text-sm">
-            Cadastre uma oferta de backing antes de registrar um resultado.
+    <div className="w-full min-h-[80vh] flex justify-center items-center bg-gray-50 py-10">
+      <div className="w-full max-w-md bg-white rounded-lg shadow-sm p-8 border border-gray-100">
+        <h2 className="text-xl font-semibold mb-7 text-center">Registrar Resultado</h2>
+        {loadingOffers ? (
+          <div className="py-8 text-center">Carregando ofertas abertas...</div>
+        ) : offers.length === 0 ? (
+          <div className="bg-muted border border-dashed rounded p-6 text-center space-y-2">
+            <div className="font-bold text-muted-foreground">Nenhuma oferta de backing aberta.</div>
+            <div className="text-muted-foreground text-sm">
+              Cadastre uma oferta de backing antes de registrar um resultado.
+            </div>
+            <a href="#tab-cadastro" className="inline-block mt-3">
+              <Button variant="outline">Cadastrar Torneio/Oferta</Button>
+            </a>
           </div>
-          <a href="#tab-cadastro" className="inline-block mt-3">
-            <Button variant="outline">Cadastrar Torneio/Oferta</Button>
-          </a>
-        </div>
-      ) : (
-        <form className="space-y-4" onSubmit={e => e.preventDefault()}>
-          <div>
-            <label className="block text-poker-gold font-semibold mb-1">Selecione a oferta</label>
-            <select
-              value={selectedOfferId ?? ""}
-              onChange={e => setSelectedOfferId(e.target.value)}
-              className="w-full rounded p-2 text-black bg-background border border-input outline-none"
+        ) : (
+          <form className="space-y-5" onSubmit={e => e.preventDefault()}>
+            <div className="flex flex-col gap-2">
+              <label className="block text-poker-gold font-semibold mb-1">
+                Selecione a oferta
+              </label>
+              <select
+                value={selectedOfferId ?? ""}
+                onChange={e => setSelectedOfferId(e.target.value)}
+                className="w-full rounded border border-input p-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-poker-gold focus-visible:ring-offset-2 bg-[#f7f8fa] text-black"
+              >
+                {offers.map(o => (
+                  <option key={o.id} value={o.id}>
+                    {/* Ajuste para moeda BR */}
+                    {o.player_name} — {new Date(o.tournament_date).toLocaleDateString()} (R$ {Number(o.buy_in_amount).toLocaleString("pt-BR", {minimumFractionDigits:2})})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="block text-poker-gold font-semibold mb-1">
+                Status
+              </label>
+              <select
+                value={status}
+                onChange={e => setStatus(e.target.value)}
+                className="w-full rounded border border-input p-2 text-base ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-poker-gold focus-visible:ring-offset-2 bg-[#f7f8fa] text-black"
+              >
+                <option value="busto">Busto</option>
+                <option value="itm">ITM</option>
+                <option value="ft">Final Table</option>
+                <option value="campeao">Campeão</option>
+              </select>
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="block text-poker-gold font-semibold mb-1">
+                Prêmio ganho (R$)
+              </label>
+              <input
+                type="number"
+                value={prize}
+                onChange={e => setPrize(Number(e.target.value))}
+                className="w-full p-2 rounded border border-input bg-[#f7f8fa] text-base placeholder:text-gray-400"
+                placeholder="Ex: 50000"
+                min={0}
+              />
+            </div>
+            <Button
+              className="bg-poker-gold text-white px-6 py-2 rounded font-bold mt-2 hover:bg-poker-gold/90 transition-all"
+              type="button"
+              onClick={handleSave}
+              disabled={loading || !offer}
             >
-              {offers.map(o => (
-                <option key={o.id} value={o.id}>
-                  {o.player_name} — {new Date(o.tournament_date).toLocaleDateString()} ({o.buy_in_amount?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })})
-                </option>
-              ))}
-            </select>
+              {loading ? "Salvando..." : "Salvar Resultado"}
+            </Button>
+          </form>
+        )}
+        <div className="bg-[#f6f8fa] mt-7 p-4 rounded shadow-inner border border-gray-200">
+          <div>
+            <span className="font-bold">Prêmio líquido: </span>
+            <span>R$ {premLiq.toLocaleString("pt-BR")}</span>
           </div>
           <div>
-            <label className="block text-poker-gold font-semibold mb-1">Status</label>
-            <select
-              value={status}
-              onChange={e => setStatus(e.target.value)}
-              className="w-full rounded p-2 text-black bg-background border border-input outline-none"
-            >
-              <option value="busto">Busto</option>
-              <option value="itm">ITM</option>
-              <option value="ft">Final Table</option>
-              <option value="campeao">Campeão</option>
-            </select>
+            <span className="font-bold">Backers recebem: </span>
+            <span>R$ {backersValor.toLocaleString("pt-BR")}</span>
           </div>
           <div>
-            <label className="block text-poker-gold font-semibold mb-1">
-              Prêmio ganho (R$)
-            </label>
-            <input
-              type="number"
-              value={prize}
-              onChange={e => setPrize(Number(e.target.value))}
-              className="w-full p-2 rounded border border-input bg-background text-base"
-              placeholder="Ex: 50000"
-              min={0}
-            />
+            <span className="font-bold">Cavaleiro recebe: </span>
+            <span>R$ {jogadorValor.toLocaleString("pt-BR")}</span>
           </div>
-          <Button
-            className="mt-4 bg-poker-gold text-white px-6 py-2 rounded hover:bg-poker-gold/90 font-bold"
-            type="button"
-            onClick={handleSave}
-            disabled={loading || !offer}
-          >
-            {loading ? "Salvando..." : "Salvar Resultado"}
-          </Button>
-        </form>
-      )}
-
-      <div className="bg-muted p-4 rounded space-y-2">
-        <div>
-          <span className="font-bold">Prêmio líquido: </span>
-          <span>R$ {premLiq.toLocaleString()}</span>
-        </div>
-        <div>
-          <span className="font-bold">Backers recebem: </span>
-          <span>R$ {backersValor.toLocaleString()}</span>
-        </div>
-        <div>
-          <span className="font-bold">Cavaleiro recebe: </span>
-          <span>R$ {jogadorValor.toLocaleString()}</span>
         </div>
       </div>
     </div>
