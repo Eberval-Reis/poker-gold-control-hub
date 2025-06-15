@@ -90,6 +90,9 @@ export function useDashboardData({
 
     console.log("Processando performances no hook:", performances);
 
+    // LOG: Mostra todas as despesas recebidas
+    console.log("Despesas recebidas para processamento:", expenses);
+
     const totalTournaments = performances.length;
     const totalProfit = performances.reduce((sum, p) => {
       const buyin = Number(p.buyin_amount || 0);
@@ -162,12 +165,14 @@ export function useDashboardData({
       expenseSum[key] = (expenseSum[key] || 0) + Number(exp.amount);
     });
 
-    // 2. Gera lista completa traduzida (zera se não houver valor)
+    // LOG: Soma de despesas por categoria (antes da formatação final)
+    console.log("Soma por categoria do tipo (chave original):", expenseSum);
+
+    // 2. Gera lista completa traduzida (não filtra por valor)
     const expenseData = CATEGORY_KEYS.map((key) => ({
       category: EXPENSE_CATEGORY_MAP[key],
       amount: expenseSum[key] ?? 0,
-    })).filter(e => e.amount > 0); // Se quiser sempre mostrar até as de valor zero, tire esse filtro
-
+    }));
     // 3. Inclui qualquer categoria extra encontrada nos dados mas não no padrão
     Object.keys(expenseSum).forEach((key) => {
       if (!CATEGORY_KEYS.includes(key)) {
@@ -177,6 +182,9 @@ export function useDashboardData({
         });
       }
     });
+
+    // LOG: Dados finais para o gráfico de despesas (deve conter todas categorias)
+    console.log("Dados finais do gráfico de despesas:", expenseData);
 
     // Recentes (últimos torneios/performance para tabela)
     const recentTournaments = performances.slice(0, 5);
@@ -217,7 +225,7 @@ export function useDashboardData({
       itmRate,
       monthlyData,
       tournamentPrizeData, // Nova propriedade
-      expenseData,
+      expenseData, // Atualizado
       recentTournaments,
       tournamentsTrend: totalTournaments - prevTotalTournaments,
       profitTrend: totalProfit - prevProfit,

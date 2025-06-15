@@ -58,15 +58,22 @@ const Index = () => {
         .order("date", { ascending: false });
 
       if (selectedYear) {
+        // Busca todas despesas entre 1 de janeiro até 31 de dezembro do ano selecionado
         query = query.gte("date", `${selectedYear}-01-01`).lte("date", `${selectedYear}-12-31`);
       }
 
+      // Não filtra por mês aqui! O hook já computa/agrega corretamente com base na lista completa do ano
+      // Se quiser filtrar apenas despesas de um mês do ano, descomente as linhas abaixo:
+      /*
       if (selectedMonth) {
         const month = String(selectedMonth).padStart(2, '0');
         query = query.gte("date", `${selectedYear}-${month}-01`).lte("date", `${selectedYear}-${month}-31`);
       }
+      */
 
       const { data } = await query;
+      // LOG: Despesas retornadas da query
+      console.log("Despesas carregadas do banco:", data);
       return data || [];
     },
   });
