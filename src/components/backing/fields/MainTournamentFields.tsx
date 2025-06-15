@@ -38,9 +38,9 @@ export default function MainTournamentFields({
   setDate
 }: MainTournamentFieldsProps) {
   return (
-    <div className="flex flex-col gap-4 md:flex-row md:gap-6">
+    <div className="flex flex-col gap-y-4 gap-x-6 lg:flex-row">
       {/* Select Evento da Agenda */}
-      <div className="flex-1 min-w-[180px]">
+      <div className="w-full">
         <label className="block text-poker-gold font-semibold mb-1">
           Evento da Agenda
         </label>
@@ -82,7 +82,7 @@ export default function MainTournamentFields({
         </Select>
       </div>
       {/* Select Nome do Torneio */}
-      <div className="flex-1 min-w-[180px]">
+      <div className="w-full">
         <label className="block text-poker-gold font-semibold mb-1">
           Nome do Torneio *
         </label>
@@ -105,7 +105,8 @@ export default function MainTournamentFields({
           </SelectContent>
         </Select>
       </div>
-      <div className="flex-1 min-w-[150px]">
+      {/* Buy-in */}
+      <div className="w-full">
         <label className="block text-poker-gold font-semibold mb-1">
           Buy-in (R$) *
         </label>
@@ -119,7 +120,8 @@ export default function MainTournamentFields({
           onChange={e => setBuyIn(e.target.value)}
         />
       </div>
-      <div className="flex-1 min-w-[140px]">
+      {/* Data */}
+      <div className="w-full">
         <label className="block text-poker-gold font-semibold mb-1">
           Data *
         </label>
