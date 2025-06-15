@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -5,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 interface MetricCardProps {
   title: string;
   value: string | number;
-  icon: string;
+  icon: React.ReactNode; // Agora recebendo o ícone como elemento, não string!
   trend?: number;
   color?: "green" | "red";
   description?: string;
@@ -22,7 +23,6 @@ const MetricCard: React.FC<MetricCardProps> = React.memo(({
   description,
   loading = false
 }) => {
-  // Você pode adicionar visualização de "trend" aqui futuramente, por exemplo, setas para cima ou baixo
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-6">
@@ -35,7 +35,7 @@ const MetricCard: React.FC<MetricCardProps> = React.memo(({
         ) : (
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
-              {/* Aqui os ícones podem ser melhorados usando uma factory */}
+              {/* Agora exibe APENAS o ícone visual, sem texto tipo "trophy" */}
               <span className="inline-flex">{icon}</span>
               <span className="text-sm font-medium text-muted-foreground">{title}</span>
               {typeof trend === "number" && (
@@ -55,3 +55,4 @@ const MetricCard: React.FC<MetricCardProps> = React.memo(({
 
 MetricCard.displayName = "MetricCard";
 export default MetricCard;
+
