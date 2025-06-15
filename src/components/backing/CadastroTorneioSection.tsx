@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Pen } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
@@ -14,6 +13,9 @@ import { useAgendaEventList } from "@/hooks/useAgendaEventList";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import PlayerInfoFields from "./fields/PlayerInfoFields";
+import MainTournamentFields from "./fields/MainTournamentFields";
+import CavFields from "./fields/CavFields";
 
 const CadastroTorneioSection = () => {
   // Estados dos campos de formulário
@@ -100,115 +102,25 @@ const CadastroTorneioSection = () => {
     <div className="space-y-6 max-w-3xl">
       <h2 className="text-xl font-semibold">Cadastro do Torneio</h2>
       <form className="space-y-4" onSubmit={handleSalvarTorneio}>
-        {/* Linha dos campos principais */}
-        <div className="flex flex-col gap-4 md:flex-row md:gap-6">
-          {/* Select Evento da Agenda */}
-          <div className="flex-1 min-w-[180px]">
-            <label className="block text-poker-gold font-semibold mb-1">
-              Evento da Agenda
-            </label>
-            <Select
-              value={selectedEvento}
-              onValueChange={setSelectedEvento}
-              disabled={loadingAgenda}
-            >
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={loadingAgenda ? "Carregando..." : "Selecione..."}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {agendaEvents.length === 0 && !loadingAgenda && (
-                  <div className="px-4 py-2 text-muted-foreground text-sm">
-                    Nenhum evento encontrado
-                  </div>
-                )}
-                {agendaEvents.map((ev) => (
-                  <div key={ev.id} className="flex items-center justify-between pr-1">
-                    <SelectItem value={ev.id} className="flex-1">
-                      {ev.name}
-                    </SelectItem>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="text-poker-gold ml-1"
-                      title="Editar evento"
-                      onClick={(e) => { e.stopPropagation(); handleEditClick(ev.id, ev.name); }}
-                      tabIndex={-1}
-                    >
-                      <Pen size={16} />
-                    </Button>
-                  </div>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          {/* Select Nome do Torneio */}
-          <div className="flex-1 min-w-[180px]">
-            <label className="block text-poker-gold font-semibold mb-1">
-              Nome do Torneio *
-            </label>
-            <Select
-              value={selectedTorneio}
-              onValueChange={setSelectedTorneio}
-              disabled={loadingTorneios}
-            >
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={loadingTorneios ? "Carregando..." : "Selecione..."}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {torneios.map((torneio) => (
-                  <SelectItem key={torneio.id} value={torneio.id}>
-                    {torneio.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex-1 min-w-[150px]">
-            <label className="block text-poker-gold font-semibold mb-1">
-              Buy-in (R$) *
-            </label>
-            <input
-              required
-              type="number"
-              step="0.01"
-              className="w-full p-2 rounded border border-input bg-background text-base"
-              placeholder="Valor do buy-in"
-              value={buyIn}
-              onChange={e => setBuyIn(e.target.value)}
-            />
-          </div>
-          <div className="flex-1 min-w-[140px]">
-            <label className="block text-poker-gold font-semibold mb-1">
-              Data *
-            </label>
-            <input
-              type="date"
-              required
-              className="w-full p-2 rounded border border-input bg-background text-base"
-              value={date}
-              onChange={e => setDate(e.target.value)}
-            />
-          </div>
-        </div>
-        <div>
-          <label className="block text-poker-gold font-semibold mb-1">
-            Nome do Jogador *
-          </label>
-          <input
-            type="text"
-            required
-            className="w-full p-2 rounded border border-input bg-background text-base"
-            placeholder="Quem será financiado"
-            value={playerName}
-            onChange={e => setPlayerName(e.target.value)}
-          />
-        </div>
-        {/* Switch e grupo de cavalagem */}
+
+        <MainTournamentFields
+          selectedEvento={selectedEvento}
+          setSelectedEvento={setSelectedEvento}
+          agendaEvents={agendaEvents}
+          loadingAgenda={loadingAgenda}
+          onEditClick={handleEditClick}
+          selectedTorneio={selectedTorneio}
+          setSelectedTorneio={setSelectedTorneio}
+          torneios={torneios}
+          loadingTorneios={loadingTorneios}
+          buyIn={buyIn}
+          setBuyIn={setBuyIn}
+          date={date}
+          setDate={setDate}
+        />
+
+        <PlayerInfoFields playerName={playerName} setPlayerName={setPlayerName} />
+
         <div className="flex items-center gap-3 mt-3">
           <Switch checked={cavEnable} onCheckedChange={setCavEnable} />
           <span className="font-medium text-gray-800">
@@ -216,38 +128,7 @@ const CadastroTorneioSection = () => {
           </span>
         </div>
         {cavEnable && (
-          <div className="mt-4 p-4 bg-muted rounded-lg flex gap-4 flex-col md:flex-row">
-            <div className="flex-1">
-              <label className="block text-poker-gold font-semibold mb-1">
-                % Máxima para Venda
-              </label>
-              <input
-                type="number"
-                required
-                min={5}
-                max={80}
-                className="w-full p-2 rounded border border-input bg-background text-base"
-                placeholder="Ex: 80"
-                value={maxPercent}
-                onChange={e => setMaxPercent(e.target.value)}
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-poker-gold font-semibold mb-1">
-                Mark-up Padrão
-              </label>
-              <input
-                type="number"
-                required
-                min={1}
-                step="0.01"
-                className="w-full p-2 rounded border border-input bg-background text-base"
-                placeholder="Ex: 1.5"
-                value={markup}
-                onChange={e => setMarkup(e.target.value)}
-              />
-            </div>
-          </div>
+          <CavFields maxPercent={maxPercent} setMaxPercent={setMaxPercent} markup={markup} setMarkup={setMarkup} />
         )}
         <div className="flex gap-3 mt-4">
           <button
