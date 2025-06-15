@@ -99,10 +99,9 @@ const CadastroTorneioSection = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-3xl w-full mx-auto px-2 overflow-x-hidden">
       <h2 className="text-xl font-semibold">Cadastro do Torneio</h2>
-      <form className="space-y-4" onSubmit={handleSalvarTorneio}>
-
+      <form className="space-y-4" onSubmit={handleSalvarTorneio} style={{ maxWidth: '100%', width: '100%' }}>
         <MainTournamentFields
           selectedEvento={selectedEvento}
           setSelectedEvento={setSelectedEvento}
@@ -121,7 +120,7 @@ const CadastroTorneioSection = () => {
 
         <PlayerInfoFields playerName={playerName} setPlayerName={setPlayerName} />
 
-        <div className="flex items-center gap-3 mt-3">
+        <div className="flex items-center gap-3 mt-3 flex-wrap">
           <Switch checked={cavEnable} onCheckedChange={setCavEnable} />
           <span className="font-medium text-gray-800">
             Habilitar Cavalagem?
@@ -132,7 +131,7 @@ const CadastroTorneioSection = () => {
         )}
         <div className="flex gap-3 mt-4">
           <button
-            className="bg-poker-gold text-white px-6 py-2 rounded hover:bg-poker-gold/90 font-bold"
+            className="bg-poker-gold text-white px-6 py-2 rounded hover:bg-poker-gold/90 font-bold w-full sm:w-auto"
             type="submit"
             disabled={saving}
           >
@@ -143,7 +142,7 @@ const CadastroTorneioSection = () => {
       {/* Modal simples de edição */}
       {editModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-lg p-6 w-[90vw] max-w-xs shadow space-y-3 relative">
+          <div className="bg-white rounded-lg p-6 w-[94vw] max-w-xs shadow space-y-3 relative">
             <button
               className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
               type="button"
