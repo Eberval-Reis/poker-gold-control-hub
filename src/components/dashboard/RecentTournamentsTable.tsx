@@ -19,6 +19,7 @@ const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {
       <table className="w-full">
         <thead>
           <tr className="border-b">
+            <th className="text-left p-2">Torneio</th>
             <th className="text-left p-2">Data</th>
             <th className="text-left p-2">Buy-in</th>
             <th className="text-left p-2">Rebuy</th>
@@ -36,8 +37,10 @@ const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {
               const invested = buyin + rebuy + addon;
               const prize = Number(p.prize_amount || 0);
               const result = prize - invested;
+              const tournamentName = p.tournaments?.name || 'Torneio não especificado';
               return (
                 <tr key={p.id || idx} className="hover:bg-gray-50">
+                  <td className="p-2 text-sm">{tournamentName}</td>
                   <td className="p-2 text-sm">{p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR') : "-"}</td>
                   <td className="p-2 text-sm">{formatCurrency(buyin)}</td>
                   <td className="p-2 text-sm">{formatCurrency(rebuy)}</td>
@@ -60,7 +63,7 @@ const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {
             })
           ) : (
             <tr>
-              <td colSpan={6} className="p-4 text-center text-gray-500">
+              <td colSpan={7} className="p-4 text-center text-gray-500">
                 Nenhum registro de performance encontrado
               </td>
             </tr>
@@ -72,3 +75,4 @@ const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {
 };
 
 export default RecentTournamentsTable;
+
