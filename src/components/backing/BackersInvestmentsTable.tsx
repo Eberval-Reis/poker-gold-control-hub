@@ -45,6 +45,8 @@ interface Investment {
   percentage_bought: number;
   amount_paid: number;
   payment_status: string | null;
+  buy_in_amount?: number;
+  markup_percentage?: number;
 }
 
 interface BackersInvestmentsTableProps {
@@ -99,6 +101,19 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
   const [editing, setEditing] = React.useState<null | Investment>(null);
   const [updating, setUpdating] = React.useState(false);
 
+  // Buscar oferta relacionada ao investimento para o modal de edição
+  function getOfferValues(inv: Investment) {
+    // Aqui pegamos o buy_in e markup do investimento, exemplo usando (offer) se disponível
+    // OBS: Dependerá da estrutura do objeto que chega em investments!
+    // Supondo que a linha "b" tenha offer (ver useBackingInvestments.tsx)
+    // Como estamos apenas passando para o modal, garantimos que as props sejam passadas.
+    const offer = (b: any) => b.offer || b; // b.offer ou b, se já vier direto
+    return (b: any) => ({
+      buy_in_amount: offer(b).buy_in_amount || 0,
+      markup_percentage: offer(b).markup_percentage || 1,
+    });
+  }
+
   // Alternativa: utilize a mutation (por simplicidade faremos simples update direto + reload)
   const { updatePaymentStatus } = useUpdatePaymentStatus();
 
@@ -141,7 +156,18 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
       <EditInvestmentModal
         open={!!editing}
         onOpenChange={(v) => !v && setEditing(null)}
-        investment={editing}
+        investment={
+          editing
+            ? {
+                ...editing,
+                // pegar os valores corretos
+                buy_in_amount: editing.buy_in_amount,
+                markup_percentage: editing.markup_percentage,
+              }
+            : null
+        }
+        buy_in_amount={editing?.buy_in_amount}
+        markup_percentage={editing?.markup_percentage}
         onSubmit={handleEditSubmit}
         isUpdating={updating}
       />
@@ -163,8 +189,11 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {investments.map((b) => {
+          {investments.map((b: any) => {
             const hasPayouts = investmentsWithPayouts[b.id];
+            // Pegue informações do buy_in e markup através de offer (ver fetchBackingInvestments)
+            const buy_in_amount = b.offer?.buy_in_amount ?? 0;
+            const markup_percentage = b.offer?.markup_percentage ?? 1;
 
             return (
               <tr key={b.id} className="border-t last:border-b-0">
@@ -211,13 +240,16 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
                       onClick={
                         hasPayouts
                           ? undefined
-                          : () => setEditing({
-                              id: b.id,
-                              percentage_bought: b.percentage_bought,
-                              amount_paid: b.amount_paid,
-                              payment_status: b.payment_status,
-                              backer_name: b.backer_name,
-                            })
+                          : () =>
+                              setEditing({
+                                id: b.id,
+                                percentage_bought: b.percentage_bought,
+                                amount_paid: b.amount_paid,
+                                payment_status: b.payment_status,
+                                backer_name: b.backer_name,
+                                buy_in_amount, // PROPS ADICIONAIS
+                                markup_percentage,
+                              })
                       }
                     >
                       <Edit size={15} />

@@ -12,12 +12,16 @@ type Investment = {
   percentage_bought: number;
   amount_paid: number;
   payment_status: string | null;
+  buy_in_amount?: number;
+  markup_percentage?: number;
 };
 
 interface EditInvestmentModalProps {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   investment: Investment | null;
+  buy_in_amount?: number;
+  markup_percentage?: number;
   onSubmit: (values: { percentage_bought: number; amount_paid: number; payment_status: string }) => Promise<void>;
   isUpdating: boolean;
 }
@@ -26,6 +30,8 @@ export default function EditInvestmentModal({
   open,
   onOpenChange,
   investment,
+  buy_in_amount,
+  markup_percentage,
   onSubmit,
   isUpdating,
 }: EditInvestmentModalProps) {
@@ -37,16 +43,29 @@ export default function EditInvestmentModal({
     }
   });
 
+  // Recalcula valor pago sempre que percentage_bought mudar
   React.useEffect(() => {
-    // Atualizar valores ao abrir o modal ou investimento mudar
-    if (investment) {
-      reset({
-        percentage_bought: investment.percentage_bought,
-        amount_paid: investment.amount_paid,
-        payment_status: investment.payment_status === "paid"
-      });
-    }
-  }, [investment, reset]);
+    if (!investment || !buy_in_amount || !markup_percentage) return;
+    // Atualiza os campos quando abrir ou mudar investimento
+    reset({
+      percentage_bought: investment.percentage_bought,
+      payment_status: investment.payment_status === "paid",
+      // Valor pago calculado
+      amount_paid: (
+        (buy_in_amount * markup_percentage * investment.percentage_bought) / 100
+      ),
+    });
+  }, [investment, buy_in_amount, markup_percentage, reset]);
+
+  // Recalcula "amount_paid" ao atualizar percentage_bought
+  React.useEffect(() => {
+    const perc = watch("percentage_bought");
+    if (!buy_in_amount || !markup_percentage) return;
+    setValue(
+      "amount_paid",
+      (buy_in_amount * markup_percentage * Number(perc)) / 100
+    );
+  }, [watch("percentage_bought"), buy_in_amount, markup_percentage, setValue]);
 
   if (!investment) return null;
 
@@ -66,7 +85,7 @@ export default function EditInvestmentModal({
           <DialogHeader>
             <DialogTitle>Editar Investimento</DialogTitle>
             <DialogDescription>
-              Altere os campos desejados e clique em Salvar.
+              Altere o % de Ação e o status. O valor pago é calculado automaticamente.
             </DialogDescription>
           </DialogHeader>
           <div>
@@ -84,11 +103,11 @@ export default function EditInvestmentModal({
             <label className="font-semibold text-poker-gold block mb-1">Valor Pago</label>
             <Input
               type="number"
-              min={0}
+              readOnly
               step={0.01}
-              {...register("amount_paid", { required: true, min: 0 })}
-              disabled={isUpdating}
-            />
+              {...register("amount_paid")}
+              disabled
+              />
           </div>
           <div className="flex items-center gap-3 mt-1">
             <Switch
