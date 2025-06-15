@@ -10,6 +10,19 @@ export function useBackerInvestmentDelete() {
 
   const mutation = useMutation({
     mutationFn: async (id: string) => {
+      // Passo extra: checar se existem payouts vinculados
+      const { data: payouts, error: payoutError } = await supabase
+        .from("backer_payouts")
+        .select("id")
+        .eq("backing_investment_id", id);
+
+      if (payoutError) {
+        throw new Error("Erro ao verificar payouts vinculados.");
+      }
+      if (payouts && payouts.length > 0) {
+        throw new Error("Não é possível excluir o investimento: existem payouts vinculados a este investimento.");
+      }
+
       const { error } = await supabase.from("backing_investments").delete().eq("id", id);
       if (error) throw new Error(error.message);
     },
@@ -23,8 +36,10 @@ export function useBackerInvestmentDelete() {
     onError: (error: any) => {
       toast({
         variant: "destructive",
-        title: "Erro ao excluir",
-        description: error?.message ?? "Ocorreu um erro ao excluir o investimento.",
+        title: "Não foi possível excluir",
+        description:
+          error?.message ??
+          "Ocorreu um erro ao excluir o investimento. Verifique se há payouts vinculados.",
       });
     }
   });
