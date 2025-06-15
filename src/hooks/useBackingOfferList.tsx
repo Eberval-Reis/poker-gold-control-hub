@@ -10,20 +10,25 @@ export interface BackingOffer {
   available_percentage: number;
   markup_percentage: number;
   player_name: string;
-  tournament_name: string; // <-- Novo campo
+  tournament_name: string;
+  event_name?: string | null;   // <-- Novo campo opcional (nome do evento)
   status?: string | null;
   created_at?: string;
   updated_at?: string;
 }
 
 export async function fetchBackingOffers() {
-  // Faz JOIN com tournaments para obter o nome do torneio
+  // JOIN tournaments e schedule_events para trazer nome do torneio e nome do evento em um único select
   const { data, error } = await supabase
     .from('backing_offers')
     .select(`
       *,
       tournaments (
-        name
+        name,
+        event_id,
+        schedule_events (
+          name
+        )
       )
     `)
     .eq('status', 'open')
@@ -31,7 +36,7 @@ export async function fetchBackingOffers() {
 
   if (error) throw error;
 
-  // Ajusta o formato dos dados retornados para incluir tournament_name diretamente
+  // Ajuste para incluir tournament_name e event_name diretamente
   const offers: BackingOffer[] = (data ?? []).map((offer: any) => ({
     id: offer.id,
     tournament_id: offer.tournament_id,
@@ -41,6 +46,7 @@ export async function fetchBackingOffers() {
     markup_percentage: offer.markup_percentage,
     player_name: offer.player_name,
     tournament_name: offer.tournaments?.name ?? '',
+    event_name: offer.tournaments?.schedule_events?.name ?? null,
     status: offer.status,
     created_at: offer.created_at,
     updated_at: offer.updated_at,
@@ -55,3 +61,4 @@ export function useBackingOfferList() {
     queryFn: fetchBackingOffers,
   });
 }
+
