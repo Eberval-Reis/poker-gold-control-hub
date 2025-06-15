@@ -21,8 +21,8 @@ const ExpenseReportChart: React.FC<ExpenseReportChartProps> = ({ data }) => {
   }
 
   return (
-    <div className="w-full h-50 flex flex-col items-center">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="flex flex-col items-center justify-center w-full" style={{ minHeight: 220 }}>
+      <ResponsiveContainer width="100%" height={220}>
         <PieChart>
           <Pie
             data={data}
@@ -53,3 +53,4 @@ const ExpenseReportChart: React.FC<ExpenseReportChartProps> = ({ data }) => {
 };
 
 export default ExpenseReportChart;
+
