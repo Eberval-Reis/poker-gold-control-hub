@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import MetricCard from "@/components/dashboard/MetricCard";
@@ -21,7 +20,8 @@ const Index = () => {
         .from("tournament_performance")
         .select(`
           *,
-          tournaments (
+          tournaments!inner (
+            id,
             name
           )
         `)
@@ -36,7 +36,14 @@ const Index = () => {
         query = query.gte("created_at", `${selectedYear}-${month}-01`).lte("created_at", `${selectedYear}-${month}-31`);
       }
 
-      const { data } = await query;
+      const { data, error } = await query;
+      
+      if (error) {
+        console.error("Erro ao buscar performances:", error);
+        return [];
+      }
+      
+      console.log("Performances carregadas:", data);
       return data || [];
     },
   });

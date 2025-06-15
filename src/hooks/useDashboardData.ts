@@ -1,4 +1,3 @@
-
 import { useMemo } from "react";
 
 interface Performance {
@@ -66,6 +65,8 @@ export function useDashboardData({
       };
     }
 
+    console.log("Processando performances no hook:", performances);
+
     const totalTournaments = performances.length;
     const totalProfit = performances.reduce((sum, p) => {
       const buyin = Number(p.buyin_amount || 0);
@@ -113,6 +114,8 @@ export function useDashboardData({
       const tournamentName = p.tournaments?.name || "Torneio não especificado";
       const prize = Number(p.prize_amount || 0);
       
+      console.log(`Processando: ${tournamentName} - Premiação: R$ ${prize}`);
+      
       if (tournamentPrizeMap.has(tournamentName)) {
         tournamentPrizeMap.set(tournamentName, tournamentPrizeMap.get(tournamentName)! + prize);
       } else {
@@ -125,6 +128,8 @@ export function useDashboardData({
       .map(([name, totalPrize]) => ({ month: name, profit: totalPrize }))
       .sort((a, b) => b.profit - a.profit)
       .slice(0, 10); // Limitar aos top 10 torneios
+
+    console.log("Dados finais do gráfico:", tournamentPrizeData);
 
     // Gráfico de despesas por type
     const expenseData = expenses.reduce((acc: { category: string; amount: number }[], expense) => {
