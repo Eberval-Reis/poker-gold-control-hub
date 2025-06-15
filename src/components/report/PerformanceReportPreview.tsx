@@ -1,5 +1,6 @@
 
 import React from "react";
+import PrizeBarChart from "./PrizeBarChart";
 
 interface PerformanceReportPreviewProps {
   performances: any[];
@@ -19,6 +20,7 @@ const PerformanceReportPreview: React.FC<PerformanceReportPreviewProps> = ({
         Torneios jogados no período:{" "}
         <span className="font-bold">{performances.length}</span>
       </div>
+      <PrizeBarChart performances={performances} />
       <div className="bg-muted p-4 rounded text-muted-foreground text-center">
         (Gráficos e análises detalhadas em breve!)
       </div>

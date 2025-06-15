@@ -1,0 +1,63 @@
+
+import React from "react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { ChartContainer } from "@/components/ui/chart";
+
+interface PrizeBarChartProps {
+  performances: any[];
+}
+
+const colors = ['#d4af37', '#57b846', '#0088FE', '#FF8042', '#9259a5'];
+
+const PrizeBarChart: React.FC<PrizeBarChartProps> = ({ performances }) => {
+  if (!performances || performances.length === 0) {
+    return (
+      <div className="text-muted-foreground text-center mb-2">
+        Nenhum torneio no período selecionado.
+      </div>
+    );
+  }
+
+  const data = performances.map((perf: any, idx: number) => ({
+    name: perf.tournaments?.name || `Torneio ${idx + 1}`,
+    prize: Number(perf.prize_amount || 0)
+  }));
+
+  return (
+    <div className="mb-4">
+      <h4 className="font-medium mb-2">Premiação Bruta por Torneio</h4>
+      <ChartContainer config={{ prize: { color: "#d4af37", label: "Premiação (R$)" } }}>
+        <ResponsiveContainer width="100%" height={Math.max(120, data.length * 35)}>
+          <BarChart
+            layout="vertical"
+            data={data}
+            margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+            <XAxis 
+              type="number" 
+              tickFormatter={value => `R$ ${value.toLocaleString('pt-BR')}`}
+            />
+            <YAxis
+              dataKey="name"
+              type="category"
+              width={120}
+              tick={{ fontSize: 12 }}
+            />
+            <Tooltip
+              formatter={value => [`R$ ${Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, "Premiação"]}
+              labelFormatter={label => `Torneio: ${label}`}
+            />
+            <Bar dataKey="prize" minPointSize={2}>
+              {data.map((entry, idx) => (
+                <Cell key={`cell-${idx}`} fill={colors[idx % colors.length]} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartContainer>
+    </div>
+  );
+};
+
+export default PrizeBarChart;
