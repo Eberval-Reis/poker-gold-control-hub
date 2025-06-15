@@ -22,7 +22,6 @@ const FinancialReportTable: React.FC<FinancialReportTableProps> = ({
     const prize = Number(perf.prize_amount || 0);
     const tournamentId = perf.tournament_id;
     const expenseArr = getTournamentExpenses(tournamentId);
-    const expenseDesc = expenseArr.map((e: any) => e.type).join(", ") || "-";
     const expenseTotal = expenseArr.reduce((acc: number, e: any) => acc + Number(e.amount), 0);
 
     // Resultado: Premiação - (Buyin + Rebuy) - Despesas
@@ -36,7 +35,6 @@ const FinancialReportTable: React.FC<FinancialReportTableProps> = ({
       buyin,
       rebuy,
       prize,
-      expenseDesc,
       expenseTotal,
       resultado,
     };
@@ -60,7 +58,6 @@ const FinancialReportTable: React.FC<FinancialReportTableProps> = ({
             <TableHead>Buy-in</TableHead>
             <TableHead>Rebuy</TableHead>
             <TableHead>Premiação</TableHead>
-            <TableHead>Despesa</TableHead>
             <TableHead>Valor Despesas</TableHead>
             <TableHead>Resultado</TableHead>
           </TableRow>
@@ -73,7 +70,6 @@ const FinancialReportTable: React.FC<FinancialReportTableProps> = ({
               <TableCell>R$ {row.buyin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</TableCell>
               <TableCell>R$ {row.rebuy.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</TableCell>
               <TableCell>R$ {row.prize.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</TableCell>
-              <TableCell>{row.expenseDesc}</TableCell>
               <TableCell>R$ {row.expenseTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</TableCell>
               <TableCell className={
                 row.resultado > 0
