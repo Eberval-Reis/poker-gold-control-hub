@@ -29,55 +29,60 @@ const COLORS = [
   "#0071C1",
 ];
 
-function truncate(str: string, max: number) {
-  return str.length > max ? str.slice(0, max - 1) + "…" : str;
+// Truncar SEM cortar a primeira letra e com mais caracteres visíveis
+function truncateFull(str: string, max: number) {
+  if (str.length <= max) return str;
+  // Garante pelo menos 2 letras antes do "…"
+  return str.slice(0, Math.max(2, max - 1)) + "…";
 }
 
 function renderCustomizedLabel(
   props: PieLabelRenderProps & { category?: string }
 ) {
   const RADIAN = Math.PI / 180;
-  // Type narrowing: fallback to 0 if missing
-  const cx =
-    typeof props.cx === "number" ? props.cx : Number(props.cx) || 0;
-  const cy =
-    typeof props.cy === "number" ? props.cy : Number(props.cy) || 0;
+  // Fallbacks de tipo seguro
+  const cx = typeof props.cx === "number" ? props.cx : Number(props.cx) || 0;
+  const cy = typeof props.cy === "number" ? props.cy : Number(props.cy) || 0;
   const outerRadius =
     typeof props.outerRadius === "number"
       ? props.outerRadius
       : Number(props.outerRadius) || 0;
   const { midAngle, percent, category } = props;
 
-  // Mais afastado: +38
-  const radius = outerRadius + 38;
+  // Mais afastado do gráfico
+  const radius = outerRadius + 55;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-  // Label max 15 chars visíveis, mostra resto no title
+  // Aumenta o limite de caracteres mantendo o texto inicial 
+  const textMaxChars = 20;
   const displayText =
-    (category ? truncate(category, 15) : "") +
+    (category ? truncateFull(category, textMaxChars) : "") +
     ` (${(percent * 100).toFixed(0)}%)`;
 
   return (
-    <text
-      x={x}
-      y={y}
-      fill="#0088FE"
-      textAnchor={x > cx ? "start" : "end"}
-      dominantBaseline="central"
-      style={{
-        fontSize: 12,
-        fontWeight: 500,
-        pointerEvents: "none", // impede selecionar
-        filter: "drop-shadow(0 1px 2px #fff8)", // leve contorno para não sumir no fundo branco
-        textShadow: "0 0 2px #fff8"
-      }}
-    >
-      <title>
-        {category} ({(percent * 100).toFixed(0)}%)
-      </title>
-      {displayText}
-    </text>
+    <g>
+      <text
+        x={x}
+        y={y}
+        fill="#0088FE"
+        textAnchor={x > cx ? "start" : "end"}
+        alignmentBaseline="middle"
+        style={{
+          fontSize: 13,
+          fontWeight: 500,
+          pointerEvents: "none",
+          filter: "drop-shadow(0 1px 2px #fff8)",
+          textShadow: "0 0 2px #fff8",
+          userSelect: "none",
+        }}
+      >
+        <title>
+          {category} ({(percent * 100).toFixed(0)}%)
+        </title>
+        {displayText}
+      </text>
+    </g>
   );
 }
 
@@ -88,10 +93,10 @@ const ExpenseReportChart: React.FC<ExpenseReportChartProps> = ({ data }) => {
 
   return (
     <div
-      className="flex flex-col items-center justify-center w-full"
-      style={{ minHeight: 340 }}
+      className="flex flex-col items-center justify-center w-full px-2"
+      style={{ minHeight: 360 }}
     >
-      <ResponsiveContainer width="100%" height={340}>
+      <ResponsiveContainer width="100%" height={360}>
         <PieChart>
           <Pie
             data={data}
@@ -124,4 +129,3 @@ const ExpenseReportChart: React.FC<ExpenseReportChartProps> = ({ data }) => {
 };
 
 export default ExpenseReportChart;
-
