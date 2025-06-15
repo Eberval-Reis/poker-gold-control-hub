@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { expenseService } from '@/services/expense.service';
+import { formatDateToBR } from "@/lib/utils";
 
 const ExpenseList = () => {
   const navigate = useNavigate();
@@ -157,7 +158,7 @@ const ExpenseList = () => {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-600">Data</p>
-                      <p className="text-sm">{expense.date}</p>
+                      <p className="text-sm">{formatDateToBR(expense.date)}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-600">Torneio</p>
