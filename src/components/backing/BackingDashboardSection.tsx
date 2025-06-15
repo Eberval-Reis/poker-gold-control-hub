@@ -14,6 +14,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import BackersPayoutTable from "./BackersPayoutTable";
 
 const chartColors = ["#F6C94A", "#5B870B", "#a2a2a2", "#E16900", "#F85043", "#22c55e"];
 
@@ -115,6 +116,11 @@ const BackingDashboardSection = () => {
             )}
           </div>
         </div>
+      </div>
+      {/* NOVO: Tabela geral dos payouts dos backers */}
+      <div className="mt-12">
+        <h3 className="font-bold text-lg mb-3">Geral - Investimento & Retorno por Backer</h3>
+        <BackersPayoutTable />
       </div>
     </div>
   );
