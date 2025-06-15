@@ -7,6 +7,7 @@ import ExpenseDistributionChart from "@/components/dashboard/ExpenseDistribution
 import RecentTournamentsTable from "@/components/dashboard/RecentTournamentsTable";
 import { supabase } from "@/integrations/supabase/client";
 import { useDashboardData } from "@/hooks/useDashboardData";
+import { Trophy, TrendingUp, DollarSign, Target } from "lucide-react";
 
 const Index = () => {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
@@ -117,27 +118,27 @@ const Index = () => {
         <MetricCard
           title="Total de Torneios"
           value={dashboardData.totalTournaments.toString()}
-          icon="trophy"
+          icon={<Trophy className="h-5 w-5 text-[#d4af37]" />}
           trend={dashboardData.tournamentsTrend}
         />
         <MetricCard
           title="ROI"
           value={`${dashboardData.roi.toFixed(1)}%`}
-          icon="trending-up"
+          icon={<TrendingUp className="h-5 w-5 text-[#d4af37]" />}
           trend={dashboardData.roiTrend}
           color={dashboardData.roi >= 0 ? "green" : "red"}
         />
         <MetricCard
           title="Lucro Total"
           value={`R$ ${dashboardData.totalProfit.toFixed(2)}`}
-          icon="dollar-sign"
+          icon={<DollarSign className="h-5 w-5 text-[#d4af37]" />}
           trend={dashboardData.profitTrend}
           color={dashboardData.totalProfit >= 0 ? "green" : "red"}
         />
         <MetricCard
           title="ITM Rate"
           value={`${dashboardData.itmRate.toFixed(1)}%`}
-          icon="target"
+          icon={<Target className="h-5 w-5 text-[#d4af37]" />}
           trend={dashboardData.itmTrend}
         />
       </div>
