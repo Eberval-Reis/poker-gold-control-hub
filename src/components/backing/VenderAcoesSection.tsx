@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -115,7 +116,8 @@ const VenderAcoesSection = () => {
   }
 
   return (
-    <div className="space-y-7 max-w-lg mx-auto">
+    // Ajuste: overflow-x-hidden + larguras responsivas no mobile
+    <div className="space-y-7 max-w-lg mx-auto px-2 overflow-x-hidden">
       <h2 className="text-2xl font-bold text-poker-gold mb-1">Vender Ações</h2>
       {/* Seleção da oferta */}
       <div>
@@ -136,7 +138,7 @@ const VenderAcoesSection = () => {
         </select>
       </div>
       {/* Card de informações do torneio */}
-      <div className="bg-muted rounded-xl p-5 flex flex-col gap-1 border border-poker-gold/10 shadow-sm">
+      <div className="bg-muted rounded-xl p-5 flex flex-col gap-1 border border-poker-gold/10 shadow-sm min-w-0">
         {selectedOffer?.event_name && (
           <span className="font-bold text-lg text-poker-gold mb-0" style={{ lineHeight: 1.1 }}>
             {selectedOffer.event_name}
@@ -159,7 +161,7 @@ const VenderAcoesSection = () => {
         </span>
       </div>
       <form 
-        className="flex flex-col gap-5 bg-white/90 rounded-xl px-5 py-6 shadow border border-gray-100"
+        className="flex flex-col gap-5 bg-white/90 rounded-xl px-2 py-6 shadow border border-gray-100 min-w-0"
         onSubmit={handleSubmit}
       >
         <BackerSelectWithModal value={backerId} onChange={setBackerId} />
@@ -212,3 +214,4 @@ const VenderAcoesSection = () => {
 };
 
 export default VenderAcoesSection;
+
