@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Pen } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
@@ -12,14 +13,20 @@ import { useTorneioList } from "@/hooks/useTorneioList";
 import { useAgendaEventList } from "@/hooks/useAgendaEventList";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 const CadastroTorneioSection = () => {
+  // Estados dos campos de formulário
+  const [playerName, setPlayerName] = React.useState("");
   const [cavEnable, setCavEnable] = React.useState(false);
   const [selectedTorneio, setSelectedTorneio] = React.useState<string>("");
   const [selectedEvento, setSelectedEvento] = React.useState<string>("");
-  // Busca os torneios da tabela tournaments
+  const [buyIn, setBuyIn] = React.useState<string>("");
+  const [date, setDate] = React.useState<string>("");
+  const [maxPercent, setMaxPercent] = React.useState<string>("80");
+  const [markup, setMarkup] = React.useState<string>("1.5");
+
   const { torneios, loading: loadingTorneios } = useTorneioList();
-  // Busca os eventos da tabela schedule_events (fonte para o dropdown)
   const { events: agendaEvents, loading: loadingAgenda } = useAgendaEventList();
   const [editModal, setEditModal] = React.useState<{ open: boolean; eventId: string | null }>({ open: false, eventId: null });
   const [editValue, setEditValue] = React.useState("");
@@ -41,17 +48,61 @@ const CadastroTorneioSection = () => {
       .eq("id", editModal.eventId);
     setSaving(false);
     setEditModal({ open: false, eventId: null });
-    // Força refresh visual dos eventos
-    window.location.reload(); // Simples e eficaz neste contexto pequeno
+    window.location.reload();
+  }
+
+  // Função para salvar o cadastro do torneio/backing_offer
+  async function handleSalvarTorneio(e: React.FormEvent) {
+    e.preventDefault();
+    // Validações
+    if (!playerName.trim() || !selectedTorneio || !buyIn || !date) {
+      toast({ title: "Preencha todos os campos obrigatórios", variant: "destructive" });
+      return;
+    }
+    if (cavEnable && (Number(maxPercent) < 5 || Number(maxPercent) > 80)) {
+      toast({ title: "Percentual para venda deve ser entre 5% e 80%", variant: "destructive" });
+      return;
+    }
+    if (cavEnable && Number(markup) < 1) {
+      toast({ title: "O mark-up deve ser igual ou maior que 1", variant: "destructive" });
+      return;
+    }
+    setSaving(true);
+    try {
+      // Cria backing_offer
+      const { error } = await supabase.from("backing_offers").insert({
+        tournament_id: selectedTorneio,
+        player_name: playerName,
+        buy_in_amount: Number(buyIn),
+        tournament_date: date,
+        available_percentage: cavEnable ? Number(maxPercent) : 0,
+        markup_percentage: cavEnable ? Number(markup) : 1,
+        status: "open",
+      });
+      if (error) throw error;
+      toast({ title: "Torneio cadastrado com sucesso!" });
+      // Limpa campos
+      setPlayerName("");
+      setSelectedTorneio("");
+      setSelectedEvento("");
+      setBuyIn("");
+      setDate("");
+      setMaxPercent("80");
+      setMarkup("1.5");
+      setCavEnable(false);
+    } catch (err: any) {
+      toast({ title: "Erro ao cadastrar torneio", description: err.message, variant: "destructive" });
+    }
+    setSaving(false);
   }
 
   return (
     <div className="space-y-6 max-w-3xl">
       <h2 className="text-xl font-semibold">Cadastro do Torneio</h2>
-      <form className="space-y-4">
+      <form className="space-y-4" onSubmit={handleSalvarTorneio}>
         {/* Linha dos campos principais */}
         <div className="flex flex-col gap-4 md:flex-row md:gap-6">
-          {/* Select Evento da Agenda - AGORA PRIMEIRO */}
+          {/* Select Evento da Agenda */}
           <div className="flex-1 min-w-[180px]">
             <label className="block text-poker-gold font-semibold mb-1">
               Evento da Agenda
@@ -127,6 +178,8 @@ const CadastroTorneioSection = () => {
               step="0.01"
               className="w-full p-2 rounded border border-input bg-background text-base"
               placeholder="Valor do buy-in"
+              value={buyIn}
+              onChange={e => setBuyIn(e.target.value)}
             />
           </div>
           <div className="flex-1 min-w-[140px]">
@@ -137,8 +190,23 @@ const CadastroTorneioSection = () => {
               type="date"
               required
               className="w-full p-2 rounded border border-input bg-background text-base"
+              value={date}
+              onChange={e => setDate(e.target.value)}
             />
           </div>
+        </div>
+        <div>
+          <label className="block text-poker-gold font-semibold mb-1">
+            Nome do Jogador *
+          </label>
+          <input
+            type="text"
+            required
+            className="w-full p-2 rounded border border-input bg-background text-base"
+            placeholder="Quem será financiado"
+            value={playerName}
+            onChange={e => setPlayerName(e.target.value)}
+          />
         </div>
         {/* Switch e grupo de cavalagem */}
         <div className="flex items-center gap-3 mt-3">
@@ -160,6 +228,8 @@ const CadastroTorneioSection = () => {
                 max={80}
                 className="w-full p-2 rounded border border-input bg-background text-base"
                 placeholder="Ex: 80"
+                value={maxPercent}
+                onChange={e => setMaxPercent(e.target.value)}
               />
             </div>
             <div className="flex-1">
@@ -173,13 +243,19 @@ const CadastroTorneioSection = () => {
                 step="0.01"
                 className="w-full p-2 rounded border border-input bg-background text-base"
                 placeholder="Ex: 1.5"
+                value={markup}
+                onChange={e => setMarkup(e.target.value)}
               />
             </div>
           </div>
         )}
         <div className="flex gap-3 mt-4">
-          <button className="bg-poker-gold text-white px-6 py-2 rounded hover:bg-poker-gold/90 font-bold" type="submit">
-            Salvar
+          <button
+            className="bg-poker-gold text-white px-6 py-2 rounded hover:bg-poker-gold/90 font-bold"
+            type="submit"
+            disabled={saving}
+          >
+            {saving ? "Salvando..." : "Salvar"}
           </button>
         </div>
       </form>
