@@ -1,5 +1,6 @@
 
 import React from "react";
+import FinancialReportTable from "./FinancialReportTable";
 
 interface FinancialReportPreviewProps {
   performances: any[];
@@ -26,6 +27,7 @@ const FinancialReportPreview: React.FC<FinancialReportPreviewProps> = ({
         <span>Total em Despesas: <strong>{totalDespesas.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong></span>
         <span>Balanço Final: <strong>{(totalPremios-totalDespesas).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong></span>
       </div>
+      <FinancialReportTable performances={performances} expenses={expenses} />
       <div className="bg-muted p-4 rounded text-muted-foreground text-center">
         (Relatório visual e detalhamento em breve!)
       </div>
@@ -37,3 +39,4 @@ const FinancialReportPreview: React.FC<FinancialReportPreviewProps> = ({
 };
 
 export default FinancialReportPreview;
+
