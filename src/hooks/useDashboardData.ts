@@ -9,6 +9,9 @@ interface Performance {
   addon_amount?: number;
   prize_amount?: number;
   created_at: string;
+  tournaments?: {
+    name: string;
+  };
 }
 
 interface Expense {
@@ -23,6 +26,7 @@ interface DashboardData {
   roi: number;
   itmRate: number;
   monthlyData: { month: string; profit: number }[];
+  tournamentPrizeData: { month: string; profit: number }[]; // Nova propriedade para premiação por torneio
   expenseData: { category: string; amount: number }[];
   recentTournaments: any[];
   tournamentsTrend: number;
@@ -52,6 +56,7 @@ export function useDashboardData({
         roi: 0,
         itmRate: 0,
         monthlyData: [],
+        tournamentPrizeData: [],
         expenseData: [],
         recentTournaments: [],
         tournamentsTrend: 0,
@@ -100,6 +105,26 @@ export function useDashboardData({
       }, 0);
       monthlyData.push({ month: `${selectedYear}-${month}`, profit: monthlyProfit });
     }
+
+    // Nova lógica: Premiação acumulada por nome de torneio
+    const tournamentPrizeMap = new Map<string, number>();
+    
+    performances.forEach((p) => {
+      const tournamentName = p.tournaments?.name || "Torneio não especificado";
+      const prize = Number(p.prize_amount || 0);
+      
+      if (tournamentPrizeMap.has(tournamentName)) {
+        tournamentPrizeMap.set(tournamentName, tournamentPrizeMap.get(tournamentName)! + prize);
+      } else {
+        tournamentPrizeMap.set(tournamentName, prize);
+      }
+    });
+
+    // Converter o Map para array e ordenar por premiação (maior para menor)
+    const tournamentPrizeData: { month: string; profit: number }[] = Array.from(tournamentPrizeMap.entries())
+      .map(([name, totalPrize]) => ({ month: name, profit: totalPrize }))
+      .sort((a, b) => b.profit - a.profit)
+      .slice(0, 10); // Limitar aos top 10 torneios
 
     // Gráfico de despesas por type
     const expenseData = expenses.reduce((acc: { category: string; amount: number }[], expense) => {
@@ -151,6 +176,7 @@ export function useDashboardData({
       roi,
       itmRate,
       monthlyData,
+      tournamentPrizeData, // Nova propriedade
       expenseData,
       recentTournaments,
       tournamentsTrend: totalTournaments - prevTotalTournaments,

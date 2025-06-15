@@ -13,13 +13,18 @@ const Index = () => {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
-  // Carrega as performances dos torneios
+  // Carrega as performances dos torneios com informações do torneio
   const { data: performances, isLoading: isLoadingPerformances } = useQuery({
     queryKey: ["tournament_performance", selectedYear, selectedMonth],
     queryFn: async () => {
       let query = supabase
         .from("tournament_performance")
-        .select("*")
+        .select(`
+          *,
+          tournaments (
+            name
+          )
+        `)
         .order("created_at", { ascending: false });
 
       if (selectedYear) {
@@ -124,7 +129,7 @@ const Index = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <TournamentBarChart data={dashboardData.monthlyData} />
+        <TournamentBarChart data={dashboardData.tournamentPrizeData} />
         <MonthlyPerformanceChart data={dashboardData.monthlyData} />
       </div>
 
