@@ -37,11 +37,11 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
       <table className="min-w-full text-sm text-gray-900">
         <thead>
           <tr className="bg-muted">
-            <th className="py-2 px-3 text-left">Nome</th>
-            <th className="py-2 px-3 text-center">% Ação</th>
-            <th className="py-2 px-3 text-center">Valor Pago</th>
-            <th className="py-2 px-3 text-center">Status</th>
-            <th className="py-2 px-3 text-right">Ações</th>
+            <th className="py-2 px-3 text-left align-middle">Nome</th>
+            <th className="py-2 px-3 text-center align-middle">% Ação</th>
+            <th className="py-2 px-3 text-center align-middle">Valor Pago</th>
+            <th className="py-2 px-3 text-center align-middle">Status</th>
+            <th className="py-2 px-3 text-right align-middle">Ações</th>
           </tr>
         </thead>
         <tbody>
@@ -52,7 +52,9 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
               <td className="py-2 px-3 text-center align-middle">
                 R$ {b.amount_paid.toLocaleString(undefined, { minimumFractionDigits: 2 })}
               </td>
-              <td className="py-2 px-3 text-center align-middle">{statusLabel(b.payment_status)}</td>
+              <td className="py-2 px-3 text-center align-middle">
+                <div className="flex items-center justify-center h-full w-full">{statusLabel(b.payment_status)}</div>
+              </td>
               <td className="py-2 px-3 text-right align-middle flex justify-end gap-1">
                 <Button size="sm" variant="ghost" className="text-poker-gold hover:bg-gray-100 p-1">
                   <Edit size={15} />
