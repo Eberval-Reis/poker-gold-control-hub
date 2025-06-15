@@ -7,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DatePicker } from '@/components/ui/date-picker';
 import ExpenseReportTable from "@/components/report/ExpenseReportTable";
 import ExpenseReportChart from "@/components/report/ExpenseReportChart";
+import PerformanceReportPreview from "@/components/report/PerformanceReportPreview";
+import FinancialReportPreview from "@/components/report/FinancialReportPreview";
+import RoiReportPreview from "@/components/report/RoiReportPreview";
 import { useReportData, ReportType, PeriodType } from "@/hooks/useReportData";
 
 const Report = () => {
@@ -120,7 +123,6 @@ const Report = () => {
             <CardContent>
               {reportReady ? (
                 <div className="space-y-4">
-                  {/* Relatório de Despesas */}
                   {reportType === "expenses" ? (
                     <>
                       <h3 className="text-lg font-semibold mb-2 text-poker-text-dark">
@@ -138,6 +140,23 @@ const Report = () => {
                         Período: {reportData.start.toLocaleDateString()} a {reportData.end.toLocaleDateString()}
                       </div>
                     </>
+                  ) : reportType === "performance" ? (
+                    <PerformanceReportPreview
+                      performances={reportData.performances}
+                      periodRange={{ start: reportData.start, end: reportData.end }}
+                    />
+                  ) : reportType === "financial" ? (
+                    <FinancialReportPreview
+                      performances={reportData.performances}
+                      expenses={reportData.expenses}
+                      periodRange={{ start: reportData.start, end: reportData.end }}
+                    />
+                  ) : reportType === "roi" ? (
+                    <RoiReportPreview
+                      performances={reportData.performances}
+                      expenses={reportData.expenses}
+                      periodRange={{ start: reportData.start, end: reportData.end }}
+                    />
                   ) : (
                     <div className="py-12 text-center text-muted-foreground">
                       Relatório para este tipo ainda não implementado.
