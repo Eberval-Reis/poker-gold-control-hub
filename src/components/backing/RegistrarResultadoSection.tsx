@@ -2,42 +2,26 @@
 import React from "react";
 import { saveBackingResult } from "@/services/backing-result.service";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
+import { useBackingOfferList } from "@/hooks/useBackingOfferList";
 
 const RegistrarResultadoSection = () => {
   const [prize, setPrize] = React.useState<number | string>("");
   const [status, setStatus] = React.useState("busto");
   const [loading, setLoading] = React.useState(false);
 
-  // Busca todos backing_offers abertos
-  const [offers, setOffers] = React.useState<any[]>([]);
+  // Busca backing_offers abertos pelo hook
+  const { data: offers = [], isLoading: loadingOffers } = useBackingOfferList();
   const [selectedOfferId, setSelectedOfferId] = React.useState<string | null>(null);
-  const [loadingOffers, setLoadingOffers] = React.useState(true);
 
+  // Seleciona automaticamente o primeiro, se houver e não houver seleção
   React.useEffect(() => {
-    async function fetchOffers() {
-      setLoadingOffers(true);
-      const { data, error } = await supabase
-        .from("backing_offers")
-        .select("*")
-        .eq("status", "open")
-        .order("created_at", { ascending: false });
-      if (error) {
-        toast({
-          title: "Erro ao buscar offers",
-          description: error.message,
-          variant: "destructive",
-        });
-      }
-      setOffers(data ?? []);
-      setLoadingOffers(false);
-      // Selecionar o 1o da lista automaticamente (user-friendly UX)
-      if ((data ?? []).length > 0) setSelectedOfferId(data[0].id);
+    if (offers.length > 0 && !selectedOfferId) {
+      setSelectedOfferId(offers[0].id);
     }
-    fetchOffers();
-  }, []);
+  }, [offers, selectedOfferId]);
 
+  // Seleciona o offer atual
   const offer = offers.find(o => o.id === selectedOfferId) || null;
 
   // Para preview, usa os dados do offer selecionado, senão defaults
@@ -118,8 +102,8 @@ const RegistrarResultadoSection = () => {
               >
                 {offers.map(o => (
                   <option key={o.id} value={o.id}>
-                    {/* Ajuste para moeda BR */}
-                    {o.player_name} — {new Date(o.tournament_date).toLocaleDateString()} (R$ {Number(o.buy_in_amount).toLocaleString("pt-BR", {minimumFractionDigits:2})})
+                    {o.event_name ? `${o.event_name} · ` : ""}
+                    {o.tournament_name} — {o.player_name} — {new Date(o.tournament_date).toLocaleDateString()} (R$ {Number(o.buy_in_amount).toLocaleString("pt-BR", {minimumFractionDigits:2})})
                   </option>
                 ))}
               </select>
