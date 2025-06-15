@@ -2,6 +2,8 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, Check, AlertTriangle, Edit, Trash2 } from "lucide-react";
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog";
+import { useBackerInvestmentDelete } from "@/hooks/useBackerInvestmentDelete";
 
 interface Investment {
   id: string;
@@ -32,6 +34,14 @@ const statusLabel = (status: string | null) => {
 const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
   investments,
 }) => {
+  const {
+    deletingId,
+    requestDelete,
+    confirmDelete,
+    cancelDelete,
+    isDeleting,
+  } = useBackerInvestmentDelete();
+
   return (
     <div className="overflow-x-auto border border-gray-200 rounded-b-md bg-white">
       <table className="min-w-full text-sm text-gray-900">
@@ -59,9 +69,39 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
                 <Button size="sm" variant="ghost" className="text-poker-gold hover:bg-gray-100 p-1">
                   <Edit size={15} />
                 </Button>
-                <Button size="sm" variant="destructive" className="p-1">
-                  <Trash2 size={15} />
-                </Button>
+                {/* ALERT DIALOG PARA CONFIRMAR EXCLUSÃO */}
+                <AlertDialog open={deletingId === b.id} onOpenChange={(open) => !open && cancelDelete()}>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      className="p-1"
+                      onClick={() => requestDelete(b.id)}
+                    >
+                      <Trash2 size={15} />
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Tem certeza que deseja excluir este investimento?<br />
+                        Esta ação não poderá ser desfeita.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel disabled={isDeleting}>Cancelar</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={confirmDelete}
+                        disabled={isDeleting}
+                        className="bg-destructive text-white"
+                      >
+                        {isDeleting ? <Loader2 className="animate-spin mr-2" size={16} /> : null}
+                        Excluir
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </td>
             </tr>
           ))}
