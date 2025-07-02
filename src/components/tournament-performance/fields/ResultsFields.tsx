@@ -26,7 +26,7 @@ const ResultsFields = ({ form }: ResultsFieldsProps) => {
           control={form.control}
           name="itm_achieved"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between">
+            <FormItem className="flex flex-row items-center gap-3">
               <div className="space-y-0">
                 <FormLabel>ITM (In The Money)?</FormLabel>
               </div>
@@ -44,7 +44,7 @@ const ResultsFields = ({ form }: ResultsFieldsProps) => {
           control={form.control}
           name="final_table_achieved"
           render={({ field }) => (
-            <FormItem className="flex flex-row items-center justify-between">
+            <FormItem className="flex flex-row items-center gap-3">
               <div className="space-y-0">
                 <FormLabel>Foi FT (Final Table)?</FormLabel>
               </div>
