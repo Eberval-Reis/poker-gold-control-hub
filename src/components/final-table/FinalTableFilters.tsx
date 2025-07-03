@@ -36,10 +36,10 @@ const FinalTableFilters = ({
   ).sort((a, b) => a - b);
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm border mb-6">
-      <div className="flex flex-wrap gap-4 items-end">
+    <div className="bg-card border rounded-lg shadow-sm p-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 items-end">
         <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Torneio
           </label>
           <Select value={filters.tournament} onValueChange={(value) => onFilterChange('tournament', value)}>
@@ -58,7 +58,7 @@ const FinalTableFilters = ({
         </div>
 
         <div className="flex-1 min-w-[150px]">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Buy-in (R$)
           </label>
           <Select value={filters.buyin} onValueChange={(value) => onFilterChange('buyin', value)}>
@@ -77,7 +77,7 @@ const FinalTableFilters = ({
         </div>
 
         <div className="flex-1 min-w-[120px]">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             Colocação
           </label>
           <Select value={filters.position} onValueChange={(value) => onFilterChange('position', value)}>
@@ -98,7 +98,7 @@ const FinalTableFilters = ({
         <Button
           variant="outline"
           onClick={onClearFilters}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 h-10"
         >
           <X className="h-4 w-4" />
           Limpar
