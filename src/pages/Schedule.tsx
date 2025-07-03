@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from "react";
 import { Plus, List, Grid2x2 } from "lucide-react";
 import { EventForm } from "@/components/schedule/EventForm";
@@ -82,39 +83,42 @@ const SchedulePage = () => {
   // Layout do filtro de status e modo de visualização
   const FilterBar = (
     <div className="flex flex-col sm:flex-row gap-2 sm:items-center justify-between mb-4 flex-wrap overflow-x-auto">
-      <div className="flex gap-2 flex-wrap min-w-0">
+      <div className="flex gap-1 flex-wrap min-w-0">
         <Button
+          size="sm"
           variant={filterStatus === "all" ? "default" : "outline"}
           className={
             filterStatus === "all"
-              ? "bg-primary text-primary-foreground"
-              : ""
+              ? "bg-primary text-primary-foreground text-xs px-3 py-1 h-8"
+              : "text-xs px-3 py-1 h-8"
           }
           onClick={() => setFilterStatus("all")}
         >
           Todos
         </Button>
         <Button
+          size="sm"
           variant={filterStatus === "done" ? "default" : "outline"}
           className={
             filterStatus === "done"
-              ? "bg-green-600 text-white border-green-600"
-              : "border-green-600 text-green-600"
+              ? "bg-green-600 text-white border-green-600 text-xs px-2 py-1 h-8"
+              : "border-green-600 text-green-600 text-xs px-2 py-1 h-8"
           }
           onClick={() => setFilterStatus("done")}
         >
-          <span className="text-green-500">✔️</span> Cumpridos
+          <span className="text-green-500 mr-1">✔️</span> Cumpridos
         </Button>
         <Button
+          size="sm"
           variant={filterStatus === "not_done" ? "default" : "outline"}
           className={
             filterStatus === "not_done"
-              ? "bg-destructive text-destructive-foreground border-destructive"
-              : "border-destructive text-destructive"
+              ? "bg-destructive text-destructive-foreground border-destructive text-xs px-2 py-1 h-8"
+              : "border-destructive text-destructive text-xs px-2 py-1 h-8"
           }
           onClick={() => setFilterStatus("not_done")}
         >
-          <span className="text-red-500">❌</span> Não Cumpridos
+          <span className="text-red-500 mr-1">❌</span> Não Cumpridos
         </Button>
       </div>
       <div className="flex gap-2 mt-2 sm:mt-0 w-full sm:w-auto flex-wrap min-w-0">
@@ -122,31 +126,31 @@ const SchedulePage = () => {
           placeholder="Buscar por torneio..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full sm:w-48"
+          className="w-full sm:w-48 h-8 text-sm"
         />
         <Button
-          size="icon"
+          size="sm"
           variant={viewMode === "grid" ? "default" : "outline"}
           className={
             viewMode === "grid"
-              ? "bg-primary text-primary-foreground"
-              : ""
+              ? "bg-primary text-primary-foreground h-8 w-8 p-0"
+              : "h-8 w-8 p-0"
           }
           onClick={() => setViewMode("grid")}
         >
-          <Grid2x2 />
+          <Grid2x2 size={16} />
         </Button>
         <Button
-          size="icon"
+          size="sm"
           variant={viewMode === "list" ? "default" : "outline"}
           className={
             viewMode === "list"
-              ? "bg-primary text-primary-foreground"
-              : ""
+              ? "bg-primary text-primary-foreground h-8 w-8 p-0"
+              : "h-8 w-8 p-0"
           }
           onClick={() => setViewMode("list")}
         >
-          <List />
+          <List size={16} />
         </Button>
       </div>
     </div>
