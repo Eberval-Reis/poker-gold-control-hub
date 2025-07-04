@@ -37,7 +37,7 @@ const FinalTableFilters = ({
 
   return (
     <div className="bg-card border rounded-lg shadow-sm p-4 mb-6">
-      <div className="flex flex-col sm:flex-row gap-4 items-end">
+      <div className="flex flex-wrap gap-4 items-end">
         <div className="flex-1 min-w-[200px]">
           <label className="block text-sm font-medium text-foreground mb-2">
             Torneio

@@ -16,12 +16,14 @@ interface QuickEventModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddEvent: (eventoSalvo: { id: string; name: string; date?: string | null }) => void;
+  onEventAdded?: () => void;
 }
 
 export const QuickEventModal: React.FC<QuickEventModalProps> = ({
   open,
   onOpenChange,
   onAddEvent,
+  onEventAdded,
 }) => {
   const [nome, setNome] = useState("");
   const [data, setData] = useState("");
@@ -52,6 +54,12 @@ export const QuickEventModal: React.FC<QuickEventModalProps> = ({
     }
     // Informa componente pai e reseta o modal
     onAddEvent({ id: inserted.id, name: inserted.name, date: inserted.date });
+    
+    // Chama a função de refresh se fornecida
+    if (onEventAdded) {
+      onEventAdded();
+    }
+    
     setNome("");
     setData("");
     setCidade("");

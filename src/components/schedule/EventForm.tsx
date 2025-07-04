@@ -34,7 +34,7 @@ export const EventForm: React.FC<EventFormProps> = ({
   existingEvents,
 }) => {
   // -------- INTEGRAÇÃO BASE DE DADOS --------
-  const { events: agendaEvents, loading: loadingAgenda } = useAgendaEventList();
+  const { events: agendaEvents, loading: loadingAgenda, refreshEvents } = useAgendaEventList();
   const [quickModalOpen, setQuickModalOpen] = useState(false);
 
   // Ao cadastrar evento rápido, seleciona o recém-cadastrado
@@ -159,6 +159,7 @@ export const EventForm: React.FC<EventFormProps> = ({
         open={quickModalOpen}
         onOpenChange={setQuickModalOpen}
         onAddEvent={handleAddQuickEvent}
+        onEventAdded={refreshEvents}
       />
 
       {/* Campo Torneio (dropdown base torneio) */}

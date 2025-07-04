@@ -7,20 +7,33 @@ export interface AgendaEvent {
   name: string;
   date?: string | null;
 }
+
 export function useAgendaEventList() {
   const [events, setEvents] = useState<AgendaEvent[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const fetchEvents = async () => {
     setLoading(true);
-    supabase
-      .from("schedule_events")
-      .select("id, name, date")
-      .then(({ data }) => {
-        setEvents(data || []);
-        setLoading(false);
-      });
+    try {
+      const { data } = await supabase
+        .from("schedule_events")
+        .select("id, name, date")
+        .order("date", { ascending: false });
+      setEvents(data || []);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEvents();
   }, []);
 
-  return { events, loading };
+  const refreshEvents = () => {
+    fetchEvents();
+  };
+
+  return { events, loading, refreshEvents };
 }
