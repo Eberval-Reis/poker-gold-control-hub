@@ -43,15 +43,15 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
       }}
       className="space-y-5 mb-5"
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 items-stretch">
+      <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 sm:items-end">
         <div className="flex flex-col gap-3 w-full sm:flex-row sm:w-auto flex-1">
           <ReportTypeSelect reportType={reportType} setReportType={setReportType} />
           <PeriodSelect period={period} setPeriod={setPeriod} />
         </div>
-        <div className="w-full sm:min-w-[140px] sm:w-auto">
+        <div className="w-full sm:w-auto">
           <Button
             type="submit"
-            className="w-full sm:w-auto bg-poker-gold text-white font-semibold h-12 text-base"
+            className="w-full sm:w-auto bg-poker-gold text-white font-semibold h-11 text-base px-6"
           >
             Gerar Relatório
           </Button>
