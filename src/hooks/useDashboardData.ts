@@ -160,18 +160,24 @@ export function useDashboardData({
 
     console.log("Dados finais do gráfico:", tournamentPrizeData);
 
-    // Dados para gráfico de torneios ao longo do tempo
-    const tournamentsTimelineData: { month: string; count: number }[] = [];
-    for (let i = 1; i <= 12; i++) {
-      const month = String(i).padStart(2, "0");
-      const monthlyPerformances = performances.filter((p) =>
-        p.created_at.startsWith(`${selectedYear}-${month}`)
-      );
-      tournamentsTimelineData.push({ 
-        month: `${selectedYear}-${month}`, 
-        count: monthlyPerformances.length 
-      });
-    }
+    // Dados para gráfico de torneios ao longo do tempo - APENAS meses com torneios
+    const tournamentsTimelineMap = new Map<string, number>();
+    
+    performances.forEach((p) => {
+      const monthYear = p.created_at.substring(0, 7); // Pega "YYYY-MM"
+      if (tournamentsTimelineMap.has(monthYear)) {
+        tournamentsTimelineMap.set(monthYear, tournamentsTimelineMap.get(monthYear)! + 1);
+      } else {
+        tournamentsTimelineMap.set(monthYear, 1);
+      }
+    });
+
+    // Converter para array e ordenar cronologicamente
+    const tournamentsTimelineData: { month: string; count: number }[] = Array.from(tournamentsTimelineMap.entries())
+      .map(([monthYear, count]) => ({ month: monthYear, count }))
+      .sort((a, b) => a.month.localeCompare(b.month)); // Ordenação cronológica
+
+    console.log("Dados de timeline de torneios (apenas meses com registros):", tournamentsTimelineData);
 
     // Gráfico de despesas: garantir todas categorias traduzidas, mas exibir apenas com movimentação
     const expenseSum: Record<string, number> = {};
