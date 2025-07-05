@@ -1,5 +1,5 @@
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface TournamentsTimelineChartProps {
   data: { month: string; count: number }[];
@@ -20,7 +20,7 @@ const TournamentsTimelineChart = ({ data }: TournamentsTimelineChartProps) => {
       <h3 className="text-lg font-semibold mb-4">Torneios ao Longo do Tempo</h3>
       <div className="h-[300px] w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
+          <BarChart
             data={data}
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
@@ -38,15 +38,12 @@ const TournamentsTimelineChart = ({ data }: TournamentsTimelineChartProps) => {
               formatter={(value) => [`${value} torneios`, "Quantidade"]}
               labelFormatter={(label) => `Período: ${formatMonth(label)}`}
             />
-            <Line 
-              type="monotone" 
+            <Bar 
               dataKey="count" 
-              stroke="#d4af37" 
-              strokeWidth={3}
-              dot={{ fill: '#d4af37', strokeWidth: 2, r: 4 }}
-              activeDot={{ r: 6, fill: '#d4af37' }}
+              fill="#d4af37" 
+              radius={[4, 4, 0, 0]}
             />
-          </LineChart>
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </div>
