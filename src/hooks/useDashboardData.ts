@@ -1,3 +1,4 @@
+
 import { useMemo } from "react";
 
 // Tabela de tradução de categorias
@@ -49,6 +50,7 @@ interface DashboardData {
   itmRate: number;
   monthlyData: { month: string; profit: number }[];
   tournamentPrizeData: { month: string; profit: number }[];
+  tournamentsTimelineData: { month: string; count: number }[];
   expenseData: { category: string; amount: number }[];
   recentTournaments: any[];
   tournamentsTrend: number;
@@ -79,6 +81,7 @@ export function useDashboardData({
         itmRate: 0,
         monthlyData: [],
         tournamentPrizeData: [],
+        tournamentsTimelineData: [],
         expenseData: [],
         recentTournaments: [],
         tournamentsTrend: 0,
@@ -157,6 +160,19 @@ export function useDashboardData({
 
     console.log("Dados finais do gráfico:", tournamentPrizeData);
 
+    // Dados para gráfico de torneios ao longo do tempo
+    const tournamentsTimelineData: { month: string; count: number }[] = [];
+    for (let i = 1; i <= 12; i++) {
+      const month = String(i).padStart(2, "0");
+      const monthlyPerformances = performances.filter((p) =>
+        p.created_at.startsWith(`${selectedYear}-${month}`)
+      );
+      tournamentsTimelineData.push({ 
+        month: `${selectedYear}-${month}`, 
+        count: monthlyPerformances.length 
+      });
+    }
+
     // Gráfico de despesas: garantir todas categorias traduzidas, mas exibir apenas com movimentação
     const expenseSum: Record<string, number> = {};
     expenses.forEach((exp) => {
@@ -223,8 +239,9 @@ export function useDashboardData({
       roi,
       itmRate,
       monthlyData,
-      tournamentPrizeData, // Nova propriedade
-      expenseData, // Atualizado
+      tournamentPrizeData,
+      tournamentsTimelineData,
+      expenseData,
       recentTournaments,
       tournamentsTrend: totalTournaments - prevTotalTournaments,
       profitTrend: totalProfit - prevProfit,

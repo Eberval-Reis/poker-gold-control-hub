@@ -1,7 +1,9 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import MetricCard from "@/components/dashboard/MetricCard";
 import TournamentBarChart from "@/components/dashboard/TournamentBarChart";
+import TournamentsTimelineChart from "@/components/dashboard/TournamentsTimelineChart";
 import MonthlyPerformanceChart from "@/components/dashboard/MonthlyPerformanceChart";
 import ExpenseDistributionChart from "@/components/dashboard/ExpenseDistributionChart";
 import RecentTournamentsTable from "@/components/dashboard/RecentTournamentsTable";
@@ -143,13 +145,17 @@ const Index = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 gap-6 mb-8">
         <TournamentBarChart data={dashboardData.tournamentPrizeData} />
-        <MonthlyPerformanceChart data={dashboardData.monthlyData} />
+        <TournamentsTimelineChart data={dashboardData.tournamentsTimelineData} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <MonthlyPerformanceChart data={dashboardData.monthlyData} />
         <ExpenseDistributionChart data={dashboardData.expenseData} />
+      </div>
+
+      <div className="grid grid-cols-1 gap-6">
         <RecentTournamentsTable data={dashboardData.recentTournaments} />
       </div>
     </div>
