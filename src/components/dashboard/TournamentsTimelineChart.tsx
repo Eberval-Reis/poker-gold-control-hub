@@ -31,7 +31,9 @@ const TournamentsTimelineChart = ({ data }: TournamentsTimelineChartProps) => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
               dataKey="name"
-              tick={{ fontSize: 10, angle: -45, textAnchor: 'end' }}
+              angle={-45}
+              textAnchor="end"
+              tick={{ fontSize: 10 }}
               height={80}
             />
             <YAxis 
