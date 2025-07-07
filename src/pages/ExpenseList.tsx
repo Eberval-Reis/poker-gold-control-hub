@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Plus, Search, Edit, Trash2 } from 'lucide-react';
@@ -130,11 +131,12 @@ const ExpenseList = () => {
                   <CardTitle className="text-lg">
                     {getExpenseTypeName(expense.type)}
                   </CardTitle>
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => navigate(`/register-expense/${expense.id}`)}
+                      className="flex items-center justify-center"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -143,6 +145,7 @@ const ExpenseList = () => {
                       size="sm"
                       onClick={() => handleDelete(expense.id)}
                       disabled={deleteMutation.isPending}
+                      className="flex items-center justify-center"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
