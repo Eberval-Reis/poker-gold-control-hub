@@ -1,4 +1,3 @@
-
 import { useMemo } from "react";
 
 // Tabela de tradução de categorias
@@ -50,7 +49,7 @@ interface DashboardData {
   itmRate: number;
   monthlyData: { month: string; profit: number }[];
   tournamentPrizeData: { month: string; profit: number }[];
-  tournamentsTimelineData: { month: string; count: number }[];
+  tournamentsTimelineData: { name: string; date: string; buyin: number; prize: number; profit: number }[];
   expenseData: { category: string; amount: number }[];
   recentTournaments: any[];
   tournamentsTrend: number;
@@ -160,24 +159,27 @@ export function useDashboardData({
 
     console.log("Dados finais do gráfico:", tournamentPrizeData);
 
-    // Dados para gráfico de torneios ao longo do tempo - APENAS meses com torneios
-    const tournamentsTimelineMap = new Map<string, number>();
-    
-    performances.forEach((p) => {
-      const monthYear = p.created_at.substring(0, 7); // Pega "YYYY-MM"
-      if (tournamentsTimelineMap.has(monthYear)) {
-        tournamentsTimelineMap.set(monthYear, tournamentsTimelineMap.get(monthYear)! + 1);
-      } else {
-        tournamentsTimelineMap.set(monthYear, 1);
-      }
-    });
+    // Dados para gráfico de torneios individuais ao longo do tempo
+    const tournamentsTimelineData: { name: string; date: string; buyin: number; prize: number; profit: number }[] = performances
+      .map((p) => {
+        const buyin = Number(p.buyin_amount || 0);
+        const rebuy = Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0);
+        const addon = p.addon_enabled ? Number(p.addon_amount || 0) : 0;
+        const totalInvested = buyin + rebuy + addon;
+        const prize = Number(p.prize_amount || 0);
+        const profit = prize - totalInvested;
+        
+        return {
+          name: p.tournaments?.name || "Torneio não especificado",
+          date: p.created_at,
+          buyin: totalInvested,
+          prize: prize,
+          profit: profit
+        };
+      })
+      .sort((a, b) => a.date.localeCompare(b.date)); // Ordenação cronológica
 
-    // Converter para array e ordenar cronologicamente
-    const tournamentsTimelineData: { month: string; count: number }[] = Array.from(tournamentsTimelineMap.entries())
-      .map(([monthYear, count]) => ({ month: monthYear, count }))
-      .sort((a, b) => a.month.localeCompare(b.month)); // Ordenação cronológica
-
-    console.log("Dados de timeline de torneios (apenas meses com registros):", tournamentsTimelineData);
+    console.log("Dados de timeline de torneios individuais:", tournamentsTimelineData);
 
     // Gráfico de despesas: garantir todas categorias traduzidas, mas exibir apenas com movimentação
     const expenseSum: Record<string, number> = {};
