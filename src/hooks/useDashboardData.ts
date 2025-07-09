@@ -153,6 +153,7 @@ export function useDashboardData({
 
     // Converter o Map para array e ordenar por premiação (maior para menor)
     const tournamentPrizeData: { month: string; profit: number }[] = Array.from(tournamentPrizeMap.entries())
+      .filter(([name, totalPrize]) => totalPrize > 0)
       .map(([name, totalPrize]) => ({ month: name, profit: totalPrize }))
       .sort((a, b) => b.profit - a.profit)
       .slice(0, 10); // Limitar aos top 10 torneios
