@@ -36,6 +36,7 @@ export interface Tournament {
 export interface TournamentPerformance {
   id: string;
   tournament_id: string;
+  tournament_date: string;
   buyin_amount: number;
   rebuy_amount?: number;
   rebuy_quantity?: number;

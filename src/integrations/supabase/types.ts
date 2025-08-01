@@ -343,6 +343,7 @@ export type Database = {
           prize_amount: number | null
           rebuy_amount: number | null
           rebuy_quantity: number | null
+          tournament_date: string
           tournament_id: string | null
           updated_at: string
         }
@@ -360,6 +361,7 @@ export type Database = {
           prize_amount?: number | null
           rebuy_amount?: number | null
           rebuy_quantity?: number | null
+          tournament_date: string
           tournament_id?: string | null
           updated_at?: string
         }
@@ -377,6 +379,7 @@ export type Database = {
           prize_amount?: number | null
           rebuy_amount?: number | null
           rebuy_quantity?: number | null
+          tournament_date?: string
           tournament_id?: string | null
           updated_at?: string
         }

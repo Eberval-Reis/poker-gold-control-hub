@@ -27,6 +27,7 @@ export function useTournamentPerformanceForm() {
     resolver: zodResolver(tournamentPerformanceFormSchema),
     defaultValues: {
       tournament_id: '',
+      tournament_date: new Date(),
       buyin_amount: '',
       rebuy_amount: '',
       rebuy_quantity: '',
@@ -118,6 +119,7 @@ export function useTournamentPerformanceForm() {
       
       form.reset({
         tournament_id: performanceData.tournament_id,
+        tournament_date: performanceData.tournament_date ? new Date(performanceData.tournament_date) : new Date(),
         buyin_amount: performanceData.buyin_amount?.toString() || '',
         rebuy_amount: performanceData.rebuy_amount?.toString() || '',
         rebuy_quantity: performanceData.rebuy_quantity?.toString() || '',
@@ -154,6 +156,7 @@ export function useTournamentPerformanceForm() {
       // Convert form data to database format
       const performanceData: Partial<TournamentPerformance> = {
         tournament_id: data.tournament_id,
+        tournament_date: data.tournament_date.toISOString().split('T')[0], // Convert to YYYY-MM-DD format
         buyin_amount: parseFloat(data.buyin_amount),
         rebuy_amount: data.rebuy_amount ? parseFloat(data.rebuy_amount) : null,
         rebuy_quantity: data.rebuy_quantity ? parseInt(data.rebuy_quantity) : 0,

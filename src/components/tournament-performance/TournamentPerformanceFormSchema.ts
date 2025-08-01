@@ -5,6 +5,9 @@ export const tournamentPerformanceFormSchema = z.object({
   tournament_id: z.string({
     required_error: "Torneio é obrigatório",
   }),
+  tournament_date: z.date({
+    required_error: "Data do torneio é obrigatória",
+  }),
   buyin_amount: z.string().min(1, "Valor do buy-in é obrigatório"),
   rebuy_amount: z.string().optional(),
   rebuy_quantity: z.string().optional(),
