@@ -28,7 +28,7 @@ const TournamentDateField = ({ form }: TournamentDateFieldProps) => {
       control={form.control}
       name="tournament_date"
       render={({ field }) => (
-        <FormItem className="flex flex-col">
+        <FormItem className="flex flex-col space-y-2">
           <FormLabel>Data do Torneio*</FormLabel>
           <Popover>
             <PopoverTrigger asChild>

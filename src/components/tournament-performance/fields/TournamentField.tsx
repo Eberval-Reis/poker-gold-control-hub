@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
 import { Tournament } from '@/lib/supabase';
 import { TournamentPerformanceFormData } from '../TournamentPerformanceFormSchema';
 
@@ -26,9 +25,6 @@ interface TournamentFieldProps {
 }
 
 const TournamentField = ({ form, tournaments, onTournamentChange }: TournamentFieldProps) => {
-  const selectedTournamentId = form.watch('tournament_id');
-  const selectedTournament = tournaments.find(t => t.id === selectedTournamentId);
-
   // Handle tournament selection changes
   useEffect(() => {
     const subscription = form.watch((value, { name }) => {
@@ -40,71 +36,38 @@ const TournamentField = ({ form, tournaments, onTournamentChange }: TournamentFi
     return () => subscription.unsubscribe();
   }, [form, onTournamentChange]);
 
-  // Function to get club name with fallback
-  const getClubName = () => {
-    if (selectedTournament?.clubs?.name) {
-      return selectedTournament.clubs.name;
-    }
-    
-    // Fallback: if we have a selected tournament ID but no club name in the tournaments list,
-    // it might be because we're loading data during edit mode
-    if (selectedTournamentId && tournaments.length > 0) {
-      return 'Carregando...';
-    }
-    
-    return '';
-  };
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div className="md:col-span-2">
-        <FormField
-          control={form.control}
-          name="tournament_id"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-base">Torneio*</FormLabel>
-              <FormControl>
-                <Select 
-                  onValueChange={(value) => {
-                    field.onChange(value);
-                    onTournamentChange(value);
-                  }} 
-                  value={field.value}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione o torneio" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {tournaments.map((tournament) => (
-                      <SelectItem key={tournament.id} value={tournament.id}>
-                        {tournament.name}
-                        {tournament.date && ` (${tournament.date})`}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      
-      <div>
+    <FormField
+      control={form.control}
+      name="tournament_id"
+      render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-base">Clube</FormLabel>
+          <FormLabel>Torneio*</FormLabel>
           <FormControl>
-            <Input 
-              value={getClubName()} 
-              placeholder="Clube será preenchido automaticamente"
-              readOnly
-              className="bg-gray-50 text-gray-600"
-            />
+            <Select 
+              onValueChange={(value) => {
+                field.onChange(value);
+                onTournamentChange(value);
+              }} 
+              value={field.value}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione o torneio" />
+              </SelectTrigger>
+              <SelectContent>
+                {tournaments.map((tournament) => (
+                  <SelectItem key={tournament.id} value={tournament.id}>
+                    {tournament.name}
+                    {tournament.date && ` (${tournament.date})`}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </FormControl>
+          <FormMessage />
         </FormItem>
-      </div>
-    </div>
+      )}
+    />
   );
 };
 
