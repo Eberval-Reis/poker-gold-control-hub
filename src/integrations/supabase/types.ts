@@ -395,7 +395,9 @@ export type Database = {
       }
       tournaments: {
         Row: {
+          addon_amount: number | null
           blind_structure: string | null
+          buyin_amount: number | null
           club_id: string
           created_at: string
           date: string
@@ -405,12 +407,15 @@ export type Database = {
           name: string
           notes: string | null
           prizes: string | null
+          rebuy_amount: number | null
           time: string
           type: string
           updated_at: string
         }
         Insert: {
+          addon_amount?: number | null
           blind_structure?: string | null
+          buyin_amount?: number | null
           club_id: string
           created_at?: string
           date?: string
@@ -420,12 +425,15 @@ export type Database = {
           name: string
           notes?: string | null
           prizes?: string | null
+          rebuy_amount?: number | null
           time?: string
           type: string
           updated_at?: string
         }
         Update: {
+          addon_amount?: number | null
           blind_structure?: string | null
+          buyin_amount?: number | null
           club_id?: string
           created_at?: string
           date?: string
@@ -435,6 +443,7 @@ export type Database = {
           name?: string
           notes?: string | null
           prizes?: string | null
+          rebuy_amount?: number | null
           time?: string
           type?: string
           updated_at?: string

@@ -24,6 +24,9 @@ export const getTournaments = async (): Promise<Tournament[]> => {
     blind_structure: item.blind_structure,
     prizes: item.prizes,
     notes: item.notes,
+    buyin_amount: item.buyin_amount,
+    rebuy_amount: item.rebuy_amount,
+    addon_amount: item.addon_amount,
     created_at: item.created_at,
     updated_at: item.updated_at,
     clubs: item.club_id,
@@ -57,6 +60,9 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     blind_structure: data.blind_structure,
     prizes: data.prizes,
     notes: data.notes,
+    buyin_amount: data.buyin_amount,
+    rebuy_amount: data.rebuy_amount,
+    addon_amount: data.addon_amount,
     created_at: data.created_at,
     updated_at: data.updated_at,
     clubs: data.club_id,
@@ -79,7 +85,10 @@ export const createTournament = async (tournamentData: Partial<Tournament>): Pro
       initial_stack: tournamentData.initial_stack,
       blind_structure: tournamentData.blind_structure,
       prizes: tournamentData.prizes,
-      notes: tournamentData.notes
+      notes: tournamentData.notes,
+      buyin_amount: tournamentData.buyin_amount,
+      rebuy_amount: tournamentData.rebuy_amount,
+      addon_amount: tournamentData.addon_amount
     })
     .select('*, club_id (name), event_id (name, date)')
     .maybeSingle();
@@ -102,6 +111,9 @@ export const updateTournament = async (id: string, tournamentData: Partial<Tourn
   if (tournamentData.blind_structure !== undefined) updateData.blind_structure = tournamentData.blind_structure;
   if (tournamentData.prizes !== undefined) updateData.prizes = tournamentData.prizes;
   if (tournamentData.notes !== undefined) updateData.notes = tournamentData.notes;
+  if (tournamentData.buyin_amount !== undefined) updateData.buyin_amount = tournamentData.buyin_amount;
+  if (tournamentData.rebuy_amount !== undefined) updateData.rebuy_amount = tournamentData.rebuy_amount;
+  if (tournamentData.addon_amount !== undefined) updateData.addon_amount = tournamentData.addon_amount;
   
   const { data, error } = await supabase
     .from('tournaments')

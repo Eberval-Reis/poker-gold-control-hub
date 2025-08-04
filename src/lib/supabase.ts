@@ -24,6 +24,9 @@ export interface Tournament {
   blind_structure?: string;
   prizes?: string;
   notes?: string;
+  buyin_amount?: number;
+  rebuy_amount?: number;
+  addon_amount?: number;
   created_at?: string;
   updated_at?: string;
   event_id?: string; // <-- Adicionado para suportar campo de evento opcional

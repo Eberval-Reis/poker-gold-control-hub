@@ -103,9 +103,9 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
         type: data.type,
         initial_stack: data.initial_stack,
         blind_structure: data.blind_structure,
-        buyin_amount: data.buyin_amount,
-        rebuy_amount: data.rebuy_amount,
-        addon_amount: data.addon_amount,
+        buyin_amount: data.buyin_amount ? parseFloat(data.buyin_amount) : undefined,
+        rebuy_amount: data.rebuy_amount ? parseFloat(data.rebuy_amount) : undefined,
+        addon_amount: data.addon_amount ? parseFloat(data.addon_amount) : undefined,
       };
 
       return isEditing

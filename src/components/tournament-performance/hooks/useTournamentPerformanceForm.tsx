@@ -212,6 +212,19 @@ export function useTournamentPerformanceForm() {
   const handleTournamentChange = (tournamentId: string) => {
     const tournament = tournaments.find(t => t.id === tournamentId);
     setSelectedTournament(tournament || null);
+    
+    // Preencher automaticamente os campos com os valores do torneio
+    if (tournament) {
+      if (tournament.buyin_amount) {
+        form.setValue('buyin_amount', tournament.buyin_amount.toString());
+      }
+      if (tournament.rebuy_amount) {
+        form.setValue('rebuy_amount', tournament.rebuy_amount.toString());
+      }
+      if (tournament.addon_amount) {
+        form.setValue('addon_amount', tournament.addon_amount.toString());
+      }
+    }
   };
   
   return {
