@@ -82,9 +82,9 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
         type: data.type || '',
         initial_stack: data.initial_stack || '',
         blind_structure: data.blind_structure || '',
-        buyin_amount: '',
-        rebuy_amount: '',
-        addon_amount: '',
+        buyin_amount: data.buyin_amount?.toString() || '',
+        rebuy_amount: data.rebuy_amount?.toString() || '',
+        addon_amount: data.addon_amount?.toString() || '',
       });
     }
   }, [fetchedTournamentData, propTournamentData, isEditing, form, clubsLoading]);
