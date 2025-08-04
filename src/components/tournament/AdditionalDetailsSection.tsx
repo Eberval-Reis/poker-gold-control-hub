@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Award, FileText } from 'lucide-react';
+import { DollarSign } from 'lucide-react';
 import { UseFormReturn } from 'react-hook-form';
 import {
   FormField,
@@ -8,7 +8,7 @@ import {
   FormLabel,
   FormControl,
 } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { TournamentFormData } from './TournamentFormSchema';
 
 interface AdditionalDetailsSectionProps {
@@ -20,45 +20,91 @@ const AdditionalDetailsSection: React.FC<AdditionalDetailsSectionProps> = ({ for
     <div className="space-y-4">
       <h2 className="text-xl font-semibold text-poker-text-dark">Detalhes Adicionais</h2>
       
-      <FormField
-        control={form.control}
-        name="prizes"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="flex items-center gap-2">
-              <Award className="h-4 w-4 text-poker-gold" />
-              Prêmios
-            </FormLabel>
-            <FormControl>
-              <Textarea
-                placeholder="Descrição dos prêmios"
-                {...field}
-                className="border-[#a0a0a0]"
-              />
-            </FormControl>
-          </FormItem>
-        )}
-      />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <FormField
+          control={form.control}
+          name="buyin_amount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-poker-gold" />
+                Valor do Buy-in (R$)
+              </FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    R$
+                  </div>
+                  <Input
+                    {...field}
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    className="pl-9"
+                  />
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
 
-      <FormField
-        control={form.control}
-        name="notes"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-poker-gold" />
-              Observações
-            </FormLabel>
-            <FormControl>
-              <Textarea
-                placeholder="Informações extras sobre o torneio"
-                {...field}
-                className="border-[#a0a0a0]"
-              />
-            </FormControl>
-          </FormItem>
-        )}
-      />
+        <FormField
+          control={form.control}
+          name="rebuy_amount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-poker-gold" />
+                Valor do Rebuy (R$)
+              </FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    R$
+                  </div>
+                  <Input
+                    {...field}
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    className="pl-9"
+                  />
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="addon_amount"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-poker-gold" />
+                Valor do Add-on (R$)
+              </FormLabel>
+              <FormControl>
+                <div className="relative">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    R$
+                  </div>
+                  <Input
+                    {...field}
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="0.00"
+                    className="pl-9"
+                  />
+                </div>
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      </div>
     </div>
   );
 };

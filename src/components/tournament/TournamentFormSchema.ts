@@ -6,8 +6,9 @@ export const tournamentFormSchema = z.object({
   type: z.string().min(1, { message: 'Campo obrigatório' }),
   initial_stack: z.string().optional(),
   blind_structure: z.string().optional(),
-  prizes: z.string().optional(),
-  notes: z.string().optional(),
+  buyin_amount: z.string().optional(),
+  rebuy_amount: z.string().optional(),
+  addon_amount: z.string().optional(),
   event_id: z.string().optional(),
 });
 
