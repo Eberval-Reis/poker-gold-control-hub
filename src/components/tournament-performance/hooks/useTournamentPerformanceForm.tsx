@@ -119,7 +119,7 @@ export function useTournamentPerformanceForm() {
       
       form.reset({
         tournament_id: performanceData.tournament_id,
-        tournament_date: performanceData.tournament_date ? new Date(performanceData.tournament_date) : new Date(),
+        tournament_date: performanceData.tournament_date ? new Date(performanceData.tournament_date + 'T12:00:00') : new Date(),
         buyin_amount: performanceData.buyin_amount?.toString() || '',
         rebuy_amount: performanceData.rebuy_amount?.toString() || '',
         rebuy_quantity: performanceData.rebuy_quantity?.toString() || '',
@@ -152,6 +152,8 @@ export function useTournamentPerformanceForm() {
   const mutation = useMutation({
     mutationFn: (data: TournamentPerformanceFormData) => {
       console.log('Submitting performance data:', data);
+      console.log('Tournament date being saved:', data.tournament_date);
+      console.log('Tournament date ISO string:', data.tournament_date.toISOString());
       
       // Convert form data to database format
       const performanceData: Partial<TournamentPerformance> = {
