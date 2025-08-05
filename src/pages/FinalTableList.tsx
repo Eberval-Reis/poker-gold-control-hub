@@ -2,7 +2,9 @@
 import { Trophy } from 'lucide-react';
 import FinalTableFilters from '@/components/final-table/FinalTableFilters';
 import FinalTableCard from '@/components/final-table/FinalTableCard';
+import { PaginationControls } from '@/components/ui/pagination-controls';
 import { useFinalTableList } from '@/hooks/useFinalTableList';
+import { usePagination } from '@/hooks/usePagination';
 
 const FinalTableList = () => {
   const {
@@ -13,6 +15,8 @@ const FinalTableList = () => {
     updateFilter,
     clearFilters
   } = useFinalTableList();
+
+  const pagination = usePagination(performances, 9);
 
   if (isLoading) {
     return (
@@ -59,16 +63,20 @@ const FinalTableList = () => {
       ) : (
         <>
           <div className="mb-4 text-sm text-gray-600">
-            Exibindo {performances.length} de {allPerformances.length} Final Tables
+            Exibindo {pagination.paginatedData.length} de {performances.length} Final Tables filtradas ({allPerformances.length} total)
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {performances.map((performance) => (
+            {pagination.paginatedData.map((performance) => (
               <FinalTableCard
                 key={performance.id}
                 performance={performance}
               />
             ))}
+          </div>
+
+          <div className="mt-8">
+            <PaginationControls pagination={pagination} />
           </div>
         </>
       )}

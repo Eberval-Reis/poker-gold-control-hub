@@ -3,6 +3,8 @@ import { useTournamentPerformanceList } from '@/hooks/useTournamentPerformanceLi
 import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PaginationControls } from '@/components/ui/pagination-controls';
+import { usePagination } from '@/hooks/usePagination';
 import TournamentPerformanceTabs from '@/components/tournament-performance/list/TournamentPerformanceTabs';
 import DeleteTournamentDialog from '@/components/tournament-performance/list/DeleteTournamentDialog';
 
@@ -16,6 +18,8 @@ const TournamentPerformanceList = () => {
     handleDeleteClick, 
     handleDelete 
   } = useTournamentPerformanceList();
+
+  const pagination = usePagination(performances, 12);
 
   return (
     <div className="container mx-auto p-6">
@@ -34,10 +38,16 @@ const TournamentPerformanceList = () => {
       </div>
 
       <TournamentPerformanceTabs 
-        performances={performances}
+        performances={pagination.paginatedData}
         isLoading={isLoading}
         onDeleteClick={handleDeleteClick}
       />
+
+      {performances.length > 0 && (
+        <div className="mt-6">
+          <PaginationControls pagination={pagination} />
+        </div>
+      )}
 
       <DeleteTournamentDialog 
         open={!!deleteId}

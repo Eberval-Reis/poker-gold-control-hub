@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FileText, Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { PaginationControls } from '@/components/ui/pagination-controls';
+import { usePagination } from '@/hooks/usePagination';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -61,6 +63,8 @@ const ExpenseList = () => {
     expense.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     getExpenseTypeName(expense.type).toLowerCase().includes(searchTerm.toLowerCase())
   ) : [];
+
+  const pagination = usePagination(filteredExpenses, 8);
 
   if (error) {
     return (
@@ -124,60 +128,68 @@ const ExpenseList = () => {
               </CardContent>
             </Card>
           ) : (
-            filteredExpenses.map((expense) => (
-              <Card key={expense.id} className="hover:shadow-md transition-shadow">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 p-6">
-                  <CardTitle className="text-lg leading-none">
-                    {getExpenseTypeName(expense.type)}
-                  </CardTitle>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigate(`/register-expense/${expense.id}`)}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDelete(expense.id)}
-                      disabled={deleteMutation.isPending}
-                      className="h-8 w-8 p-0"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Valor</p>
-                      <p className="text-lg font-semibold text-green-600">
-                        R$ {Number(expense.amount).toFixed(2)}
-                      </p>
+            <>
+              {pagination.paginatedData.map((expense) => (
+                <Card key={expense.id} className="hover:shadow-md transition-shadow">
+                  <CardHeader className="flex flex-row items-center justify-between space-y-0 p-6">
+                    <CardTitle className="text-lg leading-none">
+                      {getExpenseTypeName(expense.type)}
+                    </CardTitle>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/register-expense/${expense.id}`)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(expense.id)}
+                        disabled={deleteMutation.isPending}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Data</p>
-                      <p className="text-sm">{formatDateToBR(expense.date)}</p>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Valor</p>
+                        <p className="text-lg font-semibold text-green-600">
+                          R$ {Number(expense.amount).toFixed(2)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Data</p>
+                        <p className="text-sm">{formatDateToBR(expense.date)}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Torneio</p>
+                        <p className="text-sm">
+                          {expense.tournaments?.name || 'Não associado'}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Torneio</p>
-                      <p className="text-sm">
-                        {expense.tournaments?.name || 'Não associado'}
-                      </p>
-                    </div>
-                  </div>
-                  {expense.description && (
-                    <div className="mt-3">
-                      <p className="text-sm font-medium text-gray-600">Descrição</p>
-                      <p className="text-sm text-gray-800">{expense.description}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))
+                    {expense.description && (
+                      <div className="mt-3">
+                        <p className="text-sm font-medium text-gray-600">Descrição</p>
+                        <p className="text-sm text-gray-800">{expense.description}</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+              
+              {filteredExpenses.length > 0 && (
+                <div className="mt-6">
+                  <PaginationControls pagination={pagination} />
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

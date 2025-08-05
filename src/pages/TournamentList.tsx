@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, TrendingUp, Plus, Pencil, Trash2, Search } from 'lucide-react';
+import { PaginationControls } from '@/components/ui/pagination-controls';
+import { usePagination } from '@/hooks/usePagination';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -65,6 +67,8 @@ const TournamentList = () => {
     tournament.clubs?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     tournament.type.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const pagination = usePagination(filteredTournaments, 10);
 
   const handleDelete = (id: string) => {
     deleteTournament.mutate(id);
@@ -154,7 +158,7 @@ const TournamentList = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredTournaments.map((tournament) => (
+                {pagination.paginatedData.map((tournament) => (
                   <TableRow key={tournament.id}>
                     <TableCell className="font-medium">
                       <div className="max-w-[200px] truncate">{tournament.name}</div>
@@ -219,6 +223,12 @@ const TournamentList = () => {
               </TableBody>
             </Table>
           </div>
+          
+          {filteredTournaments.length > 0 && (
+            <div className="mt-6 px-6 pb-6">
+              <PaginationControls pagination={pagination} />
+            </div>
+          )}
         </div>
       )}
     </div>
