@@ -52,7 +52,7 @@ const FinalTableCard = ({ performance }: FinalTableCardProps) => {
   // Extrair nome do torneio e clube de forma segura
   const tournamentName = performance.tournaments?.name || 'Torneio sem nome';
   const clubName = performance.tournaments?.clubs?.name || 'Clube não informado';
-  const tournamentDate = performance.tournaments?.date || '';
+  const tournamentDate = performance.tournament_date || '';
 
   console.log('Extracted tournament name:', tournamentName);
   console.log('Extracted club name:', clubName);

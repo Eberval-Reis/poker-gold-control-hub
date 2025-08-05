@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 export interface FinalTablePerformance {
   id: string;
   tournament_id: string;
+  tournament_date: string;
   buyin_amount: number;
   rebuy_amount?: number;
   rebuy_quantity?: number;
@@ -32,7 +33,22 @@ export const getFinalTablePerformances = async (): Promise<FinalTablePerformance
   const { data, error } = await supabase
     .from('tournament_performance')
     .select(`
-      *,
+      id,
+      tournament_id,
+      tournament_date,
+      buyin_amount,
+      rebuy_amount,
+      rebuy_quantity,
+      addon_enabled,
+      addon_amount,
+      itm_achieved,
+      final_table_achieved,
+      position,
+      prize_amount,
+      ft_photo_url,
+      news_link,
+      created_at,
+      updated_at,
       tournaments (
         name,
         date,
