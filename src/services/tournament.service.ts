@@ -6,48 +6,53 @@ import { Tournament } from '@/lib/supabase';
 export const getTournaments = async (): Promise<Tournament[]> => {
   const { data, error } = await supabase
     .from('tournaments')
-    .select(`
-      *,
-      club:club_id!inner("Cadastro Clube"!inner(name)),
-      event:event_id("schedule_events"!inner(name, date))
-    `);
+    .select('*');
   
   if (error) {
     console.error('Error fetching tournaments:', error);
     throw error;
   }
   
-  // Map event and club join fields
-  return (data as any[] || []).map(item => ({
-    id: item.id,
-    name: item.name,
-    club_id: item.club_id,
-    event_id: item.event_id,
-    type: item.type,
-    initial_stack: item.initial_stack || '',
-    blind_structure: item.blind_structure,
-    prizes: item.prizes,
-    notes: item.notes,
-    buyin_amount: item.buyin_amount,
-    rebuy_amount: item.rebuy_amount,
-    addon_amount: item.addon_amount,
-    created_at: item.created_at,
-    updated_at: item.updated_at,
-    date: item.date,
-    time: item.time,
-    clubs: item.club?.[0] ? { name: item.club[0].name } : null,
-    event: item.event?.[0] ? { name: item.event[0].name, date: item.event[0].date } : null
-  })) as Tournament[];
+  // Buscar clubes e eventos separadamente por enquanto
+  const [clubsData, eventsData] = await Promise.all([
+    supabase.from('Cadastro Clube').select('id, name'),
+    supabase.from('schedule_events').select('id, name, date')
+  ]);
+
+  const clubs = clubsData.data || [];
+  const events = eventsData.data || [];
+
+  return data.map((item: any) => {
+    const club = clubs.find((c: any) => c.id === item.club_id);
+    const event = events.find((e: any) => e.id === item.event_id);
+    
+    return {
+      id: item.id,
+      name: item.name,
+      club_id: item.club_id,
+      type: item.type,
+      blind_structure: item.blind_structure,
+      prizes: item.prizes,
+      notes: item.notes,
+      buyin_amount: item.buyin_amount,
+      rebuy_amount: item.rebuy_amount,
+      addon_amount: item.addon_amount,
+      created_at: item.created_at,
+      updated_at: item.updated_at,
+      date: item.date,
+      time: item.time,
+      event_id: item.event_id,
+      initial_stack: item.initial_stack,
+      clubs: club ? { name: (club as any).name } : null,
+      event: event ? { name: (event as any).name, date: (event as any).date } : null
+    };
+  }) as Tournament[];
 };
 
 export const getTournamentById = async (id: string): Promise<Tournament | null> => {
   const { data, error } = await supabase
     .from('tournaments')
-    .select(`
-      *,
-      club:club_id!inner("Cadastro Clube"!inner(name)),
-      event:event_id("schedule_events"!inner(name, date))
-    `)
+    .select('*')
     .eq('id', id)
     .maybeSingle();
   
@@ -59,14 +64,19 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     throw error;
   }
   
-  // Map event and club join fields
-  return data ? {
+  if (!data) return null;
+
+  // Buscar clube e evento separadamente
+  const [clubData, eventData] = await Promise.all([
+    data.club_id ? supabase.from('Cadastro Clube').select('name').eq('id', data.club_id).maybeSingle() : Promise.resolve({ data: null }),
+    data.event_id ? supabase.from('schedule_events').select('name, date').eq('id', data.event_id).maybeSingle() : Promise.resolve({ data: null })
+  ]);
+
+  return {
     id: data.id,
     name: data.name,
     club_id: data.club_id,
-    event_id: data.event_id,
     type: data.type,
-    initial_stack: data.initial_stack || '',
     blind_structure: data.blind_structure,
     prizes: data.prizes,
     notes: data.notes,
@@ -77,9 +87,11 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     updated_at: data.updated_at,
     date: data.date,
     time: data.time,
-    clubs: data.club?.[0] ? { name: data.club[0].name } : null,
-    event: data.event?.[0] ? { name: data.event[0].name, date: data.event[0].date } : null
-  } as Tournament : null;
+    event_id: data.event_id,
+    initial_stack: data.initial_stack,
+    clubs: clubData.data ? { name: clubData.data.name } : null,
+    event: eventData.data ? { name: eventData.data.name, date: eventData.data.date } : null
+  } as Tournament;
 };
 
 export const createTournament = async (tournamentData: Partial<Tournament>): Promise<Tournament> => {
@@ -104,11 +116,7 @@ export const createTournament = async (tournamentData: Partial<Tournament>): Pro
       date: tournamentData.date || '',
       time: tournamentData.time || ''
     })
-    .select(`
-      *,
-      club:club_id!inner("Cadastro Clube"!inner(name)),
-      event:event_id("schedule_events"!inner(name, date))
-    `)
+    .select('*')
     .maybeSingle();
   
   if (error) {
@@ -137,11 +145,7 @@ export const updateTournament = async (id: string, tournamentData: Partial<Tourn
     .from('tournaments')
     .update(updateData)
     .eq('id', id)
-    .select(`
-      *,
-      club:club_id!inner("Cadastro Clube"!inner(name)),
-      event:event_id("schedule_events"!inner(name, date))
-    `)
+    .select('*')
     .maybeSingle();
   
   if (error) {
