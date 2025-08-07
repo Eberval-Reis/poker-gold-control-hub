@@ -6,7 +6,11 @@ import { Tournament } from '@/lib/supabase';
 export const getTournaments = async (): Promise<Tournament[]> => {
   const { data, error } = await supabase
     .from('tournaments')
-    .select('*, club_id (name), event_id (name, date)');
+    .select(`
+      *,
+      club:club_id!inner("Cadastro Clube"!inner(name)),
+      event:event_id("schedule_events"!inner(name, date))
+    `);
   
   if (error) {
     console.error('Error fetching tournaments:', error);
@@ -29,15 +33,21 @@ export const getTournaments = async (): Promise<Tournament[]> => {
     addon_amount: item.addon_amount,
     created_at: item.created_at,
     updated_at: item.updated_at,
-    clubs: item.club_id,
-    event: item.event_id // event_id join: { name, date }
+    date: item.date,
+    time: item.time,
+    clubs: item.club?.[0] ? { name: item.club[0].name } : null,
+    event: item.event?.[0] ? { name: item.event[0].name, date: item.event[0].date } : null
   })) as Tournament[];
 };
 
 export const getTournamentById = async (id: string): Promise<Tournament | null> => {
   const { data, error } = await supabase
     .from('tournaments')
-    .select('*, club_id (name), event_id (name, date)')
+    .select(`
+      *,
+      club:club_id!inner("Cadastro Clube"!inner(name)),
+      event:event_id("schedule_events"!inner(name, date))
+    `)
     .eq('id', id)
     .maybeSingle();
   
@@ -65,8 +75,10 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     addon_amount: data.addon_amount,
     created_at: data.created_at,
     updated_at: data.updated_at,
-    clubs: data.club_id,
-    event: data.event_id // { name, date }
+    date: data.date,
+    time: data.time,
+    clubs: data.club?.[0] ? { name: data.club[0].name } : null,
+    event: data.event?.[0] ? { name: data.event[0].name, date: data.event[0].date } : null
   } as Tournament : null;
 };
 
@@ -88,9 +100,15 @@ export const createTournament = async (tournamentData: Partial<Tournament>): Pro
       notes: tournamentData.notes,
       buyin_amount: tournamentData.buyin_amount,
       rebuy_amount: tournamentData.rebuy_amount,
-      addon_amount: tournamentData.addon_amount
+      addon_amount: tournamentData.addon_amount,
+      date: tournamentData.date || '',
+      time: tournamentData.time || ''
     })
-    .select('*, club_id (name), event_id (name, date)')
+    .select(`
+      *,
+      club:club_id!inner("Cadastro Clube"!inner(name)),
+      event:event_id("schedule_events"!inner(name, date))
+    `)
     .maybeSingle();
   
   if (error) {
@@ -119,7 +137,11 @@ export const updateTournament = async (id: string, tournamentData: Partial<Tourn
     .from('tournaments')
     .update(updateData)
     .eq('id', id)
-    .select('*, club_id (name), event_id (name, date)')
+    .select(`
+      *,
+      club:club_id!inner("Cadastro Clube"!inner(name)),
+      event:event_id("schedule_events"!inner(name, date))
+    `)
     .maybeSingle();
   
   if (error) {
