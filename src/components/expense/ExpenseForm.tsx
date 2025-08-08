@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -45,38 +45,42 @@ const ExpenseForm = () => {
   });
   
   // Get expense data if editing
-  const { isLoading: isLoadingExpense } = useQuery({
+  const { data: expenseData, isLoading: isLoadingExpense, error: expenseError } = useQuery({
     queryKey: ['expense', id],
     queryFn: () => expenseService.getExpenseById(id as string),
     enabled: !!id,
-    meta: {
-      onSuccess: (data: any) => {
-        if (data) {
-          form.reset({
-            type: data.type,
-            amount: String(data.amount),
-            date: new Date(data.date),
-            tournament_id: data.tournament_id || '',
-            description: data.description || '',
-            receipt: null, // Can't set File object from URL
-          });
-          
-          if (data.receipt_url) {
-            const fileName = data.receipt_url.split('/').pop() || 'comprovante';
-            setReceiptFileName(fileName);
-          }
-        }
-      },
-      onError: (error: Error) => {
-        toast({
-          variant: "destructive",
-          title: "Erro ao carregar dados da despesa",
-          description: error instanceof Error ? error.message : "Ocorreu um erro desconhecido.",
-        });
-        navigate('/expenses');
+  });
+
+  // Handle expense data loading
+  useEffect(() => {
+    if (expenseData) {
+      form.reset({
+        type: expenseData.type,
+        amount: String(expenseData.amount),
+        date: new Date(expenseData.date),
+        tournament_id: expenseData.tournament_id || '',
+        description: expenseData.description || '',
+        receipt: null, // Can't set File object from URL
+      });
+      
+      if (expenseData.receipt_url) {
+        const fileName = expenseData.receipt_url.split('/').pop() || 'comprovante';
+        setReceiptFileName(fileName);
       }
     }
-  });
+  }, [expenseData, form]);
+
+  // Handle expense loading error
+  useEffect(() => {
+    if (expenseError) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar dados da despesa",
+        description: expenseError instanceof Error ? expenseError.message : "Ocorreu um erro desconhecido.",
+      });
+      navigate('/expenses');
+    }
+  }, [expenseError, toast, navigate]);
   
   // Create or update expense mutation
   const mutation = useMutation({
