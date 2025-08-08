@@ -14,6 +14,8 @@ type Backer = {
   whatsapp: string;
   cpf?: string | null;
   nickname?: string | null;
+  email?: string | null;
+  endereco?: string | null;
 };
 
 type FormValues = {
@@ -21,6 +23,8 @@ type FormValues = {
   whatsapp: string;
   cpf?: string;
   nickname?: string;
+  email?: string;
+  endereco?: string;
 };
 
 // Helper runtime type guard
@@ -53,7 +57,7 @@ export default function BackerSelectWithModal({
     setIsLoading(true);
     const { data, error } = await supabase
       .from("financiadores")
-      .select("id, name, whatsapp, cpf, nickname")
+      .select("id, name, whatsapp, cpf, nickname, email, endereco")
       .order("name", { ascending: true });
     setIsLoading(false);
 
@@ -126,6 +130,8 @@ export default function BackerSelectWithModal({
               <div><b>WhatsApp:</b> {selected.whatsapp}</div>
               {selected.cpf && <div><b>CPF:</b> {selected.cpf}</div>}
               {selected.nickname && <div><b>Apelido:</b> {selected.nickname}</div>}
+              {selected.email && <div><b>Email:</b> {selected.email}</div>}
+              {selected.endereco && <div><b>Endereço:</b> {selected.endereco}</div>}
             </div>
           )}
         </div>
@@ -179,6 +185,23 @@ export default function BackerSelectWithModal({
                   {...register("nickname")}
                   className="w-full p-2 rounded border border-input bg-background"
                   placeholder="Opicional"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-semibold block mb-1 text-poker-gold">Email</label>
+                <input
+                  {...register("email")}
+                  type="email"
+                  className="w-full p-2 rounded border border-input bg-background"
+                  placeholder="email@exemplo.com"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-semibold block mb-1 text-poker-gold">Endereço</label>
+                <input
+                  {...register("endereco")}
+                  className="w-full p-2 rounded border border-input bg-background"
+                  placeholder="Opcional"
                 />
               </div>
               <Button
