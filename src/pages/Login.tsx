@@ -84,7 +84,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center relative overflow-hidden">
+    <div className="min-h-[100dvh] w-full flex items-center justify-center relative overflow-hidden">
       {/* Background carousel */}
       <div className="absolute inset-0 overflow-hidden">
         <Carousel autoplay={true} interval={5000} loop={true} className="h-full">
