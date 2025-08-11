@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
-
+import PWAInstallPrompt from "@/components/pwa/PWAInstallPrompt";
 // Lazy loading dos componentes pesados
 const TournamentList = lazy(() => import("./pages/TournamentList"));
 const RegisterTournament = lazy(() => import("./pages/RegisterTournament"));
@@ -72,6 +72,7 @@ const App = () => {
                 }
               />
             </Routes>
+            <PWAInstallPrompt />
           </div>
         </BrowserRouter>
       </TooltipProvider>
