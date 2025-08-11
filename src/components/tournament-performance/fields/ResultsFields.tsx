@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { TournamentPerformanceFormData } from '../TournamentPerformanceFormSchema';
 import ImageUploadField from './ImageUploadField';
+import { confettiBurst } from '@/components/magicui/confetti';
 
 interface ResultsFieldsProps {
   form: UseFormReturn<TournamentPerformanceFormData>;
@@ -33,7 +34,10 @@ const ResultsFields = ({ form }: ResultsFieldsProps) => {
               <FormControl>
                 <Switch
                   checked={field.value}
-                  onCheckedChange={field.onChange}
+                  onCheckedChange={(checked) => {
+                    field.onChange(checked);
+                    if (checked) confettiBurst();
+                  }}
                 />
               </FormControl>
             </FormItem>
@@ -49,10 +53,13 @@ const ResultsFields = ({ form }: ResultsFieldsProps) => {
                 <FormLabel>Foi FT (Final Table)?</FormLabel>
               </div>
               <FormControl>
-                <Switch
-                  checked={field.value}
-                  onCheckedChange={field.onChange}
-                />
+                 <Switch
+                   checked={field.value}
+                   onCheckedChange={(checked) => {
+                     field.onChange(checked);
+                     if (checked) confettiBurst();
+                   }}
+                 />
               </FormControl>
             </FormItem>
           )}
