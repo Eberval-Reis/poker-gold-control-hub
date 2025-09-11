@@ -112,7 +112,6 @@ export function useDashboardData({
     const totalRebuy = performances.reduce((sum, p) => sum + (Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0)), 0);
     const totalPrizes = performances.reduce((sum, p) => sum + Number(p.prize_amount || 0), 0);
     const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
-    const finalResult = totalPrizes - totalBuyin - totalRebuy - totalExpenses;
     
     const totalProfit = performances.reduce((sum, p) => {
       const buyin = Number(p.buyin_amount || 0);
@@ -122,6 +121,8 @@ export function useDashboardData({
       const prize = Number(p.prize_amount || 0);
       return sum + (prize - invested);
     }, 0);
+
+    const finalResult = (totalProfit - totalExpenses) - (totalBuyin + totalRebuy);
 
     const totalInvested = performances.reduce((sum, p) => {
       const buyin = Number(p.buyin_amount || 0);
