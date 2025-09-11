@@ -9,7 +9,7 @@ import ExpenseDistributionChart from "@/components/dashboard/ExpenseDistribution
 import RecentTournamentsTable from "@/components/dashboard/RecentTournamentsTable";
 import { supabase } from "@/integrations/supabase/client";
 import { useDashboardData } from "@/hooks/useDashboardData";
-import { Trophy, TrendingUp, DollarSign, Target } from "lucide-react";
+import { Trophy, TrendingUp, DollarSign, Target, CreditCard, Repeat2, Receipt, Calculator } from "lucide-react";
 
 const Index = () => {
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
@@ -136,6 +136,27 @@ const Index = () => {
           icon={<DollarSign className="h-5 w-5 text-[#d4af37]" />}
           trend={dashboardData.profitTrend}
           color={dashboardData.totalProfit >= 0 ? "green" : "red"}
+        />
+        <MetricCard
+          title="Total Buy-in"
+          value={`R$ ${dashboardData.totalBuyin.toFixed(2)}`}
+          icon={<CreditCard className="h-5 w-5 text-[#d4af37]" />}
+        />
+        <MetricCard
+          title="Total de Rebuys"
+          value={`R$ ${dashboardData.totalRebuy.toFixed(2)}`}
+          icon={<Repeat2 className="h-5 w-5 text-[#d4af37]" />}
+        />
+        <MetricCard
+          title="Despesa Total"
+          value={`R$ ${dashboardData.totalExpenses.toFixed(2)}`}
+          icon={<Receipt className="h-5 w-5 text-[#d4af37]" />}
+        />
+        <MetricCard
+          title="Resultado"
+          value={`R$ ${dashboardData.finalResult.toFixed(2)}`}
+          icon={<Calculator className="h-5 w-5 text-[#d4af37]" />}
+          color={dashboardData.finalResult >= 0 ? "green" : "red"}
         />
         <MetricCard
           title="ITM Rate"

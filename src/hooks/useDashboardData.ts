@@ -47,6 +47,11 @@ interface DashboardData {
   totalProfit: number;
   roi: number;
   itmRate: number;
+  totalBuyin: number;
+  totalRebuy: number;
+  totalPrizes: number;
+  totalExpenses: number;
+  finalResult: number;
   monthlyData: { month: string; profit: number }[];
   tournamentPrizeData: { month: string; profit: number }[];
   tournamentsTimelineData: { name: string; date: string; buyin: number; prize: number; profit: number }[];
@@ -78,6 +83,11 @@ export function useDashboardData({
         totalProfit: 0,
         roi: 0,
         itmRate: 0,
+        totalBuyin: 0,
+        totalRebuy: 0,
+        totalPrizes: 0,
+        totalExpenses: 0,
+        finalResult: 0,
         monthlyData: [],
         tournamentPrizeData: [],
         tournamentsTimelineData: [],
@@ -96,6 +106,14 @@ export function useDashboardData({
     console.log("Despesas recebidas para processamento:", expenses);
 
     const totalTournaments = performances.length;
+    
+    // Calcular novos totais solicitados
+    const totalBuyin = performances.reduce((sum, p) => sum + Number(p.buyin_amount || 0), 0);
+    const totalRebuy = performances.reduce((sum, p) => sum + (Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0)), 0);
+    const totalPrizes = performances.reduce((sum, p) => sum + Number(p.prize_amount || 0), 0);
+    const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
+    const finalResult = totalPrizes - totalBuyin - totalRebuy - totalExpenses;
+    
     const totalProfit = performances.reduce((sum, p) => {
       const buyin = Number(p.buyin_amount || 0);
       const rebuy = Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0);
@@ -247,6 +265,11 @@ export function useDashboardData({
       totalProfit,
       roi,
       itmRate,
+      totalBuyin,
+      totalRebuy,
+      totalPrizes,
+      totalExpenses,
+      finalResult,
       monthlyData,
       tournamentPrizeData,
       tournamentsTimelineData,
