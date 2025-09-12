@@ -75,6 +75,7 @@ export type Database = {
           payment_status: string | null
           percentage_bought: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           amount_paid: number
@@ -85,6 +86,7 @@ export type Database = {
           payment_status?: string | null
           percentage_bought: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           amount_paid?: number
@@ -95,6 +97,7 @@ export type Database = {
           payment_status?: string | null
           percentage_bought?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -119,6 +122,7 @@ export type Database = {
           tournament_date: string
           tournament_id: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           available_percentage: number
@@ -132,6 +136,7 @@ export type Database = {
           tournament_date: string
           tournament_id: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           available_percentage?: number
@@ -145,6 +150,7 @@ export type Database = {
           tournament_date?: string
           tournament_id?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -166,6 +172,7 @@ export type Database = {
           prize_amount: number | null
           result_type: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           backing_offer_id: string
@@ -176,6 +183,7 @@ export type Database = {
           prize_amount?: number | null
           result_type: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           backing_offer_id?: string
@@ -186,6 +194,7 @@ export type Database = {
           prize_amount?: number | null
           result_type?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -209,6 +218,7 @@ export type Database = {
           phone: string | null
           reference: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           address_link?: string | null
@@ -221,6 +231,7 @@ export type Database = {
           phone?: string | null
           reference?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           address_link?: string | null
@@ -233,6 +244,7 @@ export type Database = {
           phone?: string | null
           reference?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -247,6 +259,7 @@ export type Database = {
           tournament_id: string | null
           type: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           amount: number
@@ -258,6 +271,7 @@ export type Database = {
           tournament_id?: string | null
           type: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
@@ -269,6 +283,7 @@ export type Database = {
           tournament_id?: string | null
           type?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -290,6 +305,7 @@ export type Database = {
           name: string
           nickname: string | null
           updated_at: string
+          user_id: string | null
           whatsapp: string
         }
         Insert: {
@@ -301,6 +317,7 @@ export type Database = {
           name: string
           nickname?: string | null
           updated_at?: string
+          user_id?: string | null
           whatsapp: string
         }
         Update: {
@@ -312,6 +329,7 @@ export type Database = {
           name?: string
           nickname?: string | null
           updated_at?: string
+          user_id?: string | null
           whatsapp?: string
         }
         Relationships: []
@@ -322,18 +340,21 @@ export type Database = {
           date: string | null
           id: string
           name: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
           date?: string | null
           id?: string
           name: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
           date?: string | null
           id?: string
           name?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -355,6 +376,7 @@ export type Database = {
           tournament_date: string
           tournament_id: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           addon_amount?: number | null
@@ -373,6 +395,7 @@ export type Database = {
           tournament_date: string
           tournament_id?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           addon_amount?: number | null
@@ -391,6 +414,7 @@ export type Database = {
           tournament_date?: string
           tournament_id?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -420,6 +444,7 @@ export type Database = {
           time: string
           type: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           addon_amount?: number | null
@@ -438,6 +463,7 @@ export type Database = {
           time?: string
           type: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           addon_amount?: number | null
@@ -456,6 +482,7 @@ export type Database = {
           time?: string
           type?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
