@@ -3,6 +3,11 @@ import { TournamentPerformance } from '@/lib/supabase';
 
 // Individual functions for tournament performance operations
 export const getTournamentPerformances = async (): Promise<TournamentPerformance[]> => {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   const { data, error } = await supabase
     .from('tournament_performance')
     .select(`
@@ -16,7 +21,8 @@ export const getTournamentPerformances = async (): Promise<TournamentPerformance
           name
         )
       )
-    `);
+    `)
+    .eq('user_id', user.id);
   
   if (error) {
     console.error('Error fetching tournament performances:', error);
@@ -65,6 +71,11 @@ type TournamentPerformanceInsert = Omit<Partial<TournamentPerformance>, 'buyin_a
 export const createTournamentPerformance = async (
   performanceData: Partial<TournamentPerformance>
 ): Promise<TournamentPerformance> => {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   // Ensure buyin_amount is present
   if (!performanceData.buyin_amount && performanceData.buyin_amount !== 0) {
     throw new Error('Buy-in amount is required');
@@ -76,7 +87,7 @@ export const createTournamentPerformance = async (
   }
   
   // Cast to the correct type with required fields guaranteed to be present
-  const dataToInsert = performanceData as TournamentPerformanceInsert;
+  const dataToInsert = { ...performanceData, user_id: user.id } as TournamentPerformanceInsert & { user_id: string };
   
   const { data, error } = await supabase
     .from('tournament_performance')

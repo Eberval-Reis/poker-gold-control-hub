@@ -15,6 +15,11 @@ export async function saveBackingResult({ backingOfferId, prizeAmount, netPrize,
   playerProfit: number,
   resultType: string
 }) {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   // Salva resultado
   const { data: result, error: resultError } = await supabase
     .from("backing_results")
@@ -24,6 +29,7 @@ export async function saveBackingResult({ backingOfferId, prizeAmount, netPrize,
       net_prize: netPrize,
       player_profit: playerProfit,
       result_type: resultType,
+      user_id: user.id
     }])
     .select()
     .single();
@@ -34,7 +40,8 @@ export async function saveBackingResult({ backingOfferId, prizeAmount, netPrize,
   const { data: investments, error: investError } = await supabase
     .from("backing_investments")
     .select("*")
-    .eq("backing_offer_id", backingOfferId);
+    .eq("backing_offer_id", backingOfferId)
+    .eq("user_id", user.id);
 
   if (investError) throw investError;
 
@@ -47,6 +54,7 @@ export async function saveBackingResult({ backingOfferId, prizeAmount, netPrize,
       ? ((netPrize * (Number(investment.percentage_bought) / 100)) / Number(investment.amount_paid)) * 100
       : 0,
     payment_status: "pending",
+    user_id: user.id
   }));
 
   if (payouts.length > 0) {

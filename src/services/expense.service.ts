@@ -4,9 +4,15 @@ import { Expense } from '@/lib/supabase';
 
 // Individual functions for expense operations
 export const getExpenses = async (): Promise<Expense[]> => {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   const { data, error } = await supabase
     .from('expenses')
-    .select('*, tournaments(name)');
+    .select('*, tournaments(name)')
+    .eq('user_id', user.id);
   
   if (error) {
     console.error('Error fetching expenses:', error);
@@ -35,6 +41,11 @@ export const getExpenseById = async (id: string): Promise<Expense | null> => {
 };
 
 export const createExpense = async (expenseData: Partial<Expense>, receipt?: File): Promise<Expense> => {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   // Make sure required fields are present
   if (!expenseData.type || !expenseData.amount || !expenseData.date) {
     throw new Error('Missing required expense fields');
@@ -71,7 +82,8 @@ export const createExpense = async (expenseData: Partial<Expense>, receipt?: Fil
       date: expenseData.date,
       tournament_id: expenseData.tournament_id,
       description: expenseData.description,
-      receipt_url: expenseData.receipt_url
+      receipt_url: expenseData.receipt_url,
+      user_id: user.id
     })
     .select()
     .single();

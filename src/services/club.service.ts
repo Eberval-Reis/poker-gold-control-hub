@@ -4,7 +4,15 @@ import { Club } from '@/lib/supabase';
 
 // Individual functions for club operations
 export const getClubs = async (): Promise<Club[]> => {
-  const { data, error } = await supabase.from('Cadastro Clube').select('*');
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
+  const { data, error } = await supabase
+    .from('Cadastro Clube')
+    .select('*')
+    .eq('user_id', user.id);
   
   if (error) {
     console.error('Error fetching clubs:', error);
@@ -41,9 +49,14 @@ export const createClub = async (clubData: {
   address_link?: string;
   observations?: string;
 }): Promise<Club> => {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   const { data, error } = await supabase
     .from('Cadastro Clube')
-    .insert(clubData)
+    .insert({ ...clubData, user_id: user.id })
     .select()
     .single();
   

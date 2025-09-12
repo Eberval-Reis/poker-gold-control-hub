@@ -4,9 +4,15 @@ import { Tournament } from '@/lib/supabase';
 
 // Individual functions for tournament operations
 export const getTournaments = async (): Promise<Tournament[]> => {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   const { data, error } = await supabase
     .from('tournaments')
-    .select('*');
+    .select('*')
+    .eq('user_id', user.id);
   
   if (error) {
     console.error('Error fetching tournaments:', error);
@@ -15,8 +21,8 @@ export const getTournaments = async (): Promise<Tournament[]> => {
   
   // Buscar clubes e eventos separadamente por enquanto
   const [clubsData, eventsData] = await Promise.all([
-    supabase.from('Cadastro Clube').select('id, name'),
-    supabase.from('schedule_events').select('id, name, date')
+    supabase.from('Cadastro Clube').select('id, name').eq('user_id', user.id),
+    supabase.from('schedule_events').select('id, name, date').eq('user_id', user.id)
   ]);
 
   const clubs = clubsData.data || [];
@@ -50,10 +56,16 @@ export const getTournaments = async (): Promise<Tournament[]> => {
 };
 
 export const getTournamentById = async (id: string): Promise<Tournament | null> => {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   const { data, error } = await supabase
     .from('tournaments')
     .select('*')
     .eq('id', id)
+    .eq('user_id', user.id)
     .maybeSingle();
   
   if (error) {
@@ -68,8 +80,8 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
 
   // Buscar clube e evento separadamente
   const [clubData, eventData] = await Promise.all([
-    data.club_id ? supabase.from('Cadastro Clube').select('name').eq('id', data.club_id).maybeSingle() : Promise.resolve({ data: null }),
-    data.event_id ? supabase.from('schedule_events').select('name, date').eq('id', data.event_id).maybeSingle() : Promise.resolve({ data: null })
+    data.club_id ? supabase.from('Cadastro Clube').select('name').eq('id', data.club_id).eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null }),
+    data.event_id ? supabase.from('schedule_events').select('name, date').eq('id', data.event_id).eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null })
   ]);
 
   return {
@@ -95,6 +107,11 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
 };
 
 export const createTournament = async (tournamentData: Partial<Tournament>): Promise<Tournament> => {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   if (!tournamentData.name || !tournamentData.club_id || !tournamentData.type) {
     throw new Error('Missing required tournament fields');
   }
@@ -114,7 +131,8 @@ export const createTournament = async (tournamentData: Partial<Tournament>): Pro
       rebuy_amount: tournamentData.rebuy_amount,
       addon_amount: tournamentData.addon_amount,
       date: tournamentData.date || '',
-      time: tournamentData.time || ''
+      time: tournamentData.time || '',
+      user_id: user.id
     })
     .select('*')
     .maybeSingle();
@@ -128,6 +146,11 @@ export const createTournament = async (tournamentData: Partial<Tournament>): Pro
 };
 
 export const updateTournament = async (id: string, tournamentData: Partial<Tournament>): Promise<Tournament> => {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   const updateData: Record<string, any> = {};
   if (tournamentData.name !== undefined) updateData.name = tournamentData.name;
   if (tournamentData.club_id !== undefined) updateData.club_id = tournamentData.club_id;
@@ -145,6 +168,7 @@ export const updateTournament = async (id: string, tournamentData: Partial<Tourn
     .from('tournaments')
     .update(updateData)
     .eq('id', id)
+    .eq('user_id', user.id)
     .select('*')
     .maybeSingle();
   
@@ -157,10 +181,16 @@ export const updateTournament = async (id: string, tournamentData: Partial<Tourn
 };
 
 export const deleteTournament = async (id: string): Promise<{ success: boolean }> => {
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   const { error } = await supabase
     .from('tournaments')
     .delete()
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', user.id);
   
   if (error) {
     console.error('Error deleting tournament:', error);
