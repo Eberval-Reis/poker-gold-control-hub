@@ -24,6 +24,7 @@ export type Database = {
           payout_amount: number
           roi_percentage: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           backing_investment_id: string
@@ -34,6 +35,7 @@ export type Database = {
           payout_amount: number
           roi_percentage: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           backing_investment_id?: string
@@ -44,6 +46,7 @@ export type Database = {
           payout_amount?: number
           roi_percentage?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
