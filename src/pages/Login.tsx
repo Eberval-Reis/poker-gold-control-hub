@@ -111,7 +111,7 @@ const Login = () => {
           
           <form onSubmit={isSigningUp ? handleSignUp : handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">
+              <Label htmlFor="email" className="text-sm font-medium text-poker-gold">
                 Email
               </Label>
               <Input
@@ -125,7 +125,7 @@ const Login = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">
+              <Label htmlFor="password" className="text-sm font-medium text-poker-gold">
                 Senha
               </Label>
               <Input
