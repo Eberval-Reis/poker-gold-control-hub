@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/autoplay-carousel";
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -85,42 +85,16 @@ const Login = () => {
 
   return (
     <div className="min-h-[100dvh] w-full flex items-center justify-center relative overflow-hidden">
-      {/* Background carousel */}
+      {/* Background image */}
       <div className="absolute inset-0 overflow-hidden">
-        <Carousel autoplay={true} interval={5000} loop={true} className="h-full">
-          <CarouselContent className="h-full">
-            <CarouselItem className="h-full">
-              <div className="w-full h-full relative">
-                <img 
-                  src="/lovable-uploads/5977c8a7-abd6-44a2-b609-eb4fb3108657.png" 
-                  alt="Poker background 1" 
-                  className="w-full h-full object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-black/60" />
-              </div>
-            </CarouselItem>
-            <CarouselItem className="h-full">
-              <div className="w-full h-full relative">
-                <img 
-                  src="/lovable-uploads/36882bf8-82e3-4711-b761-c37b11e7fccc.png" 
-                  alt="Poker background 2" 
-                  className="w-full h-full object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-black/60" />
-              </div>
-            </CarouselItem>
-            <CarouselItem className="h-full">
-              <div className="w-full h-full relative">
-                <img 
-                  src="/lovable-uploads/52e3489b-85b5-4709-9069-a7aa802f7a00.png" 
-                  alt="Poker background 3" 
-                  className="w-full h-full object-cover object-center max-h-screen"
-                />
-                <div className="absolute inset-0 bg-black/60" />
-              </div>
-            </CarouselItem>
-          </CarouselContent>
-        </Carousel>
+        <div className="w-full h-full relative">
+          <img 
+            src="/lovable-uploads/poker-background-main.jpg" 
+            alt="Poker background" 
+            className="w-full h-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-black/60" />
+        </div>
       </div>
       
       {/* Login Form */}
