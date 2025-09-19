@@ -98,7 +98,7 @@ const Login = () => {
       </div>
       
       {/* Login Form */}
-      <Card className="w-[350px] z-10 bg-white/95 shadow-xl">
+      <Card className="w-[350px] z-10 bg-white/20 backdrop-blur-sm shadow-xl border-white/30">
         <CardContent className="pt-6">
           <div className="mb-6 text-center">
             <h1 className="text-2xl font-bold text-poker-gold mb-2">
