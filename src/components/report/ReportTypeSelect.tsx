@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ReportType } from "@/hooks/useReportData";
 
 const REPORT_TYPE_OPTIONS = [
@@ -23,7 +23,9 @@ const ReportTypeSelect: React.FC<ReportTypeSelectProps> = ({
   <div className="flex-1 min-w-[180px]">
     <label className="block text-sm font-medium mb-1">Tipo de Relatório</label>
     <Select value={reportType} onValueChange={v => setReportType(v as ReportType)}>
-      <SelectTrigger className="w-full h-11 text-base" />
+      <SelectTrigger className="w-full h-11 text-base">
+        <SelectValue />
+      </SelectTrigger>
       <SelectContent>
         {REPORT_TYPE_OPTIONS.map(opt => (
           <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
