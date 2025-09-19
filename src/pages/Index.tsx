@@ -131,11 +131,10 @@ const Index = () => {
           color={dashboardData.roi >= 0 ? "green" : "red"}
         />
         <MetricCard
-          title="Lucro Total"
-          value={`R$ ${dashboardData.totalProfit.toFixed(2)}`}
+          title="Ganho Total"
+          value={`R$ ${dashboardData.totalPrizes.toFixed(2)}`}
           icon={<DollarSign className="h-5 w-5 text-[#d4af37]" />}
-          trend={dashboardData.profitTrend}
-          color={dashboardData.totalProfit >= 0 ? "green" : "red"}
+          color={dashboardData.totalPrizes >= 0 ? "green" : "red"}
         />
         <MetricCard
           title="Total Buy-in"

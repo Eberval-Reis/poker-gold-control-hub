@@ -122,7 +122,11 @@ export function useDashboardData({
       return sum + (prize - invested);
     }, 0);
 
-    const finalResult = (totalProfit - totalExpenses) - (totalBuyin + totalRebuy);
+    // Adicionar addon ao cálculo do resultado final
+    const totalAddon = performances.reduce((sum, p) => sum + (p.addon_enabled ? Number(p.addon_amount || 0) : 0), 0);
+    
+    // Resultado = Ganho Total - Total Investido (buy-in + rebuy + addon) - Despesas
+    const finalResult = totalPrizes - totalBuyin - totalRebuy - totalAddon - totalExpenses;
 
     const totalInvested = performances.reduce((sum, p) => {
       const buyin = Number(p.buyin_amount || 0);
