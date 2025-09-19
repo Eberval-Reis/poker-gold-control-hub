@@ -135,7 +135,7 @@ export function useDashboardData({
       return sum + buyin + rebuy + addon;
     }, 0);
 
-    const roi = totalInvested === 0 ? 0 : (totalProfit / totalInvested) * 100;
+    const roi = totalInvested === 0 ? 0 : Math.round(((totalProfit / totalInvested) * 100) * 10) / 10;
     const itmRate = totalTournaments === 0
       ? 0
       : (performances.filter(p => p.prize_amount && Number(p.prize_amount) > 0).length / totalTournaments) * 100;
