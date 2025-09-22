@@ -6,93 +6,85 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-
-
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const navigate = useNavigate();
-  
+
   // Check if the user is already authenticated
   useEffect(() => {
     const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession();
+      const {
+        data
+      } = await supabase.auth.getSession();
       if (data.session) {
         navigate("/");
       }
     };
     checkAuth();
   }, [navigate]);
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const {
+        data,
+        error
+      } = await supabase.auth.signInWithPassword({
         email,
-        password,
+        password
       });
-      
       if (error) throw error;
-      
       toast({
         title: "Login realizado com sucesso!",
-        variant: "default",
+        variant: "default"
       });
       navigate("/");
     } catch (error: any) {
       toast({
         title: "Erro ao fazer login",
         description: error.message,
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
-
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const {
+        data,
+        error
+      } = await supabase.auth.signUp({
         email,
-        password,
+        password
       });
-      
       if (error) throw error;
-      
       toast({
         title: "Cadastro realizado com sucesso!",
         description: "Verifique seu email.",
-        variant: "default",
+        variant: "default"
       });
       setIsSigningUp(false);
     } catch (error: any) {
       toast({
         title: "Erro ao criar conta",
         description: error.message,
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
-
-  return (
-    <div className="min-h-[100dvh] w-full flex items-center justify-center relative overflow-hidden">
+  return <div className="min-h-[100dvh] w-full flex items-center justify-center relative overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="w-full h-full relative">
-          <img 
-            src="/lovable-uploads/poker-background-main.jpg" 
-            alt="Poker background" 
-            className="w-full h-full object-cover object-center"
-          />
+          <img src="/lovable-uploads/poker-background-main.jpg" alt="Poker background" className="w-full h-full object-cover object-center" />
           <div className="absolute inset-0 bg-black/30" />
         </div>
       </div>
@@ -104,7 +96,7 @@ const Login = () => {
             <h1 className="text-2xl font-bold text-poker-gold mb-2">
               {isSigningUp ? "Criar Conta" : "Login"}
             </h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-green-500">
               {isSigningUp ? "Cadastre-se para acessar o sistema" : "Acesse o sistema de gestão de poker"}
             </p>
           </div>
@@ -114,52 +106,28 @@ const Login = () => {
               <Label htmlFor="email" className="text-sm font-medium text-poker-gold">
                 Email
               </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email@exemplo.com"
-                required
-              />
+              <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="email@exemplo.com" required />
             </div>
             
             <div className="space-y-2">
               <Label htmlFor="password" className="text-sm font-medium text-poker-gold">
                 Senha
               </Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="********"
-                required
-              />
+              <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="********" required />
             </div>
             
-            <Button
-              type="submit"
-              className="w-full bg-poker-gold hover:bg-poker-gold/80 text-white"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full bg-poker-gold hover:bg-poker-gold/80 text-white" disabled={loading}>
               {loading ? "Processando..." : isSigningUp ? "Cadastrar" : "Entrar"}
             </Button>
           </form>
           
           <div className="mt-4 text-center">
-            <button
-              type="button"
-              className="text-sm text-poker-gold hover:underline"
-              onClick={() => setIsSigningUp(!isSigningUp)}
-            >
+            <button type="button" className="text-sm text-poker-gold hover:underline" onClick={() => setIsSigningUp(!isSigningUp)}>
               {isSigningUp ? "Já tem uma conta? Faça login" : "Não tem uma conta? Cadastre-se"}
             </button>
           </div>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
-
 export default Login;
