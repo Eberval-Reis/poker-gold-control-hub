@@ -7,6 +7,7 @@ import { PaginationControls } from '@/components/ui/pagination-controls';
 import { usePagination } from '@/hooks/usePagination';
 import TournamentPerformanceTabs from '@/components/tournament-performance/list/TournamentPerformanceTabs';
 import DeleteTournamentDialog from '@/components/tournament-performance/list/DeleteTournamentDialog';
+import CSVImportDialog from '@/components/csv-import/CSVImportDialog';
 
 const TournamentPerformanceList = () => {
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ const TournamentPerformanceList = () => {
     deleteId, 
     setDeleteId, 
     handleDeleteClick, 
-    handleDelete 
+    handleDelete,
+    refetch
   } = useTournamentPerformanceList();
 
   const pagination = usePagination(performances, 12);
@@ -28,13 +30,16 @@ const TournamentPerformanceList = () => {
           <h1 className="text-2xl font-bold text-poker-text-dark">Desempenho em Torneios</h1>
           <p className="text-gray-600">Gerencie seus registros de desempenho em torneios</p>
         </div>
-        <Button
-          onClick={() => navigate('/register-tournament-performance')}
-          className="bg-[#d4af37] text-white hover:bg-[#d4af37]/90"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Novo Registro
-        </Button>
+        <div className="flex gap-2">
+          <CSVImportDialog onImportComplete={refetch} />
+          <Button
+            onClick={() => navigate('/register-tournament-performance')}
+            className="bg-[#d4af37] text-white hover:bg-[#d4af37]/90"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Novo Registro
+          </Button>
+        </div>
       </div>
 
       <TournamentPerformanceTabs 

@@ -43,5 +43,6 @@ export const useTournamentPerformanceList = () => {
     setDeleteId,
     handleDeleteClick,
     handleDelete,
+    refetch,
   };
 };
