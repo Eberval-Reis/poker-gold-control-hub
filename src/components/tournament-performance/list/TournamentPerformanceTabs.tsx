@@ -34,14 +34,14 @@ const TournamentPerformanceTabs = ({
   });
 
   return (
-    <Tabs defaultValue="all" onValueChange={(value) => setFilter(value as any)}>
-      <TabsList className="mb-6">
+    <Tabs defaultValue="all" onValueChange={(value) => setFilter(value as any)} className="h-full flex flex-col">
+      <TabsList className="mb-4 flex-shrink-0">
         <TabsTrigger value="all">Todos</TabsTrigger>
         <TabsTrigger value="profit">Lucro</TabsTrigger>
         <TabsTrigger value="loss">Prejuízo</TabsTrigger>
       </TabsList>
 
-      <TabsContent value={filter}>
+      <TabsContent value={filter} className="flex-1 overflow-y-auto mt-0">
         <TournamentPerformanceGrid 
           performances={filteredPerformances} 
           isLoading={isLoading} 
