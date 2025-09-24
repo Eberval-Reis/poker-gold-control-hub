@@ -14,6 +14,7 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from '@/hooks/use-toast';
 import { csvImportService, ImportResult } from '@/services/csv-import.service';
 import { Upload, FileSpreadsheet, CheckCircle, AlertCircle } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface CSVImportDialogProps {
   onImportComplete?: () => void;
@@ -81,132 +82,140 @@ const CSVImportDialog = ({ onImportComplete }: CSVImportDialogProps) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2">
-          <Upload className="h-4 w-4" />
-          Importar CSV
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <FileSpreadsheet className="h-5 w-5" />
-            Importar Desempenhos do CSV
-          </DialogTitle>
-          <DialogDescription>
-            Selecione um arquivo CSV com dados de desempenho em torneios para importar automaticamente.
-          </DialogDescription>
-        </DialogHeader>
+    <TooltipProvider>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Upload className="h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Importar CSV</p>
+          </TooltipContent>
+        </Tooltip>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileSpreadsheet className="h-5 w-5" />
+              Importar Desempenhos do CSV
+            </DialogTitle>
+            <DialogDescription>
+              Selecione um arquivo CSV com dados de desempenho em torneios para importar automaticamente.
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="csv-file">Arquivo CSV</Label>
-            <Input
-              id="csv-file"
-              type="file"
-              accept=".csv"
-              onChange={handleFileChange}
-              disabled={importing}
-            />
-            <p className="text-sm text-muted-foreground">
-              O arquivo deve conter as colunas: data_torneio, nome_torneio, valor_buy_in, etc.
-            </p>
-          </div>
-
-          {importing && (
+          <div className="space-y-4">
             <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                <span className="text-sm">Processando arquivo...</span>
-              </div>
-              <Progress value={undefined} className="w-full" />
+              <Label htmlFor="csv-file">Arquivo CSV</Label>
+              <Input
+                id="csv-file"
+                type="file"
+                accept=".csv"
+                onChange={handleFileChange}
+                disabled={importing}
+              />
+              <p className="text-sm text-muted-foreground">
+                O arquivo deve conter as colunas: data_torneio, nome_torneio, valor_buy_in, etc.
+              </p>
             </div>
-          )}
 
-          {results && (
-            <div className="border rounded-lg p-4 space-y-3">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                Resultados da Importação
+            {importing && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                  <span className="text-sm">Processando arquivo...</span>
+                </div>
+                <Progress value={undefined} className="w-full" />
               </div>
-              
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-muted-foreground">Registros processados:</span>
-                  <span className="ml-2 font-medium">{results.processed}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Importados com sucesso:</span>
-                  <span className="ml-2 font-medium text-green-600">{results.imported}</span>
-                </div>
-              </div>
+            )}
 
-              {results.clubsCreated.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Clubes criados:</p>
-                  <p className="text-sm">{results.clubsCreated.join(', ')}</p>
+            {results && (
+              <div className="border rounded-lg p-4 space-y-3">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  Resultados da Importação
                 </div>
-              )}
-
-              {results.tournamentsCreated.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Torneios criados:</p>
-                  <p className="text-sm">{results.tournamentsCreated.slice(0, 5).join(', ')}</p>
-                  {results.tournamentsCreated.length > 5 && (
-                    <p className="text-sm text-muted-foreground">
-                      ... e mais {results.tournamentsCreated.length - 5} torneios
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {results.errors.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-2 text-sm font-medium text-destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    Erros encontrados ({results.errors.length})
+                
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Registros processados:</span>
+                    <span className="ml-2 font-medium">{results.processed}</span>
                   </div>
-                  <div className="max-h-32 overflow-y-auto">
-                    {results.errors.slice(0, 10).map((error, index) => (
-                      <p key={index} className="text-xs text-muted-foreground">{error}</p>
-                    ))}
-                    {results.errors.length > 10 && (
-                      <p className="text-xs text-muted-foreground">
-                        ... e mais {results.errors.length - 10} erros
+                  <div>
+                    <span className="text-muted-foreground">Importados com sucesso:</span>
+                    <span className="ml-2 font-medium text-green-600">{results.imported}</span>
+                  </div>
+                </div>
+
+                {results.clubsCreated.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Clubes criados:</p>
+                    <p className="text-sm">{results.clubsCreated.join(', ')}</p>
+                  </div>
+                )}
+
+                {results.tournamentsCreated.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">Torneios criados:</p>
+                    <p className="text-sm">{results.tournamentsCreated.slice(0, 5).join(', ')}</p>
+                    {results.tournamentsCreated.length > 5 && (
+                      <p className="text-sm text-muted-foreground">
+                        ... e mais {results.tournamentsCreated.length - 5} torneios
                       </p>
                     )}
                   </div>
-                </div>
-              )}
-            </div>
-          )}
+                )}
 
-          <div className="flex justify-end gap-2">
-            <Button variant="outline" onClick={handleClose}>
-              {results ? 'Fechar' : 'Cancelar'}
-            </Button>
-            <Button 
-              onClick={handleImport} 
-              disabled={!file || importing}
-              className="gap-2"
-            >
-              {importing ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
-                  Importando...
-                </>
-              ) : (
-                <>
-                  <Upload className="h-4 w-4" />
-                  Importar
-                </>
-              )}
-            </Button>
+                {results.errors.length > 0 && (
+                  <div>
+                    <div className="flex items-center gap-2 text-sm font-medium text-destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      Erros encontrados ({results.errors.length})
+                    </div>
+                    <div className="max-h-32 overflow-y-auto">
+                      {results.errors.slice(0, 10).map((error, index) => (
+                        <p key={index} className="text-xs text-muted-foreground">{error}</p>
+                      ))}
+                      {results.errors.length > 10 && (
+                        <p className="text-xs text-muted-foreground">
+                          ... e mais {results.errors.length - 10} erros
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={handleClose}>
+                {results ? 'Fechar' : 'Cancelar'}
+              </Button>
+              <Button 
+                onClick={handleImport} 
+                disabled={!file || importing}
+                className="gap-2"
+              >
+                {importing ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+                    Importando...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4" />
+                    Importar
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </TooltipProvider>
   );
 };
 
