@@ -1,11 +1,12 @@
-
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface TournamentsTimelineChartProps {
   data: { name: string; date: string; buyin: number; prize: number; profit: number }[];
 }
 
 const TournamentsTimelineChart = ({ data }: TournamentsTimelineChartProps) => {
+  const isMobile = useIsMobile();
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', { 
@@ -22,23 +23,27 @@ const TournamentsTimelineChart = ({ data }: TournamentsTimelineChartProps) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow">
       <h3 className="text-lg font-semibold mb-4">Torneios ao Longo do Tempo</h3>
-      <div className="h-[300px] w-full">
+      <div className={isMobile ? "h-[400px] w-full" : "h-[300px] w-full"}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={data}
-            margin={{ top: 5, right: 30, left: 20, bottom: 60 }}
+            margin={isMobile 
+              ? { top: 5, right: 10, left: 0, bottom: 60 }
+              : { top: 5, right: 30, left: 20, bottom: 60 }
+            }
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
               dataKey="name"
               angle={-45}
               textAnchor="end"
-              tick={{ fontSize: 10 }}
+              tick={{ fontSize: isMobile ? 8 : 10 }}
               height={80}
             />
             <YAxis 
-              tickFormatter={(value) => `R$ ${value.toLocaleString('pt-BR')}`}
-              tick={{ fontSize: 12 }}
+              tickFormatter={isMobile ? (value) => `${value}` : (value) => `R$ ${value.toLocaleString('pt-BR')}`}
+              tick={{ fontSize: isMobile ? 10 : 12 }}
+              width={isMobile ? 40 : 60}
             />
             <Tooltip
               formatter={(value, name) => {
