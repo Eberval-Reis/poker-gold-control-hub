@@ -1,5 +1,6 @@
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ExpenseDistributionChartProps {
   data: { category: string; amount: number }[];
@@ -13,31 +14,36 @@ const formatCurrency = (value: number) => {
 };
 
 const ExpenseDistributionChart = ({ data }: ExpenseDistributionChartProps) => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="bg-white p-6 rounded-lg shadow">
       <h3 className="text-lg font-semibold mb-4">Despesas acumuladas por categoria</h3>
-      <div className="h-[300px] w-full">
+      <div className={isMobile ? "h-[450px] w-full" : "h-[300px] w-full"}>
         {data.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               layout="vertical"
               data={data}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }} // Igual ao gráfico de premiação
-              barSize={38}
+              margin={isMobile 
+                ? { top: 5, right: 5, left: 10, bottom: 5 }
+                : { top: 5, right: 30, left: 20, bottom: 5 }
+              }
+              barSize={isMobile ? 30 : 38}
             >
               <CartesianGrid strokeDasharray="3 3" horizontal={false} />
               <XAxis
                 type="number"
-                tickFormatter={formatCurrency}
-                tick={{ fill: "#4B5563", fontSize: 15 }}
+                tick={isMobile ? false : { fill: "#4B5563", fontSize: 15 }}
+                tickFormatter={isMobile ? undefined : formatCurrency}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
                 dataKey="category"
                 type="category"
-                width={120}
-                tick={{ fontSize: 14, fill: "#374151" }}
+                width={isMobile ? 100 : 120}
+                tick={{ fontSize: isMobile ? 10 : 14, fill: "#374151" }}
                 axisLine={false}
                 tickLine={false}
               />
