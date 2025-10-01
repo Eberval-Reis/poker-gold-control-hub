@@ -29,7 +29,7 @@ const ExpenseDistributionChart = ({ data }: ExpenseDistributionChartProps) => {
                 ? { top: 5, right: 5, left: 10, bottom: 5 }
                 : { top: 5, right: 30, left: 20, bottom: 5 }
               }
-              barSize={isMobile ? 30 : 38}
+              barSize={isMobile ? 25 : 38}
             >
               <CartesianGrid strokeDasharray="3 3" horizontal={false} />
               <XAxis
