@@ -68,6 +68,32 @@ export const register = async (data: RegisterData): Promise<{ success: boolean; 
   }
 };
 
+// Login with Google
+export const loginWithGoogle = async (): Promise<{ success: boolean; error?: string }> => {
+  console.log('Attempting Google login');
+  
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/`,
+      }
+    });
+    
+    if (error) {
+      return { success: false, error: error.message };
+    }
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Google login error:', error);
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Erro ao fazer login com Google' 
+    };
+  }
+};
+
 // Logout function
 export const logout = async (): Promise<{ success: boolean }> => {
   console.log('Logging out user');
@@ -107,5 +133,6 @@ export const authService = {
   login,
   register,
   logout,
-  checkAuth
+  checkAuth,
+  loginWithGoogle
 };
