@@ -20,14 +20,14 @@ const EXPENSE_CATEGORY_MAP: Record<string, string> = {
 };
 
 const CATEGORY_KEYS = [
-  "alimento",
-  "transporte",
-  "hospedagem",
-  "lazer",
-  "bebida",
+  "food",
+  "transport",
+  "accommodation",
+  "leisure",
+  "drink",
   "taxi",
-  "estacionamento",
-  "outro",
+  "parking",
+  "other",
 ];
 
 interface Performance {
