@@ -1,20 +1,27 @@
 import { useMemo } from "react";
 
-// Tabela de tradução de categorias
+// Tabela de tradução de categorias (suporta português e inglês)
 const EXPENSE_CATEGORY_MAP: Record<string, string> = {
   food: "Alimentação",
+  alimento: "Alimentação",
   transport: "Transporte",
+  transporte: "Transporte",
   hospedagem: "Hospedagem",
+  accommodation: "Hospedagem",
   lazer: "Lazer",
+  leisure: "Lazer",
   bebida: "Bebida",
+  drink: "Bebida",
   taxi: "Táxi",
   estacionamento: "Estacionamento",
+  parking: "Estacionamento",
   outro: "Outro",
+  other: "Outro",
 };
 
 const CATEGORY_KEYS = [
-  "food",
-  "transport",
+  "alimento",
+  "transporte",
   "hospedagem",
   "lazer",
   "bebida",
@@ -31,6 +38,7 @@ interface Performance {
   addon_amount?: number;
   prize_amount?: number;
   created_at: string;
+  tournament_date: string;
   tournaments?: {
     name: string;
   };
@@ -195,7 +203,7 @@ export function useDashboardData({
         
         return {
           name: p.tournaments?.name || "Torneio não especificado",
-          date: p.created_at,
+          date: p.tournament_date,
           buyin: totalInvested,
           prize: prize,
           profit: profit
