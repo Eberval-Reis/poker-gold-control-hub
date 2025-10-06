@@ -28,15 +28,15 @@ const Index = () => {
             name
           )
         `)
-        .order("created_at", { ascending: false });
+        .order("tournament_date", { ascending: false });
 
       if (selectedYear) {
-        query = query.gte("created_at", `${selectedYear}-01-01`).lte("created_at", `${selectedYear}-12-31`);
+        query = query.gte("tournament_date", `${selectedYear}-01-01`).lte("tournament_date", `${selectedYear}-12-31`);
       }
 
       if (selectedMonth) {
         const month = String(selectedMonth).padStart(2, '0');
-        query = query.gte("created_at", `${selectedYear}-${month}-01`).lte("created_at", `${selectedYear}-${month}-31`);
+        query = query.gte("tournament_date", `${selectedYear}-${month}-01`).lte("tournament_date", `${selectedYear}-${month}-31`);
       }
 
       const { data, error } = await query;
