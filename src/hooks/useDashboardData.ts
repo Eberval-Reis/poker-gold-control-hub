@@ -214,19 +214,30 @@ export function useDashboardData({
     console.log("Dados de timeline de torneios individuais:", tournamentsTimelineData);
 
     // Gráfico de despesas: garantir todas categorias traduzidas, mas exibir apenas com movimentação
+    console.log("Despesas recebidas para processamento:", expenses);
+    
     const expenseSum: Record<string, number> = {};
     expenses.forEach((exp) => {
       const key = (exp.type || "outro").toLowerCase();
+      console.log(`Processando despesa tipo="${exp.type}" -> chave="${key}", valor=${exp.amount}`);
       expenseSum[key] = (expenseSum[key] || 0) + Number(exp.amount);
     });
 
+    console.log("ExpenseSum construído:", expenseSum);
+    console.log("CATEGORY_KEYS para mapear:", CATEGORY_KEYS);
+
     // Gera lista traduzida SÓ com movimentação (>0)
-    const expenseData = CATEGORY_KEYS
+    const expenseDataBeforeFilter = CATEGORY_KEYS
       .map((key) => ({
         category: EXPENSE_CATEGORY_MAP[key],
         amount: expenseSum[key] ?? 0,
-      }))
-      .filter(e => e.amount > 0);
+      }));
+    
+    console.log("Dados ANTES do filtro:", expenseDataBeforeFilter);
+    
+    const expenseData = expenseDataBeforeFilter.filter(e => e.amount > 0);
+    
+    console.log("Dados DEPOIS do filtro (>0):", expenseData);
 
     // Inclui qualquer categoria extra (custom) encontrada nos dados mas não no padrão
     Object.keys(expenseSum).forEach((key) => {
