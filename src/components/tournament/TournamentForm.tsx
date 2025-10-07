@@ -37,8 +37,14 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     enabled: !!tournamentId, // Only run if editing
   });
 
-  // Adicione useQuery para os clubes
+  // Query para os clubes
   const { data: clubs = [], isLoading: clubsLoading } = useQuery({
+    queryKey: ['clubs'],
+    queryFn: clubService.getClubs,
+  });
+
+  // Verificar se clubs estão carregados
+  const { isLoading } = useQuery({
     queryKey: ['clubs'],
     queryFn: clubService.getClubs,
   });
@@ -67,18 +73,20 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
 
   React.useEffect(() => {
     const data = isEditing ? fetchedTournamentData : propTournamentData;
-    if (data && !clubsLoading) {
-      // Defensive: ensure reset never provides "regular-clube" or a non-uuid to event_id
+    if (data && !clubsLoading && !isLoading) {
+      // Tratar event_id NULL como 'regular-clube' (valor padrão)
       let safeEventId = data.event_id;
-      if (!safeEventId || safeEventId === "regular-clube") safeEventId = '';
+      if (!safeEventId) {
+        safeEventId = 'regular-clube'; // Valor padrão quando NULL
+      }
+      
       let safeClubId = data.club_id;
-      // allow empty string for unselected, but never a non-uuid string
-      const safeClubIdValue =
-        normalizeUuid(safeClubId) || '';
+      const safeClubIdValue = normalizeUuid(safeClubId) || '';
+      
       form.reset({
         name: data.name || '',
         club_id: safeClubIdValue,
-        event_id: normalizeUuid(safeEventId) || '',
+        event_id: safeEventId, // Mantém 'regular-clube' ou o UUID do evento
         type: data.type || '',
         initial_stack: data.initial_stack || '',
         blind_structure: data.blind_structure || '',
@@ -87,7 +95,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
         addon_amount: data.addon_amount?.toString() || '',
       });
     }
-  }, [fetchedTournamentData, propTournamentData, isEditing, form, clubsLoading]);
+  }, [fetchedTournamentData, propTournamentData, isEditing, form, clubsLoading, isLoading]);
 
   const mutation = useMutation({
     mutationFn: (data: TournamentFormData) => {
@@ -158,7 +166,7 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <BasicInformationSection form={form} clubsLoaded={!clubsLoading} />
+        <BasicInformationSection form={form} clubsLoaded={!clubsLoading} isEditing={isEditing} />
         <TournamentStructureSection form={form} useStandardStructure={useStandardStructure} />
         <AdditionalDetailsSection form={form} />
         {/* Form Actions */}

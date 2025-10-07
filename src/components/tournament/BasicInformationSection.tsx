@@ -27,12 +27,13 @@ import { QuickEventModal } from '@/components/schedule/QuickEventModal';
 
 interface BasicInformationSectionProps {
   form: UseFormReturn<TournamentFormData>;
-  clubsLoaded?: boolean; // NOVO: flag opcional
+  clubsLoaded?: boolean;
+  isEditing?: boolean; // Indica se está em modo de edição
 }
 
 const BASIC_EVENT_DEFAULT = { id: 'regular-clube', name: 'Regular Clube' };
 
-const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form, clubsLoaded = true }) => {
+const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form, clubsLoaded = true, isEditing = false }) => {
   // Fetch clubs from Supabase
   const { data: clubs = [], isLoading } = useQuery({
     queryKey: ['clubs'],
@@ -66,24 +67,23 @@ const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form,
     form.setValue('event_id', newEvent.id);
   };
 
-  // Por padrão, seleciona o "Regular Clube" no primeiro render
+  // Só define valor padrão se não estiver em modo de edição e campo estiver vazio
   React.useEffect(() => {
-    if (!form.getValues('event_id')) {
+    if (!isEditing && !form.getValues('event_id')) {
       form.setValue('event_id', BASIC_EVENT_DEFAULT.id);
     }
     // eslint-disable-next-line
-  }, []);
+  }, [isEditing]);
 
-  // Corrigido: Após os clubes serem carregados, se no modo edição, e já existe um valor válido de club_id, garanta que este valor esteja no select
+  // Validação de club_id apenas em modo criação
   React.useEffect(() => {
-    if (!isLoading && form.getValues('club_id')) {
-      // Se o valor não existe na lista de clubes, resete
+    if (!isEditing && !isLoading && form.getValues('club_id')) {
       const clubExists = clubs.some(c => c.id === form.getValues('club_id'));
       if (!clubExists) {
         form.setValue('club_id', '');
       }
     }
-  }, [isLoading, clubs, form]);
+  }, [isEditing, isLoading, clubs, form]);
 
   return (
     <div className="space-y-4">
