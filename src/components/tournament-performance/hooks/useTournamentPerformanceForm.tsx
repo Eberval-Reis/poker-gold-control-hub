@@ -27,6 +27,7 @@ export function useTournamentPerformanceForm() {
     resolver: zodResolver(tournamentPerformanceFormSchema),
     defaultValues: {
       tournament_id: '',
+      club_id: '',
       tournament_date: new Date(),
       buyin_amount: '',
       rebuy_amount: '',
@@ -119,6 +120,7 @@ export function useTournamentPerformanceForm() {
       
       form.reset({
         tournament_id: performanceData.tournament_id,
+        club_id: (performanceData as any).club_id || tournament?.club_id || '',
         tournament_date: performanceData.tournament_date ? new Date(performanceData.tournament_date + 'T12:00:00') : new Date(),
         buyin_amount: performanceData.buyin_amount?.toString() || '',
         rebuy_amount: performanceData.rebuy_amount?.toString() || '',
@@ -156,8 +158,9 @@ export function useTournamentPerformanceForm() {
       console.log('Tournament date ISO string:', data.tournament_date.toISOString());
       
       // Convert form data to database format
-      const performanceData: Partial<TournamentPerformance> = {
+      const performanceData: any = {
         tournament_id: data.tournament_id,
+        club_id: data.club_id || selectedTournament?.club_id || null,
         tournament_date: data.tournament_date.toISOString().split('T')[0], // Convert to YYYY-MM-DD format
         buyin_amount: parseFloat(data.buyin_amount),
         rebuy_amount: data.rebuy_amount ? parseFloat(data.rebuy_amount) : null,
@@ -217,6 +220,11 @@ export function useTournamentPerformanceForm() {
     
     // Preencher automaticamente os campos com os valores do torneio
     if (tournament) {
+      // Set club_id from selected tournament
+      if (tournament.club_id) {
+        form.setValue('club_id', tournament.club_id);
+      }
+      
       if (tournament.buyin_amount) {
         form.setValue('buyin_amount', tournament.buyin_amount.toString());
       }

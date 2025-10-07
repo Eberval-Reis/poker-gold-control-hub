@@ -363,6 +363,7 @@ export type Database = {
           addon_amount: number | null
           addon_enabled: boolean | null
           buyin_amount: number
+          club_id: string | null
           created_at: string
           final_table_achieved: boolean | null
           ft_photo_url: string | null
@@ -382,6 +383,7 @@ export type Database = {
           addon_amount?: number | null
           addon_enabled?: boolean | null
           buyin_amount: number
+          club_id?: string | null
           created_at?: string
           final_table_achieved?: boolean | null
           ft_photo_url?: string | null
@@ -401,6 +403,7 @@ export type Database = {
           addon_amount?: number | null
           addon_enabled?: boolean | null
           buyin_amount?: number
+          club_id?: string | null
           created_at?: string
           final_table_achieved?: boolean | null
           ft_photo_url?: string | null
@@ -417,6 +420,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "tournament_performance_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "Cadastro Clube"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "tournament_performance_tournament_id_fkey"
             columns: ["tournament_id"]

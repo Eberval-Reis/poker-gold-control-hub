@@ -20,6 +20,10 @@ export const getTournamentPerformances = async (): Promise<TournamentPerformance
           id,
           name
         )
+      ),
+      clubs:club_id (
+        id,
+        name
       )
     `)
     .eq('user_id', user.id);
@@ -45,6 +49,10 @@ export const getTournamentPerformanceById = async (id: string): Promise<Tourname
           id,
           name
         )
+      ),
+      clubs:club_id (
+        id,
+        name
       )
     `)
     .eq('id', id)

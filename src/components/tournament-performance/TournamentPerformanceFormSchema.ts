@@ -5,6 +5,7 @@ export const tournamentPerformanceFormSchema = z.object({
   tournament_id: z.string({
     required_error: "Torneio é obrigatório",
   }),
+  club_id: z.string().optional(),
   tournament_date: z.date({
     required_error: "Data do torneio é obrigatória",
   }),

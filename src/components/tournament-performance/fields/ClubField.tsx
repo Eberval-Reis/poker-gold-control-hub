@@ -15,16 +15,22 @@ interface ClubFieldProps {
 
 const ClubField = ({ form, tournaments }: ClubFieldProps) => {
   const selectedTournamentId = form.watch('tournament_id');
+  const clubId = form.watch('club_id');
   const selectedTournament = tournaments.find(t => t.id === selectedTournamentId);
 
-  // Function to get club name with fallback
+  // Function to get club name - prioritize direct club_id, fallback to tournament's club
   const getClubName = () => {
+    // If we have a direct club_id stored, try to find it from the selected tournament
+    if (clubId && selectedTournament?.clubs && 'id' in selectedTournament.clubs && (selectedTournament.clubs as any).id === clubId) {
+      return selectedTournament.clubs.name;
+    }
+    
+    // Fallback to tournament's club
     if (selectedTournament?.clubs?.name) {
       return selectedTournament.clubs.name;
     }
     
-    // Fallback: if we have a selected tournament ID but no club name in the tournaments list,
-    // it might be because we're loading data during edit mode
+    // If loading
     if (selectedTournamentId && tournaments.length > 0) {
       return 'Carregando...';
     }
