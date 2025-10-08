@@ -39,16 +39,27 @@ export const QuickEventModal: React.FC<QuickEventModalProps> = ({
       return;
     }
     setLoading(true);
+    
+    // Pega o usuário autenticado
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      setError("Você precisa estar autenticado para criar um evento.");
+      setLoading(false);
+      return;
+    }
+    
     // Como ainda não existe campo 'cidade', concatenamos no nome:
     const fullName = `${nome} - ${cidade}`;
     const { data: inserted, error } = await supabase
       .from("schedule_events")
-      .insert([{ name: fullName, date: data }])
+      .insert([{ name: fullName, date: data, user_id: user.id }])
       .select()
       .maybeSingle();
     setLoading(false);
 
     if (error || !inserted) {
+      console.error("Erro ao salvar evento:", error);
       setError("Erro ao salvar evento. Tente novamente.");
       return;
     }
