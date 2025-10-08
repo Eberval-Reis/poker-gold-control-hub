@@ -12,10 +12,13 @@ interface TournamentFieldProps {
 }
 
 const TournamentField = ({ form, tournaments }: TournamentFieldProps) => {
-  // Helper function to safely format dates
-  const safeFormatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return isValid(date) ? format(date, 'dd/MM/yyyy') : 'Data inválida';
+  // Helper function to format tournament display name
+  const getTournamentDisplay = (tournament: any) => {
+    const date = new Date(tournament.date);
+    if (isValid(date)) {
+      return `${tournament.name} - ${format(date, 'dd/MM/yyyy')}`;
+    }
+    return tournament.name;
   };
 
   return (
@@ -34,7 +37,7 @@ const TournamentField = ({ form, tournaments }: TournamentFieldProps) => {
             <SelectContent>
               {tournaments.map((tournament: any) => (
                 <SelectItem key={tournament.id} value={tournament.id}>
-                  {tournament.name} - {safeFormatDate(tournament.date)}
+                  {getTournamentDisplay(tournament)}
                 </SelectItem>
               ))}
             </SelectContent>
