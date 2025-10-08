@@ -127,32 +127,40 @@ export const EventForm: React.FC<EventFormProps> = ({
       className="bg-card p-4 rounded-lg flex flex-col gap-2 animate-fade-in border border-poker-gold/10 max-w-md mx-auto"
     >
       {/* Campo Evento (dropdown base evento) */}
-      <div className="flex gap-2 items-end mb-1">
-        <div className="flex-1">
-          <label className="block text-poker-gold font-semibold mb-1">Evento</label>
-          <Controller
-            name="eventId"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <EventDropdown
-                events={agendaEvents}
-                value={field.value}
-                onChange={(eventId, eventName) => {
-                  field.onChange(eventId);
-                  setValue("eventName", eventName || "");
-                }}
-                disabled={loadingAgenda}
-              />
-            )}
-          />
-          {errors.eventId && (
-            <span className="text-red-500 text-xs">Selecione um evento</span>
-          )}
+      <div>
+        <label className="block text-poker-gold font-semibold mb-1">Evento</label>
+        <div className="flex gap-2 items-center">
+          <div className="flex-1">
+            <Controller
+              name="eventId"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <EventDropdown
+                  events={agendaEvents}
+                  value={field.value}
+                  onChange={(eventId, eventName) => {
+                    field.onChange(eventId);
+                    setValue("eventName", eventName || "");
+                  }}
+                  disabled={loadingAgenda}
+                />
+              )}
+            />
+          </div>
+          <Button 
+            type="button" 
+            variant="outline" 
+            size="icon" 
+            onClick={() => setQuickModalOpen(true)}
+            className="h-10 w-10 flex-shrink-0"
+          >
+            <Plus className="h-4 w-4 text-poker-gold" />
+          </Button>
         </div>
-        <Button type="button" variant="outline" size="icon" onClick={() => setQuickModalOpen(true)}>
-          <Plus className="text-poker-gold" />
-        </Button>
+        {errors.eventId && (
+          <span className="text-red-500 text-xs">Selecione um evento</span>
+        )}
       </div>
 
       <QuickEventModal

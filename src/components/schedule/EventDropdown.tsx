@@ -29,17 +29,23 @@ export const EventDropdown: React.FC<EventDropdownProps> = ({
       const selected = events.find(ev => ev.id === id);
       onChange(id, selected?.name ?? "");
     }}
-    disabled={disabled || events.length === 0}
+    disabled={disabled}
   >
-    <SelectTrigger className={cn("w-full", disabled ? "opacity-50" : "")}>
+    <SelectTrigger className={cn("w-full h-10 bg-background", disabled ? "opacity-50" : "")}>
       <SelectValue placeholder="Selecione..." />
     </SelectTrigger>
-    <SelectContent className="z-[60]">
-      {events.map((ev) => (
-        <SelectItem key={ev.id} value={ev.id}>
-          {ev.name} {ev.date ? `(${ev.date})` : ""}
-        </SelectItem>
-      ))}
+    <SelectContent className="z-[60] bg-background">
+      {events.length === 0 ? (
+        <div className="p-2 text-sm text-muted-foreground text-center">
+          Nenhum evento cadastrado
+        </div>
+      ) : (
+        events.map((ev) => (
+          <SelectItem key={ev.id} value={ev.id}>
+            {ev.name} {ev.date ? `(${ev.date})` : ""}
+          </SelectItem>
+        ))
+      )}
     </SelectContent>
   </Select>
 );
