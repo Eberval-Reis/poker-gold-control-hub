@@ -51,11 +51,28 @@ const ExpenseForm = () => {
     enabled: !!id,
   });
 
+  // Map backend type values to frontend values
+  const mapBackendTypeToFrontend = (backendType: string): string => {
+    const typeMap: Record<string, string> = {
+      'transporte': 'transport',
+      'alimentacao': 'food',
+      'hospedagem': 'accommodation',
+      'material': 'material',
+      'outros': 'other',
+      // Also support English values in case they're already stored
+      'transport': 'transport',
+      'food': 'food',
+      'accommodation': 'accommodation',
+      'other': 'other',
+    };
+    return typeMap[backendType.toLowerCase()] || backendType;
+  };
+
   // Handle expense data loading
   useEffect(() => {
     if (expenseData) {
       form.reset({
-        type: expenseData.type,
+        type: mapBackendTypeToFrontend(expenseData.type),
         amount: String(expenseData.amount),
         date: new Date(expenseData.date),
         tournament_id: expenseData.tournament_id || '',
