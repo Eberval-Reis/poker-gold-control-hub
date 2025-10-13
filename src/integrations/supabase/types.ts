@@ -436,6 +436,72 @@ export type Database = {
           },
         ]
       }
+      tournament_schedules: {
+        Row: {
+          buy_in: number
+          created_at: string
+          date: string
+          event_id: string | null
+          event_name: string | null
+          id: string
+          reason: string | null
+          rebuys: number
+          status: string
+          time: string
+          tournament_id: string | null
+          tournament_name: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          buy_in?: number
+          created_at?: string
+          date: string
+          event_id?: string | null
+          event_name?: string | null
+          id?: string
+          reason?: string | null
+          rebuys?: number
+          status?: string
+          time: string
+          tournament_id?: string | null
+          tournament_name: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          buy_in?: number
+          created_at?: string
+          date?: string
+          event_id?: string | null
+          event_name?: string | null
+          id?: string
+          reason?: string | null
+          rebuys?: number
+          status?: string
+          time?: string
+          tournament_id?: string | null
+          tournament_name?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_schedules_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "schedule_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tournament_schedules_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tournaments: {
         Row: {
           addon_amount: number | null
