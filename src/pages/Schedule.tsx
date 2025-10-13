@@ -40,14 +40,8 @@ const SchedulePage = () => {
   function handleSave(ev: Omit<ScheduleEvent, "id">) {
     if (editEvent) {
       updateEvent(editEvent.id, ev);
-      toast({
-        title: "Evento atualizado",
-      });
     } else {
-      addEvent({ ...ev, id: crypto.randomUUID() });
-      toast({
-        title: "Evento cadastrado",
-      });
+      addEvent(ev);
     }
     setShowForm(false);
     setEditEvent(null);
