@@ -55,27 +55,46 @@ export const EventForm: React.FC<EventFormProps> = ({
     control,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<EventFormFields>({
-    defaultValues: initialData
-      ? {
-          ...initialData,
-          eventId: initialData.eventId ?? "",
-          eventName: initialData.eventName ?? "",
-        }
-      : {
-          eventId: "",
-          eventName: "",
-          tournamentId: "",
-          tournamentName: "",
-          date: "",
-          time: "",
-          buyIn: 0,
-          rebuys: 0,
-          status: "pending",
-          reason: "",
-        },
+    defaultValues: {
+      eventId: "",
+      eventName: "",
+      tournamentId: "",
+      tournamentName: "",
+      date: "",
+      time: "",
+      buyIn: 0,
+      rebuys: 0,
+      status: "pending",
+      reason: "",
+    },
   });
+
+  // Atualiza o formulário quando initialData mudar
+  useEffect(() => {
+    if (initialData) {
+      reset({
+        ...initialData,
+        eventId: initialData.eventId ?? "",
+        eventName: initialData.eventName ?? "",
+      });
+    } else {
+      reset({
+        eventId: "",
+        eventName: "",
+        tournamentId: "",
+        tournamentName: "",
+        date: "",
+        time: "",
+        buyIn: 0,
+        rebuys: 0,
+        status: "pending",
+        reason: "",
+      });
+    }
+  }, [initialData, reset]);
 
   // Atualiza tournamentName quando tournamentId muda
   useEffect(() => {
