@@ -22,25 +22,34 @@ export const TournamentDropdown: React.FC<TournamentDropdownProps> = ({
   onChange,
   error,
   disabled
-}) => (
-  <Select
-    value={value}
-    onValueChange={id => {
-      const tournament = tournaments.find(t => t.id === id);
-      onChange(id, tournament?.name ?? "");
-    }}
-    disabled={disabled || tournaments.length === 0}
-  >
-    <SelectTrigger className={error ? "w-full border-red-500" : "w-full"}>
-      <SelectValue placeholder="Selecione..." />
-    </SelectTrigger>
-    <SelectContent>
-      {tournaments.map((t) => (
-        <SelectItem value={t.id} key={t.id}>
-          {t.name}
-        </SelectItem>
-      ))}
-    </SelectContent>
-  </Select>
-);
+}) => {
+  const formatTournamentDisplay = (tournament: { id: string; name: string; date?: string }) => {
+    if (tournament.date) {
+      return `${tournament.name} (${tournament.date})`;
+    }
+    return tournament.name;
+  };
+
+  return (
+    <Select
+      value={value}
+      onValueChange={id => {
+        const tournament = tournaments.find(t => t.id === id);
+        onChange(id, tournament?.name ?? "");
+      }}
+      disabled={disabled || tournaments.length === 0}
+    >
+      <SelectTrigger className={error ? "w-full border-red-500" : "w-full"}>
+        <SelectValue placeholder="Selecione..." />
+      </SelectTrigger>
+      <SelectContent>
+        {tournaments.map((t) => (
+          <SelectItem value={t.id} key={t.id}>
+            {formatTournamentDisplay(t)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
+};
 
