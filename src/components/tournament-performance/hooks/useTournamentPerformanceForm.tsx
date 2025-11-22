@@ -79,10 +79,19 @@ export function useTournamentPerformanceForm() {
   }, [buyinAmount, rebuyAmount, rebuyQuantity, addonEnabled, addonAmount, prizeAmount]);
   
   // Fetch tournaments for dropdown with club information
-  const { data: tournaments = [] } = useQuery({
+  const { data: allTournaments = [] } = useQuery({
     queryKey: ['tournaments'],
     queryFn: tournamentService.getTournaments,
   });
+
+  // Filter to get unique tournament names
+  const tournaments = allTournaments.reduce<Tournament[]>((acc, tournament) => {
+    const exists = acc.find(t => t.name === tournament.name);
+    if (!exists) {
+      acc.push(tournament);
+    }
+    return acc;
+  }, []);
   
   // Get performance data if editing
   const { data: performanceData, isLoading: isLoadingPerformance, error: performanceError } = useQuery({
