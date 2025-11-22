@@ -58,7 +58,6 @@ const TournamentField = ({ form, tournaments, onTournamentChange }: TournamentFi
                 {tournaments.map((tournament) => (
                   <SelectItem key={tournament.id} value={tournament.id}>
                     {tournament.name}
-                    {tournament.date && ` (${tournament.date})`}
                   </SelectItem>
                 ))}
               </SelectContent>
