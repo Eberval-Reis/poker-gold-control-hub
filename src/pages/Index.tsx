@@ -4,6 +4,7 @@ import { useState } from "react";
 import MetricCard from "@/components/dashboard/MetricCard";
 import TournamentBarChart from "@/components/dashboard/TournamentBarChart";
 import TournamentsTimelineChart from "@/components/dashboard/TournamentsTimelineChart";
+import OgiveChart from "@/components/dashboard/OgiveChart";
 import MonthlyPerformanceChart from "@/components/dashboard/MonthlyPerformanceChart";
 import ExpenseDistributionChart from "@/components/dashboard/ExpenseDistributionChart";
 import RecentTournamentsTable from "@/components/dashboard/RecentTournamentsTable";
@@ -168,6 +169,7 @@ const Index = () => {
       <div className="grid grid-cols-1 gap-6 mb-8">
         <TournamentBarChart data={dashboardData.tournamentPrizeData} />
         <TournamentsTimelineChart data={dashboardData.tournamentsTimelineData} />
+        <OgiveChart performances={performances || []} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
