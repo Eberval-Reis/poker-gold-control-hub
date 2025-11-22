@@ -21,31 +21,33 @@ const OgiveChart = ({ performances }: OgiveChartProps) => {
     return profit;
   });
 
-  // Determinar o intervalo de classes
-  const minProfit = Math.min(...profits);
-  const maxProfit = Math.max(...profits);
-  const classWidth = 100; // R$100
+  const totalTournaments = profits.length || 1; // Evitar divisão por zero
 
-  // Criar limites das classes
-  const minClass = Math.floor(minProfit / classWidth) * classWidth;
-  const maxClass = Math.ceil(maxProfit / classWidth) * classWidth;
+  // Definir classes fixas
+  const classLimits = [
+    { label: 'R$-200', upperLimit: -200 },
+    { label: 'R$-100', upperLimit: -100 },
+    { label: 'R$0', upperLimit: 0 },
+    { label: 'R$100', upperLimit: 100 },
+    { label: 'R$200', upperLimit: 200 },
+    { label: 'R$300+', upperLimit: 300 },
+  ];
 
-  // Agrupar lucros em classes e calcular frequência acumulada
-  const classes: { upperLimit: number; cumulativeFreq: number }[] = [];
-  let cumulativeCount = 0;
-
-  for (let limit = minClass + classWidth; limit <= maxClass; limit += classWidth) {
-    // Contar quantos lucros estão até este limite superior
-    const count = profits.filter(p => p <= limit).length;
+  // Calcular frequência acumulada relativa (percentual)
+  const classes = classLimits.map(({ label, upperLimit }) => {
+    const count = profits.filter(p => p <= upperLimit).length;
+    const percentage = (count / totalTournaments) * 100;
     
-    classes.push({
-      upperLimit: limit,
-      cumulativeFreq: count,
-    });
-  }
+    return {
+      label,
+      upperLimit,
+      cumulativeFreqPercent: percentage,
+    };
+  });
 
-  // Encontrar o valor acumulado no break-even (X=0)
-  const breakEvenFreq = profits.filter(p => p <= 0).length;
+  // Encontrar o percentual no break-even (X=0)
+  const breakEvenCount = profits.filter(p => p <= 0).length;
+  const breakEvenPercent = ((breakEvenCount / totalTournaments) * 100).toFixed(1);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
@@ -61,37 +63,37 @@ const OgiveChart = ({ performances }: OgiveChartProps) => {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis 
-              dataKey="upperLimit"
+              dataKey="label"
               tick={{ fontSize: isMobile ? 10 : 12 }}
               label={!isMobile ? { 
-                value: 'Lucro por Torneio (R$)', 
+                value: 'Limite Superior da Classe (Resultado Líquido)', 
                 position: 'insideBottom', 
                 offset: -5,
                 style: { fontSize: 12 }
               } : undefined}
-              tickFormatter={(value) => `R$ ${value}`}
             />
             <YAxis 
               tick={{ fontSize: isMobile ? 10 : 12 }}
               width={isMobile ? 40 : 60}
               label={!isMobile ? { 
-                value: 'Nº de Torneios Acumulados', 
+                value: 'Frequência Acumulada Relativa (%)', 
                 angle: -90, 
                 position: 'insideLeft',
                 style: { fontSize: 12 }
               } : undefined}
+              domain={[0, 100]}
             />
             <Tooltip 
-              formatter={(value) => [`${value} torneios`, ""]} 
-              labelFormatter={(label) => `Até R$ ${label}`}
+              formatter={(value) => [`${Number(value).toFixed(1)}%`, ""]} 
+              labelFormatter={(label) => `${label}`}
             />
             <ReferenceLine 
-              x={0} 
+              x="R$0" 
               stroke="#dc2626" 
               strokeWidth={2}
               strokeDasharray="5 5"
               label={!isMobile ? { 
-                value: `Break-Even (${breakEvenFreq} torneios)`, 
+                value: `Break-Even (${breakEvenPercent}%)`, 
                 position: 'top',
                 fill: '#dc2626',
                 fontSize: 11
@@ -99,8 +101,8 @@ const OgiveChart = ({ performances }: OgiveChartProps) => {
             />
             <Line 
               type="monotone" 
-              dataKey="cumulativeFreq" 
-              name="Torneios Acumulados" 
+              dataKey="cumulativeFreqPercent" 
+              name="Frequência Acumulada (%)" 
               stroke="#0088FE" 
               strokeWidth={2}
               dot={{ r: 3 }}
@@ -110,7 +112,7 @@ const OgiveChart = ({ performances }: OgiveChartProps) => {
         </ResponsiveContainer>
       </div>
       <div className="mt-3 text-sm text-gray-600 text-center">
-        A linha vermelha tracejada indica o ponto de equilíbrio (Break-Even) onde o lucro é zero
+        A linha vermelha tracejada indica o ponto de equilíbrio (Break-Even) onde o resultado líquido é zero
       </div>
     </div>
   );
