@@ -21,8 +21,24 @@ const CadastroTorneioSection = () => {
   const [maxPercent, setMaxPercent] = React.useState<string>("80");
   const [markup, setMarkup] = React.useState<string>("1.5");
 
-  const { torneios, loading: loadingTorneios } = useTorneioList();
+  const { torneios, loading: loadingTorneios } = useTorneioList({ eventId: selectedEvento });
   const { events: agendaEvents, loading: loadingAgenda } = useAgendaEventList();
+
+  // Efeito para preencher automaticamente o buy-in quando um torneio é selecionado
+  React.useEffect(() => {
+    if (selectedTorneio) {
+      const torneio = torneios.find(t => t.id === selectedTorneio);
+      if (torneio && torneio.buyin_amount) {
+        setBuyIn(torneio.buyin_amount.toString());
+      }
+    }
+  }, [selectedTorneio, torneios]);
+
+  // Efeito para limpar a seleção de torneio quando o evento mudar
+  React.useEffect(() => {
+    setSelectedTorneio("");
+    setBuyIn("");
+  }, [selectedEvento]);
   const [editModal, setEditModal] = React.useState<{ open: boolean; eventId: string | null }>({ open: false, eventId: null });
   const [editValue, setEditValue] = React.useState("");
   const [saving, setSaving] = React.useState(false);

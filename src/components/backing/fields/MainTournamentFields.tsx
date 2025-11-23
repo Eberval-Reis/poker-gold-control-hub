@@ -54,7 +54,7 @@ export default function MainTournamentFields({
               placeholder={loadingAgenda ? "Carregando..." : "Selecione..."}
             />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="z-50 bg-background">
             {agendaEvents.length === 0 && !loadingAgenda && (
               <div className="px-4 py-2 text-muted-foreground text-sm">
                 Nenhum evento encontrado
@@ -96,7 +96,12 @@ export default function MainTournamentFields({
               placeholder={loadingTorneios ? "Carregando..." : "Selecione..."}
             />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="z-50 bg-background">
+            {torneios.length === 0 && !loadingTorneios && (
+              <div className="px-4 py-2 text-muted-foreground text-sm">
+                {selectedEvento ? "Nenhum torneio encontrado para este evento" : "Selecione um evento primeiro"}
+              </div>
+            )}
             {torneios.map((torneio) => (
               <SelectItem key={torneio.id} value={torneio.id} className="text-sm">
                 {torneio.name}

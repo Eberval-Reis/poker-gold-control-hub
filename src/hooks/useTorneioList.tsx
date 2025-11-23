@@ -5,8 +5,15 @@ import { supabase } from "@/integrations/supabase/client";
 export interface Torneio {
   id: string;
   name: string;
+  buyin_amount: number | null;
+  event_id: string | null;
 }
-export function useTorneioList() {
+
+interface UseTorneioListProps {
+  eventId?: string;
+}
+
+export function useTorneioList(props?: UseTorneioListProps) {
   const [torneios, setTorneios] = useState<Torneio[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -21,11 +28,17 @@ export function useTorneioList() {
           return;
         }
 
-        const { data, error } = await supabase
+        let query = supabase
           .from("tournaments")
-          .select("id, name")
-          .eq("user_id", user.id)
-          .order("name");
+          .select("id, name, buyin_amount, event_id")
+          .eq("user_id", user.id);
+
+        // Filtrar por evento se especificado
+        if (props?.eventId) {
+          query = query.eq("event_id", props.eventId);
+        }
+
+        const { data, error } = await query.order("name");
 
         if (error) {
           console.error('Error fetching tournaments:', error);
@@ -51,7 +64,7 @@ export function useTorneioList() {
     };
 
     fetchTournaments();
-  }, []);
+  }, [props?.eventId]);
 
   return { torneios, loading };
 }
