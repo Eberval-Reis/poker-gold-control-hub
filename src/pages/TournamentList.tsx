@@ -29,23 +29,24 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
 import { Tournament } from '@/lib/supabase';
-import { tournamentService } from '@/services/tournament.service';
+import { tournamentService, UniqueTournament } from '@/services/tournament.service';
 
 const TournamentList = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Fetch tournaments, type as Tournament[]
-  const { data: tournaments = [], isLoading, error } = useQuery<Tournament[]>({
-    queryKey: ['tournaments'],
-    queryFn: tournamentService.getTournaments,
+  // Fetch unique tournaments
+  const { data: tournaments = [], isLoading, error } = useQuery<UniqueTournament[]>({
+    queryKey: ['unique-tournaments'],
+    queryFn: tournamentService.getUniqueTournaments,
   });
 
   // Delete tournament mutation
   const deleteTournament = useMutation({
     mutationFn: (id: string) => tournamentService.deleteTournament(id),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['unique-tournaments'] });
       queryClient.invalidateQueries({ queryKey: ['tournaments'] });
       toast({
         title: "Torneio removido com sucesso!",
@@ -153,9 +154,10 @@ const TournamentList = () => {
                 <Table>
                   <TableHeader className="sticky top-0 bg-white z-10">
                     <TableRow>
-                      <TableHead className="w-[35%] min-w-[120px]">Nome</TableHead>
-                      <TableHead className="w-[25%] min-w-[100px] hidden sm:table-cell">Clube</TableHead>
-                      <TableHead className="w-[20%] min-w-[80px]">Tipo</TableHead>
+                      <TableHead className="w-[30%] min-w-[120px]">Nome</TableHead>
+                      <TableHead className="w-[20%] min-w-[100px] hidden md:table-cell">Clube</TableHead>
+                      <TableHead className="w-[15%] min-w-[80px]">Tipo</TableHead>
+                      <TableHead className="w-[15%] min-w-[80px] hidden sm:table-cell">Jogos</TableHead>
                       <TableHead className="w-[20%] min-w-[90px] text-center">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -164,17 +166,36 @@ const TournamentList = () => {
                       <TableRow key={tournament.id}>
                         <TableCell className="font-medium">
                           <div className="truncate pr-2">{tournament.name}</div>
-                          <div className="sm:hidden text-xs text-gray-500 mt-1 truncate">
+                          <div className="md:hidden text-xs text-gray-500 mt-1 truncate">
                             {tournament.clubs?.name || 'Clube não especificado'}
                           </div>
+                          {tournament.occurrences > 1 && (
+                            <div className="sm:hidden">
+                              <Badge variant="secondary" className="text-xs mt-1">
+                                {tournament.occurrences} jogos
+                              </Badge>
+                            </div>
+                          )}
                         </TableCell>
-                        <TableCell className="hidden sm:table-cell">
+                        <TableCell className="hidden md:table-cell">
                           <div className="truncate pr-2">{tournament.clubs?.name || 'Clube não especificado'}</div>
                         </TableCell>
                         <TableCell>
                           <Badge variant="outline" className="bg-poker-gold/10 text-poker-gold border-poker-gold/30 text-xs whitespace-nowrap">
                             {tournament.type}
                           </Badge>
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="secondary" className="text-xs">
+                              {tournament.occurrences}
+                            </Badge>
+                            {tournament.averageBuyin && (
+                              <span className="text-xs text-muted-foreground">
+                                R$ {tournament.averageBuyin.toFixed(0)} médio
+                              </span>
+                            )}
+                          </div>
                         </TableCell>
                         <TableCell>
                           <div className="flex justify-center gap-1">
@@ -204,7 +225,11 @@ const TournamentList = () => {
                                   <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
                                   <AlertDialogDescription>
                                     Tem certeza que deseja excluir o torneio <strong>{tournament.name}</strong>?
-                                    Esta ação não pode ser desfeita.
+                                    {tournament.occurrences > 1 && (
+                                      <span className="block mt-2 text-amber-600">
+                                        ⚠️ Este torneio possui {tournament.occurrences} ocorrências cadastradas. Apenas esta será excluída.
+                                      </span>
+                                    )}
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
