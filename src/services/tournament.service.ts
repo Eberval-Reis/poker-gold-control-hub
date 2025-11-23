@@ -200,8 +200,52 @@ export const deleteTournament = async (id: string): Promise<{ success: boolean }
   return { success: true };
 };
 
+export interface UniqueTournament extends Tournament {
+  occurrences: number;
+  averageBuyin?: number;
+}
+
+export const getUniqueTournaments = async (): Promise<UniqueTournament[]> => {
+  const allTournaments = await getTournaments();
+  
+  // Agrupar torneios por nome
+  const tournamentsByName = allTournaments.reduce((acc, tournament) => {
+    if (!acc[tournament.name]) {
+      acc[tournament.name] = [];
+    }
+    acc[tournament.name].push(tournament);
+    return acc;
+  }, {} as Record<string, Tournament[]>);
+
+  // Criar array de torneios únicos com dados agregados
+  const uniqueTournaments: UniqueTournament[] = Object.entries(tournamentsByName).map(([name, tournaments]) => {
+    // Pegar o torneio mais recente como representativo
+    const representative = tournaments.sort((a, b) => 
+      new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
+    )[0];
+
+    // Calcular buy-in médio
+    const buyins = tournaments
+      .map(t => t.buyin_amount)
+      .filter((b): b is number => b !== null && b !== undefined);
+    const averageBuyin = buyins.length > 0 
+      ? buyins.reduce((sum, b) => sum + b, 0) / buyins.length 
+      : undefined;
+
+    return {
+      ...representative,
+      occurrences: tournaments.length,
+      averageBuyin
+    };
+  });
+
+  // Ordenar por nome
+  return uniqueTournaments.sort((a, b) => a.name.localeCompare(b.name));
+};
+
 export const tournamentService = {
   getTournaments,
+  getUniqueTournaments,
   getTournamentById,
   createTournament,
   updateTournament,
