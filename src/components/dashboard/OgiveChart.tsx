@@ -21,17 +21,29 @@ const OgiveChart = ({ performances }: OgiveChartProps) => {
     return profit;
   });
 
-  const totalTournaments = profits.length || 1; // Evitar divisão por zero
+  const totalTournaments = profits.length || 1;
 
-  // Definir classes fixas
-  const classLimits = [
-    { label: 'R$-200', upperLimit: -200 },
-    { label: 'R$-100', upperLimit: -100 },
-    { label: 'R$0', upperLimit: 0 },
-    { label: 'R$100', upperLimit: 100 },
-    { label: 'R$200', upperLimit: 200 },
-    { label: 'R$300+', upperLimit: 300 },
-  ];
+  // Calcular o intervalo real dos dados
+  const minProfit = profits.length > 0 ? Math.min(...profits) : -200;
+  const maxProfit = profits.length > 0 ? Math.max(...profits) : 300;
+  const classWidth = 100;
+
+  // Arredondar para múltiplos de R$100
+  const minClass = Math.floor(minProfit / classWidth) * classWidth;
+  const maxClass = Math.ceil(maxProfit / classWidth) * classWidth;
+
+  // Criar classes dinâmicas
+  const classLimits: { label: string; upperLimit: number }[] = [];
+  
+  for (let limit = minClass; limit <= maxClass; limit += classWidth) {
+    const value = limit;
+    const label = value >= 0 ? `R$${value}` : `R$${value}`;
+    
+    classLimits.push({
+      label,
+      upperLimit: value,
+    });
+  }
 
   // Calcular frequência acumulada relativa (percentual)
   const classes = classLimits.map(({ label, upperLimit }) => {
