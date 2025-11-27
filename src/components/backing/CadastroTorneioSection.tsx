@@ -65,6 +65,15 @@ const CadastroTorneioSection = () => {
   // Função para salvar o cadastro do torneio/backing_offer
   async function handleSalvarTorneio(e: React.FormEvent) {
     e.preventDefault();
+    
+    // Obter o usuário autenticado
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      toast({ title: "Erro de autenticação", description: "Você precisa estar logado", variant: "destructive" });
+      return;
+    }
+    
     // Validações
     if (!playerName.trim() || !selectedTorneio || !buyIn || !date) {
       toast({ title: "Preencha todos os campos obrigatórios", variant: "destructive" });
@@ -89,6 +98,7 @@ const CadastroTorneioSection = () => {
         available_percentage: cavEnable ? Number(maxPercent) : 0,
         markup_percentage: cavEnable ? Number(markup) : 1,
         status: "open",
+        user_id: user.id,
       });
       if (error) throw error;
       toast({ title: "Torneio cadastrado com sucesso!" });
