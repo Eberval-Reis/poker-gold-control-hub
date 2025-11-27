@@ -133,8 +133,6 @@ export default function BackerSelectWithModal({
               {backers.map((b) => (
                 <SelectItem key={b.id} value={b.id}>
                   {b.name}
-                  {b.nickname ? ` (${b.nickname})` : ""}
-                  {b.whatsapp ? ` - ${b.whatsapp}` : ""}
                 </SelectItem>
               ))}
             </SelectContent>
