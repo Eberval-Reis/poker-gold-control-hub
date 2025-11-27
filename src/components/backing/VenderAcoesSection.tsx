@@ -53,6 +53,8 @@ const VenderAcoesSection = () => {
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    const { supabase } = await import("@/lib/supabase");
+
     // Validação simples
     if (!selectedOffer) {
       toast({ variant: "destructive", title: "Torneio não selecionado" });
@@ -74,12 +76,11 @@ const VenderAcoesSection = () => {
     // Buscar nome do backer por id (opcional, para salvar no registro)
     let backerName = "";
     try {
-      const { data: backerData, error: backerError } = await 
-        (await import("@/lib/supabase")).supabase
-          .from("financiadores")
-          .select("name")
-          .eq("id", backerId)
-          .maybeSingle();
+      const { data: backerData, error: backerError } = await supabase
+        .from("financiadores")
+        .select("name")
+        .eq("id", backerId)
+        .maybeSingle();
       if (backerError || !backerData) {
         throw new Error("Erro ao buscar nome do financiador");
       }
@@ -89,17 +90,27 @@ const VenderAcoesSection = () => {
       return;
     }
 
+    // Obter usuário autenticado para passar user_id na RLS
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      toast({ variant: "destructive", title: "Erro de autenticação", description: "Você precisa estar logado." });
+      return;
+    }
+
     // Salvar na backing_investments
     toast({ title: "Salvando investimento..." });
-    const { data, error } = await (await import("@/lib/supabase")).supabase
+    const { data, error } = await supabase
       .from("backing_investments")
-      .insert([{
-        backing_offer_id: selectedOffer.id,
-        percentage_bought: percent,
-        amount_paid: Number((selectedOffer.buy_in_amount * (percent / 100) * selectedOffer.markup_percentage).toFixed(2)),
-        backer_name: backerName,
-        payment_status: isPaid ? "paid" : "pending",
-      }]);
+      .insert([
+        {
+          backing_offer_id: selectedOffer.id,
+          percentage_bought: percent,
+          amount_paid: Number((selectedOffer.buy_in_amount * (percent / 100) * selectedOffer.markup_percentage).toFixed(2)),
+          backer_name: backerName,
+          payment_status: isPaid ? "paid" : "pending",
+          user_id: user.id,
+        },
+      ]);
 
     if (error) {
       toast({ variant: "destructive", title: "Erro ao salvar", description: error.message });
