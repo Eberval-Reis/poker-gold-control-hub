@@ -6,6 +6,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { useForm } from "react-hook-form";
 import { Plus } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { toast } from "@/hooks/use-toast";
 
 // Tipagem local para evitar erro do types gerado
 type Backer = {
@@ -80,19 +81,32 @@ export default function BackerSelectWithModal({
 
   async function onSubmit(form: FormValues) {
     setModalLoading(true);
+    
+    // Obter o usuário autenticado
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      toast({ title: "Erro de autenticação", description: "Você precisa estar logado", variant: "destructive" });
+      setModalLoading(false);
+      return;
+    }
+    
     const { data, error } = await supabase
       .from("financiadores")
-      .insert([form])
+      .insert([{ ...form, user_id: user.id }])
       .select()
       .maybeSingle();
     setModalLoading(false);
+    
     if (!error && data && data.id) {
       await fetchBackers();
       onChange(data.id);
       setOpen(false);
       reset();
+      toast({ title: "Financiador cadastrado com sucesso!" });
     } else if (error) {
       console.error("Erro ao adicionar financiador:", error);
+      toast({ title: "Erro ao cadastrar financiador", description: error.message, variant: "destructive" });
     }
   }
 
