@@ -46,16 +46,23 @@ export async function saveBackingResult({ backingOfferId, prizeAmount, netPrize,
   if (investError) throw investError;
 
   // Calcula payout de cada backer proporcional à sua porcentagem no net_prize
-  const payouts = (investments || []).map((investment) => ({
-    backing_investment_id: investment.id,
-    backing_result_id: result.id,
-    payout_amount: (netPrize * (Number(investment.percentage_bought) / 100)),
-    roi_percentage: netPrize > 0 && investment.amount_paid > 0
-      ? ((netPrize * (Number(investment.percentage_bought) / 100)) / Number(investment.amount_paid)) * 100
-      : 0,
-    payment_status: "pending",
-    user_id: user.id
-  }));
+  const payouts = (investments || []).map((investment) => {
+    const payoutAmount = netPrize * (Number(investment.percentage_bought) / 100);
+    const investedAmount = Number(investment.amount_paid);
+    // ROI = ((Retorno - Investido) / Investido) × 100
+    const roiPercentage = investedAmount > 0
+      ? ((payoutAmount - investedAmount) / investedAmount) * 100
+      : 0;
+    
+    return {
+      backing_investment_id: investment.id,
+      backing_result_id: result.id,
+      payout_amount: payoutAmount,
+      roi_percentage: roiPercentage,
+      payment_status: "pending",
+      user_id: user.id
+    };
+  });
 
   if (payouts.length > 0) {
     const { error: payoutError } = await supabase

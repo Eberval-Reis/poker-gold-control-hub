@@ -31,9 +31,10 @@ const RegistrarResultadoSection = () => {
     ? 100 - offer.available_percentage
     : 70;
 
+  // Prêmio líquido = Prêmio bruto - Buy-in total
   const premLiq =
     typeof prize === "number" && !isNaN(prize)
-      ? prize - (buyin * (vendidos / 100) * markup)
+      ? prize - buyin
       : 0;
 
   const backersValor =
