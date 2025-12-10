@@ -93,7 +93,8 @@ const BackersPayoutTable: React.FC = () => {
             <th className="py-2 px-3 text-left align-middle">Backer</th>
             <th className="py-2 px-3 text-center align-middle">% Ações</th>
             <th className="py-2 px-3 text-center align-middle">Investido (R$)</th>
-            <th className="py-2 px-3 text-center align-middle">Ganho (R$)</th>
+            <th className="py-2 px-3 text-center align-middle">Retorno (R$)</th>
+            <th className="py-2 px-3 text-center align-middle">Lucro (R$)</th>
             <th className="py-2 px-3 text-center align-middle">ROI (%)</th>
           </tr>
         </thead>
@@ -120,8 +121,22 @@ const BackersPayoutTable: React.FC = () => {
                 }
               </td>
               <td className="py-2 px-3 text-center align-middle">
+                {row.payout !== null
+                  ? (
+                    <span className={row.payout - row.invested >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                      R$ {(row.payout - row.invested).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                    </span>
+                  )
+                  : <span className="text-muted-foreground">-</span>
+                }
+              </td>
+              <td className="py-2 px-3 text-center align-middle">
                 {row.roi !== null
-                  ? `${row.roi.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}%`
+                  ? (
+                    <span className={row.roi >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                      {row.roi.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}%
+                    </span>
+                  )
                   : <span className="text-muted-foreground">-</span>
                 }
               </td>
