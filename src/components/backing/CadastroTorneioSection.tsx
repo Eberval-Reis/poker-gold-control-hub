@@ -24,12 +24,17 @@ const CadastroTorneioSection = () => {
   const { torneios, loading: loadingTorneios } = useTorneioList({ eventId: selectedEvento });
   const { events: agendaEvents, loading: loadingAgenda } = useAgendaEventList();
 
-  // Efeito para preencher automaticamente o buy-in quando um torneio é selecionado
+  // Efeito para preencher automaticamente o buy-in e data quando um torneio é selecionado
   React.useEffect(() => {
     if (selectedTorneio) {
       const torneio = torneios.find(t => t.id === selectedTorneio);
-      if (torneio && torneio.buyin_amount) {
-        setBuyIn(torneio.buyin_amount.toString());
+      if (torneio) {
+        if (torneio.buyin_amount) {
+          setBuyIn(torneio.buyin_amount.toString());
+        }
+        if (torneio.date) {
+          setDate(torneio.date);
+        }
       }
     }
   }, [selectedTorneio, torneios]);

@@ -7,6 +7,7 @@ export interface Torneio {
   name: string;
   buyin_amount: number | null;
   event_id: string | null;
+  date: string | null;
 }
 
 interface UseTorneioListProps {
@@ -30,7 +31,7 @@ export function useTorneioList(props?: UseTorneioListProps) {
 
         let query = supabase
           .from("tournaments")
-          .select("id, name, buyin_amount, event_id")
+          .select("id, name, buyin_amount, event_id, date")
           .eq("user_id", user.id);
 
         // Filtrar por evento se especificado
