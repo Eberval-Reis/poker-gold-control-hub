@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import MetricCard from "@/components/dashboard/MetricCard";
@@ -11,9 +10,10 @@ import RecentTournamentsTable from "@/components/dashboard/RecentTournamentsTabl
 import { supabase } from "@/integrations/supabase/client";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { Trophy, TrendingUp, DollarSign, Target, CreditCard, Repeat2, Receipt, Calculator } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Index = () => {
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
   // Carrega as performances dos torneios com informações do torneio
@@ -31,13 +31,13 @@ const Index = () => {
         `)
         .order("tournament_date", { ascending: false });
 
-      if (selectedYear) {
+      if (selectedYear !== null) {
         query = query.gte("tournament_date", `${selectedYear}-01-01`).lte("tournament_date", `${selectedYear}-12-31`);
-      }
-
-      if (selectedMonth) {
-        const month = String(selectedMonth).padStart(2, '0');
-        query = query.gte("tournament_date", `${selectedYear}-${month}-01`).lte("tournament_date", `${selectedYear}-${month}-31`);
+        
+        if (selectedMonth) {
+          const month = String(selectedMonth).padStart(2, '0');
+          query = query.gte("tournament_date", `${selectedYear}-${month}-01`).lte("tournament_date", `${selectedYear}-${month}-31`);
+        }
       }
 
       const { data, error } = await query;
@@ -61,8 +61,7 @@ const Index = () => {
         .select("*")
         .order("date", { ascending: false });
 
-      if (selectedYear) {
-        // Busca todas despesas entre 1 de janeiro até 31 de dezembro do ano selecionado
+      if (selectedYear !== null) {
         query = query.gte("date", `${selectedYear}-01-01`).lte("date", `${selectedYear}-12-31`);
       }
 
@@ -100,22 +99,34 @@ const Index = () => {
     );
   }
 
+  // Gera lista de anos disponíveis (2020 até ano atual)
+  const currentYear = new Date().getFullYear();
+  const availableYears = Array.from({ length: currentYear - 2019 }, (_, i) => currentYear - i);
+
   return (
     <div className="p-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
-        <p className="text-gray-600">Visão geral das suas performances no poker</p>
+      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground mb-2">Dashboard</h1>
+          <p className="text-muted-foreground">Visão geral das suas performances no poker</p>
+        </div>
+        <div className="flex gap-2">
+          <Select 
+            value={selectedYear?.toString() || "all"} 
+            onValueChange={(val) => setSelectedYear(val === "all" ? null : Number(val))}
+          >
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Ano" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os anos</SelectItem>
+              {availableYears.map((year) => (
+                <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-
-      {/* Filtros de ano/mês podem ser implementados aqui se desejar futuramente */}
-      {/* 
-      <DashboardFilters
-        selectedYear={selectedYear}
-        selectedMonth={selectedMonth}
-        onYearChange={setSelectedYear}
-        onMonthChange={setSelectedMonth}
-      />
-      */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <MetricCard
