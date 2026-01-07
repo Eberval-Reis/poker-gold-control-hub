@@ -74,7 +74,7 @@ interface DashboardData {
 type UseDashboardDataParams = {
   performances: Performance[] | null | undefined;
   expenses: Expense[] | null | undefined;
-  selectedYear: number;
+  selectedYear: number | null;
   selectedMonth: number | null;
 };
 
@@ -150,10 +150,11 @@ export function useDashboardData({
 
     // Dados para gráfico mensal de profit
     const monthlyData: { month: string; profit: number }[] = [];
+    const displayYear = selectedYear || new Date().getFullYear();
     for (let i = 1; i <= 12; i++) {
       const month = String(i).padStart(2, "0");
       const monthlyPerformances = performances.filter((p) =>
-        p.created_at.startsWith(`${selectedYear}-${month}`)
+        p.created_at.startsWith(`${displayYear}-${month}`)
       );
       const monthlyProfit = monthlyPerformances.reduce((sum, p) => {
         const buyin = Number(p.buyin_amount || 0);
@@ -163,7 +164,7 @@ export function useDashboardData({
         const prize = Number(p.prize_amount || 0);
         return sum + (prize - invested);
       }, 0);
-      monthlyData.push({ month: `${selectedYear}-${month}`, profit: monthlyProfit });
+      monthlyData.push({ month: `${displayYear}-${month}`, profit: monthlyProfit });
     }
 
     // Nova lógica: Premiação acumulada por nome de torneio
@@ -256,8 +257,9 @@ export function useDashboardData({
     const recentTournaments = performances.slice(0, 5);
 
     // Tendências: compara com mês anterior
+    const trendYear = selectedYear || new Date().getFullYear();
     const prevMonth = selectedMonth ? (selectedMonth === 1 ? 12 : selectedMonth - 1) : 12;
-    const prevYear = selectedMonth && selectedMonth === 1 ? selectedYear - 1 : selectedYear;
+    const prevYear = selectedMonth && selectedMonth === 1 ? trendYear - 1 : trendYear;
     const prevMonthStr = String(prevMonth).padStart(2, '0');
     const prevMonthPerformances = performances.filter(p =>
       p.created_at.startsWith(`${prevYear}-${prevMonthStr}`)
