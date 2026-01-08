@@ -125,7 +125,7 @@ export type Database = {
           status: string | null
           total_bankroll: number | null
           tournament_date: string
-          tournament_id: string
+          tournament_id: string | null
           updated_at: string
           user_id: string | null
         }
@@ -144,7 +144,7 @@ export type Database = {
           status?: string | null
           total_bankroll?: number | null
           tournament_date: string
-          tournament_id: string
+          tournament_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -163,7 +163,7 @@ export type Database = {
           status?: string | null
           total_bankroll?: number | null
           tournament_date?: string
-          tournament_id?: string
+          tournament_id?: string | null
           updated_at?: string
           user_id?: string | null
         }
