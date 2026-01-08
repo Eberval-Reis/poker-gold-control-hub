@@ -6,6 +6,7 @@ import BackerSelectWithModal from "./BackerSelectWithModal";
 import { useBackingOfferList, BackingOffer } from "@/hooks/useBackingOfferList";
 import { toast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 
 const VenderAcoesSection = () => {
   const [percent, setPercent] = React.useState(5);
@@ -16,48 +17,46 @@ const VenderAcoesSection = () => {
   const { data: offers, isLoading, error } = useBackingOfferList();
   const selectedOffer: BackingOffer | undefined = offers?.find(o => o.id === selectedOfferId);
 
-  // Quando houver nova lista, definir a oferta inicial
   React.useEffect(() => {
     if (offers && offers.length > 0 && !selectedOfferId) {
       setSelectedOfferId(offers[0].id);
     }
   }, [offers, selectedOfferId]);
 
-  // Atualiza o percentual sempre que mudar a oferta
   React.useEffect(() => {
     if (selectedOffer) {
       setPercent(Math.min(5, selectedOffer.available_percentage));
     }
   }, [selectedOfferId]);
 
-  // Resetar toggle ao selecionar nova oferta ou adicionar backer
   React.useEffect(() => {
     setIsPaid(false);
   }, [selectedOfferId]);
 
   if (isLoading) {
-    return <div className="text-center my-10 text-poker-gold">Carregando torneios cadastrados...</div>;
+    return <div className="text-center my-10 text-poker-gold">Carregando ofertas...</div>;
   }
   if (error) {
     return <div className="text-center my-10 text-red-500">Erro ao carregar ofertas</div>;
   }
   if (!offers || offers.length === 0) {
-    return <div className="text-center my-10 text-poker-gold">Nenhum torneio cadastrado para vender ações.</div>;
+    return <div className="text-center my-10 text-poker-gold">Nenhuma oferta cadastrada para vender ações.</div>;
   }
 
-  const buyin = selectedOffer?.buy_in_amount ?? 0;
+  const isBankroll = selectedOffer?.offer_type === 'bankroll';
+  const baseAmount = isBankroll 
+    ? (selectedOffer?.total_bankroll ?? 0) 
+    : (selectedOffer?.buy_in_amount ?? 0);
   const markup = selectedOffer?.markup_percentage ?? 1;
   const disponivel = selectedOffer?.available_percentage ?? 0;
 
-  // Lidar com envio do form para salvar investimento
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const { supabase } = await import("@/lib/supabase");
 
-    // Validação simples
     if (!selectedOffer) {
-      toast({ variant: "destructive", title: "Torneio não selecionado" });
+      toast({ variant: "destructive", title: "Oferta não selecionada" });
       return;
     }
     if (!backerId) {
@@ -73,7 +72,6 @@ const VenderAcoesSection = () => {
       return;
     }
 
-    // Buscar nome do backer por id (opcional, para salvar no registro)
     let backerName = "";
     try {
       const { data: backerData, error: backerError } = await supabase
@@ -90,22 +88,23 @@ const VenderAcoesSection = () => {
       return;
     }
 
-    // Obter usuário autenticado para passar user_id na RLS
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       toast({ variant: "destructive", title: "Erro de autenticação", description: "Você precisa estar logado." });
       return;
     }
 
-    // Salvar na backing_investments
     toast({ title: "Salvando investimento..." });
+    
+    const amountPaid = Number((baseAmount * (percent / 100) * markup).toFixed(2));
+    
     const { data, error } = await supabase
       .from("backing_investments")
       .insert([
         {
           backing_offer_id: selectedOffer.id,
           percentage_bought: percent,
-          amount_paid: Number((selectedOffer.buy_in_amount * (percent / 100) * selectedOffer.markup_percentage).toFixed(2)),
+          amount_paid: amountPaid,
           backer_name: backerName,
           payment_status: isPaid ? "paid" : "pending",
           user_id: user.id,
@@ -119,7 +118,6 @@ const VenderAcoesSection = () => {
 
     toast({ variant: "default", title: "Sucesso!", description: "Investimento adicionado!" });
 
-    // Resetar campos e atualizar disponibilidade
     setBackerId(null);
     setSelectedOfferId(null);
     setPercent(5);
@@ -127,13 +125,12 @@ const VenderAcoesSection = () => {
   }
 
   return (
-    // Ajuste: overflow-x-hidden + larguras responsivas no mobile
     <div className="space-y-7 max-w-lg mx-auto px-2 overflow-x-hidden">
       <h2 className="text-2xl font-bold text-poker-gold mb-1">Vender Ações</h2>
-      {/* Seleção da oferta */}
+      
       <div>
         <label className="block text-poker-gold font-semibold mb-1" htmlFor="offerselect">
-          Torneio para venda de ação
+          Oferta para venda de ação
         </label>
         <select
           id="offerselect"
@@ -141,29 +138,59 @@ const VenderAcoesSection = () => {
           value={selectedOfferId || ""}
           onChange={e => setSelectedOfferId(e.target.value)}
         >
-          {offers?.map(offer =>
+          {offers?.map(offer => (
             <option key={offer.id} value={offer.id}>
-              {offer.tournament_name || "—"}
+              {offer.offer_type === 'bankroll' 
+                ? `[Bankroll] ${offer.period_description || offer.player_name}` 
+                : offer.tournament_name || "—"}
             </option>
-          )}
+          ))}
         </select>
       </div>
-      {/* Card de informações do torneio */}
+
       <div className="bg-muted rounded-xl p-5 flex flex-col gap-1 border border-poker-gold/10 shadow-sm min-w-0">
-        {selectedOffer?.event_name && (
-          <span className="font-bold text-lg text-poker-gold mb-0" style={{ lineHeight: 1.1 }}>
-            {selectedOffer.event_name}
-          </span>
+        <div className="flex items-center gap-2 mb-2">
+          <Badge variant={isBankroll ? "secondary" : "default"}>
+            {isBankroll ? "Bankroll" : "Torneio"}
+          </Badge>
+        </div>
+        
+        {isBankroll ? (
+          <>
+            <span className="font-bold text-lg text-poker-gold mb-0" style={{ lineHeight: 1.1 }}>
+              {selectedOffer?.period_description || "Bankroll"}
+            </span>
+            <span className="text-gray-900 font-medium text-base">
+              Jogador: <span className="font-bold">{selectedOffer?.player_name ?? "-"}</span>
+            </span>
+            <span className="font-medium text-gray-900 text-base">
+              Valor Total: <span className="font-bold">R$ {baseAmount.toLocaleString()}</span>
+            </span>
+            {selectedOffer?.start_date && selectedOffer?.end_date && (
+              <span className="text-gray-700 text-sm">
+                Período: {new Date(selectedOffer.start_date).toLocaleDateString('pt-BR')} - {new Date(selectedOffer.end_date).toLocaleDateString('pt-BR')}
+              </span>
+            )}
+          </>
+        ) : (
+          <>
+            {selectedOffer?.event_name && (
+              <span className="font-bold text-lg text-poker-gold mb-0" style={{ lineHeight: 1.1 }}>
+                {selectedOffer.event_name}
+              </span>
+            )}
+            <span className="font-medium text-poker-gold text-lg" style={{ marginTop: selectedOffer?.event_name ? '2px' : 0 }}>
+              {selectedOffer?.tournament_name || "-"}
+            </span>
+            <span className="text-gray-900 font-medium text-base">
+              Jogador: <span className="font-bold">{selectedOffer?.player_name ?? "-"}</span>
+            </span>
+            <span className="font-medium text-gray-900 text-base">
+              Buy-in: <span className="font-bold">R$ {baseAmount.toLocaleString()}</span>
+            </span>
+          </>
         )}
-        <span className="font-medium text-poker-gold text-lg" style={{ marginTop: selectedOffer?.event_name ? '2px' : 0 }}>
-          {selectedOffer?.tournament_name || "-"}
-        </span>
-        <span className="text-gray-900 font-medium text-base">
-          Jogador: <span className="font-bold">{selectedOffer?.player_name ?? "-"}</span>
-        </span>
-        <span className="font-medium text-gray-900 text-base">
-          Buy-in: <span className="font-bold">R$ {buyin.toLocaleString()}</span>
-        </span>
+        
         <span className="text-gray-700">
           Ações Disponíveis: <span className="font-bold">{disponivel}%</span>
         </span>
@@ -171,6 +198,7 @@ const VenderAcoesSection = () => {
           Mark-up: <span className="font-bold">{markup}</span>
         </span>
       </div>
+
       <form 
         className="flex flex-col gap-5 bg-white/90 rounded-xl px-2 py-6 shadow border border-gray-100 min-w-0"
         onSubmit={handleSubmit}
@@ -199,7 +227,7 @@ const VenderAcoesSection = () => {
             readOnly
             value={
               selectedOffer
-                ? `R$ ${(buyin * (percent / 100) * markup).toLocaleString(undefined, {maximumFractionDigits:2})}`
+                ? `R$ ${(baseAmount * (percent / 100) * markup).toLocaleString(undefined, {maximumFractionDigits:2})}`
                 : ""
             }
             className="w-full p-2 rounded border border-input bg-background text-base"
@@ -225,4 +253,5 @@ const VenderAcoesSection = () => {
 };
 
 export default VenderAcoesSection;
+
 
