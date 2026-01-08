@@ -115,10 +115,15 @@ export type Database = {
           buy_in_amount: number
           collective_financing: boolean | null
           created_at: string
+          end_date: string | null
           id: string
           markup_percentage: number
+          offer_type: string
+          period_description: string | null
           player_name: string
+          start_date: string | null
           status: string | null
+          total_bankroll: number | null
           tournament_date: string
           tournament_id: string
           updated_at: string
@@ -129,10 +134,15 @@ export type Database = {
           buy_in_amount: number
           collective_financing?: boolean | null
           created_at?: string
+          end_date?: string | null
           id?: string
           markup_percentage?: number
+          offer_type?: string
+          period_description?: string | null
           player_name: string
+          start_date?: string | null
           status?: string | null
+          total_bankroll?: number | null
           tournament_date: string
           tournament_id: string
           updated_at?: string
@@ -143,10 +153,15 @@ export type Database = {
           buy_in_amount?: number
           collective_financing?: boolean | null
           created_at?: string
+          end_date?: string | null
           id?: string
           markup_percentage?: number
+          offer_type?: string
+          period_description?: string | null
           player_name?: string
+          start_date?: string | null
           status?: string | null
+          total_bankroll?: number | null
           tournament_date?: string
           tournament_id?: string
           updated_at?: string

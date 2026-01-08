@@ -2,6 +2,7 @@
 import React from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import CadastroTorneioSection from "@/components/backing/CadastroTorneioSection";
+import CadastroBankrollSection from "@/components/backing/CadastroBankrollSection";
 import VenderAcoesSection from "@/components/backing/VenderAcoesSection";
 import ControleBackersSection from "@/components/backing/ControleBackersSection";
 import RegistrarResultadoSection from "@/components/backing/RegistrarResultadoSection";
@@ -10,6 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 const tabOptions = [
   { value: "cadastro", label: "Cadastrar Torneio" },
+  { value: "bankroll", label: "Cadastrar Bankroll" },
   { value: "vender", label: "Vender Ações" },
   { value: "controle", label: "Controle de Backers" },
   { value: "resultado", label: "Registrar Resultado" },
@@ -28,7 +30,6 @@ const BackingManagement = () => {
         Gestão de Cavalagem
       </h1>
 
-      {/* Menu mobile: Select como navegação */}
       {isMobile && (
         <div className="mb-4">
           <label htmlFor="tab-select" className="sr-only">Selecionar seção</label>
@@ -47,9 +48,7 @@ const BackingManagement = () => {
         </div>
       )}
 
-      {/* O Tabs e o TabsList sempre juntos */}
       <Tabs value={currentTab} onValueChange={handleTabSelect} className="w-full">
-        {/* TabsList só aparece em desktop */}
         {!isMobile && (
           <TabsList
             className="mb-6 w-full max-w-full flex gap-1 bg-muted rounded-md overflow-x-auto"
@@ -59,7 +58,7 @@ const BackingManagement = () => {
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="px-2 py-1 text-sm min-w-[100px] h-8"
+                className="px-2 py-1 text-sm min-w-[90px] h-8"
                 data-active={currentTab === tab.value ? "true" : "false"}
               >
                 {tab.label}
@@ -70,6 +69,9 @@ const BackingManagement = () => {
 
         <TabsContent value="cadastro">
           <CadastroTorneioSection />
+        </TabsContent>
+        <TabsContent value="bankroll">
+          <CadastroBankrollSection />
         </TabsContent>
         <TabsContent value="vender">
           <VenderAcoesSection />
