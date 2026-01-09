@@ -33,15 +33,14 @@ export default function CavFields({
       </div>
       <div className="flex-1">
         <label className="block text-poker-gold font-semibold mb-1">
-          Mark-up Padrão
+          Mark-up Padrão <span className="text-muted-foreground font-normal text-sm">(opcional)</span>
         </label>
         <input
           type="number"
-          required
           min={1}
           step="0.01"
           className="w-full p-2 rounded border border-input bg-background text-base"
-          placeholder="Ex: 1.5"
+          placeholder="1.0 (sem markup)"
           value={markup}
           onChange={e => setMarkup(e.target.value)}
         />

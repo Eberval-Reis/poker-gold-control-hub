@@ -24,6 +24,21 @@ const CadastroTorneioSection = () => {
   const { torneios, loading: loadingTorneios } = useTorneioList({ eventId: selectedEvento });
   const { events: agendaEvents, loading: loadingAgenda } = useAgendaEventList();
 
+  // Efeito para carregar o nome do usuário logado
+  React.useEffect(() => {
+    const loadUserName = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const name = user.user_metadata?.full_name 
+          || user.user_metadata?.name 
+          || user.email?.split('@')[0] 
+          || '';
+        setPlayerName(name);
+      }
+    };
+    loadUserName();
+  }, []);
+
   // Efeito para preencher automaticamente o buy-in e data quando um torneio é selecionado
   React.useEffect(() => {
     if (selectedTorneio) {
@@ -88,10 +103,7 @@ const CadastroTorneioSection = () => {
       toast({ title: "Percentual para venda deve ser entre 5% e 80%", variant: "destructive" });
       return;
     }
-    if (cavEnable && Number(markup) < 1) {
-      toast({ title: "O mark-up deve ser igual ou maior que 1", variant: "destructive" });
-      return;
-    }
+    // Markup é opcional - usa 1 como padrão se não informado
     setSaving(true);
     try {
       // Cria backing_offer
@@ -101,7 +113,7 @@ const CadastroTorneioSection = () => {
         buy_in_amount: Number(buyIn),
         tournament_date: date,
         available_percentage: cavEnable ? Number(maxPercent) : 0,
-        markup_percentage: cavEnable ? Number(markup) : 1,
+        markup_percentage: cavEnable && markup ? Number(markup) : 1,
         status: "open",
         user_id: user.id,
       });

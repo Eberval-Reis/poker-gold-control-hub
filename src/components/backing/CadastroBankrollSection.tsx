@@ -17,6 +17,21 @@ const CadastroBankrollSection = () => {
   const [markup, setMarkup] = React.useState<string>("1.2");
   const [saving, setSaving] = React.useState(false);
 
+  // Efeito para carregar o nome do usuário logado
+  React.useEffect(() => {
+    const loadUserName = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const name = user.user_metadata?.full_name 
+          || user.user_metadata?.name 
+          || user.email?.split('@')[0] 
+          || '';
+        setPlayerName(name);
+      }
+    };
+    loadUserName();
+  }, []);
+
   async function handleSalvarBankroll(e: React.FormEvent) {
     e.preventDefault();
     
@@ -37,10 +52,7 @@ const CadastroBankrollSection = () => {
       return;
     }
     
-    if (Number(markup) < 1) {
-      toast({ title: "O mark-up deve ser igual ou maior que 1", variant: "destructive" });
-      return;
-    }
+    // Markup é opcional - usa 1 como padrão se não informado
 
     setSaving(true);
     try {
@@ -52,7 +64,7 @@ const CadastroBankrollSection = () => {
         start_date: startDate || null,
         end_date: endDate || null,
         available_percentage: Number(maxPercent),
-        markup_percentage: Number(markup),
+        markup_percentage: markup ? Number(markup) : 1,
         buy_in_amount: Number(totalBankroll), // For compatibility, use total as buy_in
         tournament_date: startDate || new Date().toISOString().split('T')[0],
         tournament_id: null as any, // Bankroll offers don't have tournament_id
