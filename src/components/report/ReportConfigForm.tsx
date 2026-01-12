@@ -7,6 +7,7 @@ import ReportTypeSelect from "./ReportTypeSelect";
 import PeriodSelect from "./PeriodSelect";
 import CustomPeriodPicker from "./CustomPeriodPicker";
 import ComparisonDatesFields from "./ComparisonDatesFields";
+import EventTournamentFilters from "./EventTournamentFilters";
 
 export interface ReportConfigFormProps {
   period: PeriodType;
@@ -23,6 +24,11 @@ export interface ReportConfigFormProps {
   setComparisonStart?: (date?: Date) => void;
   comparisonEnd?: Date;
   setComparisonEnd?: (date?: Date) => void;
+  // DRE filters
+  eventId?: string;
+  setEventId?: (id?: string) => void;
+  tournamentId?: string;
+  setTournamentId?: (id?: string) => void;
 }
 
 const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
@@ -34,6 +40,8 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
   formError,
   comparisonStart, setComparisonStart,
   comparisonEnd, setComparisonEnd,
+  eventId, setEventId,
+  tournamentId, setTournamentId,
 }) => {
   return (
     <form
@@ -57,6 +65,16 @@ const ReportConfigForm: React.FC<ReportConfigFormProps> = ({
           </Button>
         </div>
       </div>
+
+      {/* Filtros de Evento/Torneio para DRE */}
+      {reportType === "dre" && setEventId && setTournamentId && (
+        <EventTournamentFilters
+          eventId={eventId}
+          setEventId={setEventId}
+          tournamentId={tournamentId}
+          setTournamentId={setTournamentId}
+        />
+      )}
 
       {reportType === "comparison" && (
         <ComparisonDatesFields

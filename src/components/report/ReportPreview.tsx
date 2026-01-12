@@ -9,6 +9,8 @@ import ExportButtons from "@/components/report/ExportButtons";
 import { ReportType } from "@/hooks/useReportData";
 import ComparisonReport from "@/components/report/ComparisonReport";
 import { useReportComparisonData } from "@/hooks/useReportComparisonData";
+import DREReportPreview from "./DREReportPreview";
+import { DREData } from "@/hooks/useDREReportData";
 
 interface ReportPreviewProps {
   reportReady: boolean;
@@ -16,6 +18,10 @@ interface ReportPreviewProps {
   reportData: any;
   comparisonA?: { period: { start?: Date; end?: Date } };
   comparisonB?: { period: { start?: Date; end?: Date } };
+  // DRE props
+  dreData?: DREData & { start: Date; end: Date };
+  eventName?: string;
+  tournamentName?: string;
 }
 
 const expenseTableColumns = [
@@ -25,7 +31,16 @@ const expenseTableColumns = [
   { label: "Valor (R$)", key: "amount" }
 ];
 
-const ReportPreview: React.FC<ReportPreviewProps> = ({ reportReady, reportType, reportData, comparisonA, comparisonB }) => {
+const ReportPreview: React.FC<ReportPreviewProps> = ({ 
+  reportReady, 
+  reportType, 
+  reportData, 
+  comparisonA, 
+  comparisonB,
+  dreData,
+  eventName,
+  tournamentName,
+}) => {
   if (!reportReady) {
     return (
       <div className="text-center py-12">
@@ -59,6 +74,16 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({ reportReady, reportType, 
     if (error) return <div className="text-red-700 py-4">Erro ao carregar dados: {String(error)}</div>;
 
     return <ComparisonReport dataA={kpisA} dataB={kpisB} />;
+  }
+
+  if (reportType === "dre" && dreData) {
+    return (
+      <DREReportPreview
+        data={dreData}
+        eventName={eventName}
+        tournamentName={tournamentName}
+      />
+    );
   }
 
   return (
