@@ -9,26 +9,65 @@ import RegistrarResultadoSection from "@/components/backing/RegistrarResultadoSe
 import BackingDashboardSection from "@/components/backing/BackingDashboardSection";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const tabOptions = [
-  { value: "cadastro", label: "Cadastrar Torneio" },
-  { value: "bankroll", label: "Cadastrar Bankroll" },
-  { value: "vender", label: "Vender Ações" },
-  { value: "controle", label: "Controle de Backers" },
-  { value: "resultado", label: "Registrar Resultado" },
-  { value: "dashboard", label: "Dashboard" },
-];
+type Modalidade = "torneio" | "bankroll" | null;
 
 const BackingManagement = () => {
   const [currentTab, setCurrentTab] = React.useState("cadastro");
+  const [modalidadeSelecionada, setModalidadeSelecionada] = React.useState<Modalidade>(null);
   const isMobile = useIsMobile();
 
-  const handleTabSelect = (v: string) => setCurrentTab(v);
+  const handleTabSelect = (v: string) => {
+    // Se selecionou cadastro de torneio, define a modalidade
+    if (v === "cadastro" && modalidadeSelecionada !== "bankroll") {
+      setModalidadeSelecionada("torneio");
+    }
+    // Se selecionou cadastro de bankroll, define a modalidade
+    if (v === "bankroll" && modalidadeSelecionada !== "torneio") {
+      setModalidadeSelecionada("bankroll");
+    }
+    setCurrentTab(v);
+  };
+
+  const getTabOptions = () => [
+    { 
+      value: "cadastro", 
+      label: "Cadastrar Torneio",
+      disabled: modalidadeSelecionada === "bankroll"
+    },
+    { 
+      value: "bankroll", 
+      label: "Cadastrar Bankroll",
+      disabled: modalidadeSelecionada === "torneio"
+    },
+    { value: "vender", label: "Vender Ações", disabled: false },
+    { value: "controle", label: "Controle de Backers", disabled: false },
+    { value: "resultado", label: "Registrar Resultado", disabled: false },
+    { value: "dashboard", label: "Dashboard", disabled: false },
+  ];
+
+  const tabOptions = getTabOptions();
 
   return (
     <div className="container mx-auto px-1 sm:px-2 py-5 sm:py-8 max-w-2xl sm:max-w-4xl">
       <h1 className="text-2xl sm:text-2xl font-bold text-poker-gold mb-2 sm:mb-4 text-center sm:text-left">
         Gestão de Cavalagem
       </h1>
+
+      {modalidadeSelecionada && (
+        <div className="mb-4 p-2 bg-muted rounded-md flex items-center justify-between">
+          <span className="text-sm text-muted-foreground">
+            Modalidade: <strong className="text-foreground">
+              {modalidadeSelecionada === "torneio" ? "Torneio" : "Bankroll"}
+            </strong>
+          </span>
+          <button
+            onClick={() => setModalidadeSelecionada(null)}
+            className="text-xs text-primary hover:underline"
+          >
+            Trocar modalidade
+          </button>
+        </div>
+      )}
 
       {isMobile && (
         <div className="mb-4">
@@ -40,8 +79,8 @@ const BackingManagement = () => {
             className="w-full p-2 rounded border border-input bg-muted font-semibold text-poker-gold"
           >
             {tabOptions.map(opt => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
+              <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+                {opt.label} {opt.disabled ? "(desativado)" : ""}
               </option>
             ))}
           </select>
@@ -58,7 +97,8 @@ const BackingManagement = () => {
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="px-2 py-1 text-sm min-w-[90px] h-8"
+                disabled={tab.disabled}
+                className="px-2 py-1 text-sm min-w-[90px] h-8 disabled:opacity-50 disabled:cursor-not-allowed"
                 data-active={currentTab === tab.value ? "true" : "false"}
               >
                 {tab.label}
