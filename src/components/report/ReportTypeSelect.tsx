@@ -9,6 +9,7 @@ const REPORT_TYPE_OPTIONS = [
   { label: "Financeiro", value: "financial" },
   { label: "ROI", value: "roi" },
   { label: "Comparativo", value: "comparison" },
+  { label: "Demonstração do Resultado", value: "dre" },
 ];
 
 export interface ReportTypeSelectProps {

@@ -3,7 +3,7 @@ import { expenseService } from "@/services/expense.service";
 import { tournamentPerformanceService } from "@/services/tournament-performance.service";
 import { useMemo } from "react";
 
-export type ReportType = "expenses" | "performance" | "financial" | "roi" | "comparison";
+export type ReportType = "expenses" | "performance" | "financial" | "roi" | "comparison" | "dre";
 export type PeriodType = "week" | "month" | "quarter" | "year" | "custom";
 
 export interface UseReportDataOptions {

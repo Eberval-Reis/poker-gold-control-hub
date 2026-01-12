@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, TrendingUp, Calendar, DollarSign, Trophy } from 'lucide-react';
+import { FileText, TrendingUp, Calendar, DollarSign, Trophy, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ReportConfigForm from "@/components/report/ReportConfigForm";
 import ReportPreview from "@/components/report/ReportPreview";
 import { useReportData, ReportType, PeriodType } from "@/hooks/useReportData";
+import { useDREReportData } from "@/hooks/useDREReportData";
 import ExpenseAdvancedFilters from "@/components/report/ExpenseAdvancedFilters";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 // Update the quickReports type!
 const quickReports: {
@@ -38,10 +41,10 @@ const quickReports: {
     period: "month",
   },
   {
-    title: "Melhores Resultados",
-    description: "Top 10 performances",
-    icon: <Trophy className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
-    reportType: "performance",
+    title: "DRE Mensal",
+    description: "Demonstração do resultado",
+    icon: <BarChart3 className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+    reportType: "dre",
     period: "month",
   },
 ];
@@ -58,6 +61,10 @@ const Report = () => {
   const [comparisonEnd, setComparisonEnd] = useState<Date>();
   const [reportReady, setReportReady] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  
+  // DRE filters
+  const [eventId, setEventId] = useState<string>();
+  const [tournamentId, setTournamentId] = useState<string>();
 
   const reportData = useReportData({
     reportType,
@@ -65,6 +72,35 @@ const Report = () => {
     startDate,
     endDate,
   });
+
+  // DRE data
+  const dreData = useDREReportData({
+    period,
+    startDate,
+    endDate,
+    eventId,
+    tournamentId,
+  });
+
+  // Fetch event and tournament names for display
+  const { data: events = [] } = useQuery({
+    queryKey: ["events-names"],
+    queryFn: async () => {
+      const { data } = await supabase.from("schedule_events").select("id, name");
+      return data || [];
+    },
+  });
+
+  const { data: tournaments = [] } = useQuery({
+    queryKey: ["tournaments-names"],
+    queryFn: async () => {
+      const { data } = await supabase.from("tournaments").select("id, name");
+      return data || [];
+    },
+  });
+
+  const selectedEventName = events.find((e: any) => e.id === eventId)?.name;
+  const selectedTournamentName = tournaments.find((t: any) => t.id === tournamentId)?.name;
 
   // Atualizar filtro: só aplica categoria se não for "all" e tipo for "expenses"
   const filteredExpenses =
@@ -121,6 +157,9 @@ const Report = () => {
       setStartDate(item.extra?.startDate);
       setEndDate(item.extra?.endDate);
     }
+    // Reset DRE filters
+    setEventId(undefined);
+    setTournamentId(undefined);
     setFormError(null);
     setReportReady(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -157,6 +196,10 @@ const Report = () => {
         setComparisonStart={setComparisonStart}
         comparisonEnd={comparisonEnd}
         setComparisonEnd={setComparisonEnd}
+        eventId={eventId}
+        setEventId={setEventId}
+        tournamentId={tournamentId}
+        setTournamentId={setTournamentId}
       />
 
       {/* Filtro Avançado para Despesas */}
@@ -180,6 +223,9 @@ const Report = () => {
             reportData={filteredReportData}
             comparisonA={{ period: { start: comparisonStart, end: comparisonEnd } }}
             comparisonB={{ period: { start: startDate, end: endDate } }}
+            dreData={dreData}
+            eventName={selectedEventName}
+            tournamentName={selectedTournamentName}
           />
         </CardContent>
       </Card>
