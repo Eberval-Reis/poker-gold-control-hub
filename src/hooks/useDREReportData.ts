@@ -7,7 +7,12 @@ export interface DREData {
   receita: number;
   cavalagem: number;
   totalBruto: number;
+  buyins: number;
+  rebuys: number;
+  addons: number;
+  custosTorneio: number;
   despesas: number;
+  totalCustos: number;
   totalLiquido: number;
   loading: boolean;
   error: any;
@@ -160,14 +165,35 @@ export function useDREReportData({ period, startDate, endDate, eventId, tourname
     const receita = performances.reduce((sum: number, p: any) => sum + Number(p.prize_amount || 0), 0);
     const cavalagem = backingInvestments.reduce((sum: number, bi: any) => sum + Number(bi.amount_paid || 0), 0);
     const totalBruto = receita + cavalagem;
+    
+    // Custos de Torneio (da tabela tournament_performance)
+    const buyins = performances.reduce((sum: number, p: any) => sum + Number(p.buyin_amount || 0), 0);
+    const rebuys = performances.reduce((sum: number, p: any) => {
+      const rebuyAmount = Number(p.rebuy_amount || 0);
+      const rebuyQty = Number(p.rebuy_quantity || 0);
+      return sum + (rebuyAmount * rebuyQty);
+    }, 0);
+    const addons = performances.reduce((sum: number, p: any) => {
+      return p.addon_enabled ? sum + Number(p.addon_amount || 0) : sum;
+    }, 0);
+    const custosTorneio = buyins + rebuys + addons;
+    
+    // Despesas gerais (transporte, alimentação, etc. - tabela expenses)
     const despesas = expenses.reduce((sum: number, e: any) => sum + Number(e.amount || 0), 0);
-    const totalLiquido = totalBruto - despesas;
+    
+    const totalCustos = custosTorneio + despesas;
+    const totalLiquido = totalBruto - totalCustos;
 
     return {
       receita,
       cavalagem,
       totalBruto,
+      buyins,
+      rebuys,
+      addons,
+      custosTorneio,
       despesas,
+      totalCustos,
       totalLiquido,
     };
   }, [performances, backingInvestments, expenses]);

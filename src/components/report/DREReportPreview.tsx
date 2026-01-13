@@ -1,5 +1,5 @@
 import React from "react";
-import { DollarSign, TrendingUp, Gift, MinusCircle, CheckCircle } from "lucide-react";
+import { DollarSign, TrendingUp, Gift, MinusCircle, CheckCircle, Target, RefreshCw, PlusCircle, Receipt } from "lucide-react";
 import { DREData } from "@/hooks/useDREReportData";
 import ExportButtons from "./ExportButtons";
 
@@ -47,7 +47,14 @@ const DREReportPreview: React.FC<DREReportPreviewProps> = ({
     { item: "Receita (Prêmios)", valor: formatCurrency(data.receita) },
     { item: "(+) Cavalagem", valor: formatCurrency(data.cavalagem) },
     { item: "Total Bruto", valor: formatCurrency(data.totalBruto) },
-    { item: "(-) Despesas", valor: formatCurrency(data.despesas) },
+    { item: "--- CUSTOS DE TORNEIO ---", valor: "" },
+    { item: "(-) Buy-ins", valor: formatCurrency(data.buyins) },
+    { item: "(-) Rebuys", valor: formatCurrency(data.rebuys) },
+    { item: "(-) Addons", valor: formatCurrency(data.addons) },
+    { item: "Subtotal Custos de Torneio", valor: formatCurrency(data.custosTorneio) },
+    { item: "--- OUTRAS DESPESAS ---", valor: "" },
+    { item: "(-) Despesas Gerais", valor: formatCurrency(data.despesas) },
+    { item: "Total de Custos", valor: formatCurrency(data.totalCustos) },
     { item: "Total Líquido", valor: formatCurrency(data.totalLiquido) },
   ];
 
@@ -111,7 +118,7 @@ const DREReportPreview: React.FC<DREReportPreviewProps> = ({
         <div className="border-t-2 border-dashed border-border my-2" />
 
         {/* Total Bruto */}
-        <div className="flex items-center justify-between py-4 border-b border-border/50">
+        <div className="flex items-center justify-between py-4 border-b border-border/50 bg-muted/30 -mx-4 sm:-mx-6 px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
               <DollarSign className="w-5 h-5 text-primary" />
@@ -126,24 +133,117 @@ const DREReportPreview: React.FC<DREReportPreviewProps> = ({
           </span>
         </div>
 
-        {/* Despesas */}
-        <div className="flex items-center justify-between py-4 border-b border-border/50">
+        {/* Seção: Custos de Torneio */}
+        <div className="mt-4 mb-2">
+          <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Custos de Torneio
+          </h5>
+        </div>
+
+        {/* Buy-ins */}
+        <div className="flex items-center justify-between py-3 border-b border-border/30">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center">
-              <MinusCircle className="w-5 h-5 text-destructive" />
+            <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+              <Target className="w-4 h-4 text-orange-500" />
             </div>
             <div>
-              <h4 className="font-semibold text-foreground">(-) Despesas</h4>
-              <p className="text-sm text-muted-foreground">Buy-ins, taxas, viagens, hospedagem, etc.</p>
+              <h4 className="font-medium text-foreground">(-) Buy-ins</h4>
+              <p className="text-xs text-muted-foreground">Inscrições nos torneios</p>
             </div>
           </div>
-          <span className="text-lg font-bold text-destructive">
+          <span className="text-base font-semibold text-orange-500">
+            {formatCurrency(data.buyins)}
+          </span>
+        </div>
+
+        {/* Rebuys */}
+        <div className="flex items-center justify-between py-3 border-b border-border/30">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+              <RefreshCw className="w-4 h-4 text-orange-500" />
+            </div>
+            <div>
+              <h4 className="font-medium text-foreground">(-) Rebuys</h4>
+              <p className="text-xs text-muted-foreground">Recompras realizadas</p>
+            </div>
+          </div>
+          <span className="text-base font-semibold text-orange-500">
+            {formatCurrency(data.rebuys)}
+          </span>
+        </div>
+
+        {/* Addons */}
+        <div className="flex items-center justify-between py-3 border-b border-border/30">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+              <PlusCircle className="w-4 h-4 text-orange-500" />
+            </div>
+            <div>
+              <h4 className="font-medium text-foreground">(-) Addons</h4>
+              <p className="text-xs text-muted-foreground">Add-ons adquiridos</p>
+            </div>
+          </div>
+          <span className="text-base font-semibold text-orange-500">
+            {formatCurrency(data.addons)}
+          </span>
+        </div>
+
+        {/* Subtotal Custos de Torneio */}
+        <div className="flex items-center justify-between py-3 border-b border-border/50 bg-orange-500/5 -mx-4 sm:-mx-6 px-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center">
+              <MinusCircle className="w-4 h-4 text-orange-600" />
+            </div>
+            <div>
+              <h4 className="font-medium text-foreground">Subtotal Custos de Torneio</h4>
+            </div>
+          </div>
+          <span className="text-base font-bold text-orange-600">
+            {formatCurrency(data.custosTorneio)}
+          </span>
+        </div>
+
+        {/* Seção: Outras Despesas */}
+        <div className="mt-4 mb-2">
+          <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Outras Despesas
+          </h5>
+        </div>
+
+        {/* Despesas Gerais */}
+        <div className="flex items-center justify-between py-3 border-b border-border/50">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center">
+              <Receipt className="w-4 h-4 text-destructive" />
+            </div>
+            <div>
+              <h4 className="font-medium text-foreground">(-) Despesas Gerais</h4>
+              <p className="text-xs text-muted-foreground">Transporte, alimentação, hospedagem, etc.</p>
+            </div>
+          </div>
+          <span className="text-base font-semibold text-destructive">
             {formatCurrency(data.despesas)}
           </span>
         </div>
 
+        {/* Total de Custos */}
+        <div className="flex items-center justify-between py-3 bg-destructive/5 -mx-4 sm:-mx-6 px-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-destructive/20 flex items-center justify-center">
+              <MinusCircle className="w-4 h-4 text-destructive" />
+            </div>
+            <div>
+              <h4 className="font-medium text-foreground">Total de Custos</h4>
+              <p className="text-xs text-muted-foreground">Torneio + Despesas gerais</p>
+            </div>
+          </div>
+          <span className="text-base font-bold text-destructive">
+            {formatCurrency(data.totalCustos)}
+          </span>
+        </div>
+
         {/* Divider visual */}
-        <div className="border-t-2 border-dashed border-border my-2" />
+        <div className="border-t-2 border-dashed border-border my-4" />
 
         {/* Total Líquido */}
         <div className="flex items-center justify-between py-4">
@@ -157,7 +257,7 @@ const DREReportPreview: React.FC<DREReportPreviewProps> = ({
             </div>
             <div>
               <h4 className="font-semibold text-foreground">Total Líquido</h4>
-              <p className="text-sm text-muted-foreground">Lucro final após todas as despesas</p>
+              <p className="text-sm text-muted-foreground">Resultado final após todos os custos</p>
             </div>
           </div>
           <span className={`text-xl font-bold ${
