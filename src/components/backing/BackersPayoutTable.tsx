@@ -85,58 +85,37 @@ const BackersPayoutTable: React.FC = () => {
   }
 
   return (
-    <div className="overflow-x-auto border border-gray-200 rounded-b bg-white">
-      <table className="min-w-full text-sm text-gray-900">
+    <div className="overflow-x-auto">
+      <table className="w-full text-xs sm:text-sm">
         <thead>
-          <tr className="bg-muted">
-            <th className="py-2 px-3 text-left align-middle">Torneio</th>
-            <th className="py-2 px-3 text-left align-middle">Backer</th>
-            <th className="py-2 px-3 text-center align-middle">% Ações</th>
-            <th className="py-2 px-3 text-center align-middle">Investido (R$)</th>
-            <th className="py-2 px-3 text-center align-middle">Retorno (R$)</th>
-            <th className="py-2 px-3 text-center align-middle">Lucro (R$)</th>
-            <th className="py-2 px-3 text-center align-middle">ROI (%)</th>
+          <tr className="bg-muted border-b">
+            <th className="py-2 px-2 sm:px-3 text-left align-middle font-medium whitespace-nowrap">Torneio</th>
+            <th className="py-2 px-2 sm:px-3 text-left align-middle font-medium whitespace-nowrap">Backer</th>
+            <th className="py-2 px-2 sm:px-3 text-center align-middle font-medium whitespace-nowrap">% Ações</th>
+            <th className="py-2 px-2 sm:px-3 text-right align-middle font-medium whitespace-nowrap">Investido</th>
+            <th className="py-2 px-2 sm:px-3 text-right align-middle font-medium whitespace-nowrap">Retorno</th>
           </tr>
         </thead>
         <tbody>
           {data.map((row) => (
-            <tr key={row.id} className="border-t">
-              <td className="py-2 px-3 text-left align-middle">
-                {row.event ? `${row.event} · ` : ""}
+            <tr key={row.id} className="border-b last:border-0 hover:bg-muted/50">
+              <td className="py-2 px-2 sm:px-3 text-left align-middle max-w-[120px] truncate">
                 {row.tournament}
               </td>
-              <td className="py-2 px-3 text-left align-middle">
+              <td className="py-2 px-2 sm:px-3 text-left align-middle whitespace-nowrap">
                 {row.backer}
               </td>
-              <td className="py-2 px-3 text-center align-middle">
+              <td className="py-2 px-2 sm:px-3 text-center align-middle whitespace-nowrap">
                 {row.percentage}%
               </td>
-              <td className="py-2 px-3 text-center align-middle">
+              <td className="py-2 px-2 sm:px-3 text-right align-middle whitespace-nowrap">
                 R$ {row.invested.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </td>
-              <td className="py-2 px-3 text-center align-middle">
+              <td className="py-2 px-2 sm:px-3 text-right align-middle whitespace-nowrap">
                 {row.payout !== null
-                  ? `R$ ${row.payout.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`
-                  : <span className="text-muted-foreground">-</span>
-                }
-              </td>
-              <td className="py-2 px-3 text-center align-middle">
-                {row.payout !== null
-                  ? (
-                    <span className={row.payout - row.invested >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
-                      R$ {(row.payout - row.invested).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                  ? <span className={row.payout - row.invested >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
+                      R$ {row.payout.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                     </span>
-                  )
-                  : <span className="text-muted-foreground">-</span>
-                }
-              </td>
-              <td className="py-2 px-3 text-center align-middle">
-                {row.roi !== null
-                  ? (
-                    <span className={row.roi >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
-                      {row.roi.toLocaleString("pt-BR", { maximumFractionDigits: 2 })}%
-                    </span>
-                  )
                   : <span className="text-muted-foreground">-</span>
                 }
               </td>
