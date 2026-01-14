@@ -1,6 +1,5 @@
-
 import React from "react";
-import { BarChart3, PieChart } from "lucide-react";
+import { BarChart3, PieChart, TrendingUp, Users, DollarSign } from "lucide-react";
 import { useBackingDashboardData } from "@/hooks/useBackingDashboardData";
 import {
   BarChart,
@@ -15,6 +14,7 @@ import {
   Legend,
 } from "recharts";
 import BackersPayoutTable from "./BackersPayoutTable";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const chartColors = ["#F6C94A", "#5B870B", "#a2a2a2", "#E16900", "#F85043", "#22c55e"];
 
@@ -45,83 +45,150 @@ const BackingDashboardSection = () => {
   }
 
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
+    <div className="space-y-6 w-full">
       <h2 className="text-xl font-semibold">Dashboard</h2>
-      <div className="flex gap-6 flex-wrap">
-        <div className="bg-white rounded shadow px-6 py-4 flex-1 min-w-min">
-          <div className="text-gray-500 mb-1">ROI Total</div>
-          <div className={`font-bold text-2xl ${roi >= 0 ? "text-green-600" : "text-red-600"}`}>
-            {(roi * 100).toFixed(2)}%
-          </div>
-        </div>
-        <div className="bg-white rounded shadow px-6 py-4 flex-1 min-w-min">
-          <div className="text-gray-500 mb-1">Lucro Líquido do Cavaleiro</div>
-          <div className="font-bold text-2xl text-poker-gold">
-            R$ {playerProfit.toLocaleString("pt-BR", {minimumFractionDigits:2})}
-          </div>
-        </div>
-        <div className="bg-white rounded shadow px-6 py-4 flex-1 min-w-min">
-          <div className="text-gray-500 mb-1">Nº de Backers Ativos</div>
-          <div className="font-bold text-2xl text-green-800">{numBackers}</div>
-        </div>
+      
+      {/* Métricas principais - Grid responsivo */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
+                <TrendingUp className="h-5 w-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-muted-foreground truncate">ROI Total</p>
+                <p className={`text-xl font-bold ${roi >= 0 ? "text-green-600" : "text-red-600"}`}>
+                  {(roi * 100).toFixed(2)}%
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                <DollarSign className="h-5 w-5 text-poker-gold" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-muted-foreground truncate">Lucro do Cavaleiro</p>
+                <p className="text-xl font-bold text-poker-gold">
+                  R$ {playerProfit.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="sm:col-span-2 lg:col-span-1">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-muted-foreground truncate">Backers Ativos</p>
+                <p className="text-xl font-bold text-foreground">{numBackers}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-      <div className="flex gap-8 flex-wrap">
-        <div className="flex-1 min-w-[300px]">
-          <div className="flex items-center gap-2 mb-1 text-poker-gold font-semibold">
-            <BarChart3 /> Receita por Torneio
-          </div>
-          <div className="bg-white rounded shadow p-4 min-h-[150px]">
+
+      {/* Gráficos - Stack vertical no mobile */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base text-poker-gold">
+              <BarChart3 className="h-5 w-5" />
+              Receita por Torneio
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 pt-0">
             {revenueByTournament.length === 0 ? (
-              <span className="text-gray-400 flex justify-center">Nenhum dado ainda</span>
+              <div className="flex items-center justify-center h-[200px] text-muted-foreground">
+                Nenhum dado ainda
+              </div>
             ) : (
-              <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={revenueByTournament}>
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="value" fill="#F6C94A" />
-                </BarChart>
-              </ResponsiveContainer>
+              <div className="h-[200px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={revenueByTournament} margin={{ left: -10, right: 10 }}>
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fontSize: 11 }} 
+                      interval={0}
+                      angle={-45}
+                      textAnchor="end"
+                      height={60}
+                    />
+                    <YAxis tick={{ fontSize: 11 }} width={50} />
+                    <Tooltip 
+                      formatter={(value: number) => [`R$ ${value.toLocaleString("pt-BR")}`, "Receita"]}
+                    />
+                    <Bar dataKey="value" fill="#F6C94A" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             )}
-          </div>
-        </div>
-        <div className="flex-1 min-w-[300px]">
-          <div className="flex items-center gap-2 mb-1 text-poker-gold font-semibold">
-            <PieChart /> Distribuição de Lucros
-          </div>
-          <div className="bg-white rounded shadow p-4 min-h-[150px]">
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2 text-base text-poker-gold">
+              <PieChart className="h-5 w-5" />
+              Distribuição de Lucros
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4 pt-0">
             {profitDistribution.every((s) => s.value === 0) ? (
-              <span className="text-gray-400 flex justify-center">Sem distribuição</span>
+              <div className="flex items-center justify-center h-[200px] text-muted-foreground">
+                Sem distribuição
+              </div>
             ) : (
-              <ResponsiveContainer width="100%" height={200}>
-                <RePieChart>
-                  <Pie
-                    data={profitDistribution}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={60}
-                    fill="#F6C94A"
-                    label={({ name, percent }) => `${name}: ${(percent*100).toFixed(0)}%`}
-                  >
-                    {profitDistribution.map((_, idx) => (
-                      <Cell key={idx} fill={chartColors[idx % chartColors.length]} />
-                    ))}
-                  </Pie>
-                  <Legend />
-                  <Tooltip />
-                </RePieChart>
-              </ResponsiveContainer>
+              <div className="h-[200px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RePieChart>
+                    <Pie
+                      data={profitDistribution}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={60}
+                      fill="#F6C94A"
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      labelLine={false}
+                    >
+                      {profitDistribution.map((_, idx) => (
+                        <Cell key={idx} fill={chartColors[idx % chartColors.length]} />
+                      ))}
+                    </Pie>
+                    <Legend wrapperStyle={{ fontSize: 12 }} />
+                    <Tooltip 
+                      formatter={(value: number) => [`R$ ${value.toLocaleString("pt-BR")}`, "Lucro"]}
+                    />
+                  </RePieChart>
+                </ResponsiveContainer>
+              </div>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </div>
-      {/* NOVO: Tabela geral dos payouts dos backers */}
-      <div className="mt-12">
-        <h3 className="font-bold text-lg mb-3">Geral - Investimento & Retorno por Backer</h3>
-        <BackersPayoutTable />
-      </div>
+
+      {/* Tabela de payouts */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">
+            Geral - Investimento & Retorno por Backer
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-4 pt-0 overflow-x-auto">
+          <BackersPayoutTable />
+        </CardContent>
+      </Card>
     </div>
   );
 };
