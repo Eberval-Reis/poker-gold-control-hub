@@ -19,7 +19,7 @@ const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {
   return (
     <div className="overflow-x-auto rounded-sm border border-border/40 bg-card shadow-sm animate-reveal">
       <table className="w-full">
-        <thead className="bg-sidebar-background/50">
+        <thead className="bg-muted/50 text-muted-foreground uppercase tracking-widest text-[10px] font-bold">
           <tr className="border-b border-border/40">
             <th className="text-left p-4 font-montserrat text-xs uppercase tracking-widest text-muted-foreground">Torneio</th>
             <th className="text-left p-4 font-montserrat text-xs uppercase tracking-widest text-muted-foreground">Data</th>
@@ -51,11 +51,11 @@ const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {
                   <td className="p-4 text-sm">
                     <div className="flex items-center gap-2">
                       {result >= 0 ? (
-                        <TrendingUp className="h-4 w-4 text-green-600" />
+                        <TrendingUp className="h-4 w-4 text-green-500" />
                       ) : (
-                        <TrendingDown className="h-4 w-4 text-destructive" />
+                        <TrendingDown className="h-4 w-4 text-red-500" />
                       )}
-                      <span className={`font-bold font-mono ${result >= 0 ? 'text-green-600' : 'text-destructive'}`}>
+                      <span className={`font-bold font-mono ${result >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                         {formatCurrency(result)}
                       </span>
                     </div>

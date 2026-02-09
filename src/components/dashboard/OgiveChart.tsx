@@ -64,8 +64,11 @@ const OgiveChart = ({ performances }: OgiveChartProps) => {
   const breakEvenPercent = ((breakEvenCount / totalTournaments) * 100).toFixed(1);
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h3 className="text-lg font-semibold mb-4">Gráfico de Ogiva - Frequência Acumulada do Lucro em Torneios</h3>
+    <div className="bg-card p-6 rounded-sm border border-border/40 shadow-sm animate-reveal">
+      <h3 className="text-sm font-bold font-montserrat uppercase tracking-widest mb-6 text-muted-foreground flex items-center gap-2">
+        <div className="w-1 h-4 bg-poker-gold rounded-full" />
+        Gráfico de Ogiva - Frequência Acumulada
+      </h3>
       <div className={isMobile ? "h-[400px] w-full" : "h-[300px] w-full"}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
@@ -75,29 +78,31 @@ const OgiveChart = ({ performances }: OgiveChartProps) => {
               : { top: 5, right: 30, left: 20, bottom: 5 }
             }
           >
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: isMobile ? 10 : 12 }}
-              label={!isMobile ? {
-                value: 'Limite Superior da Classe (Resultado Líquido)',
-                position: 'insideBottom',
-                offset: -5,
-                style: { fontSize: 12 }
-              } : undefined}
+              tick={{ fontSize: isMobile ? 10 : 12, fill: 'currentColor' }}
+              className="text-muted-foreground"
+              axisLine={false}
+              tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: isMobile ? 10 : 12 }}
+              tick={{ fontSize: isMobile ? 10 : 12, fill: 'currentColor' }}
+              className="text-muted-foreground"
               width={isMobile ? 40 : 60}
-              label={!isMobile ? {
-                value: 'Frequência Acumulada Relativa (%)',
-                angle: -90,
-                position: 'insideLeft',
-                style: { fontSize: 12 }
-              } : undefined}
               domain={[0, 100]}
+              axisLine={false}
+              tickLine={false}
             />
             <Tooltip
+              contentStyle={{
+                backgroundColor: 'hsl(var(--card))',
+                borderColor: 'hsl(var(--border))',
+                borderRadius: '4px',
+                color: 'hsl(var(--foreground))',
+                fontFamily: 'Inter',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+              }}
               formatter={(value) => [`${Number(value).toFixed(1)}%`, ""]}
               labelFormatter={(label) => `${label}`}
             />
@@ -117,16 +122,16 @@ const OgiveChart = ({ performances }: OgiveChartProps) => {
               type="monotone"
               dataKey="cumulativeFreqPercent"
               name="Frequência Acumulada (%)"
-              stroke="#0088FE"
+              stroke="#C5A028"
               strokeWidth={2}
-              dot={{ r: 3 }}
-              activeDot={{ r: 5 }}
+              dot={{ r: 3, fill: '#C5A028' }}
+              activeDot={{ r: 5, fill: '#C5A028' }}
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <div className="mt-3 text-sm text-gray-600 text-center">
-        A linha vermelha tracejada indica o ponto de equilíbrio (Break-Even) onde o resultado líquido é zero
+      <div className="mt-4 text-[10px] text-muted-foreground uppercase tracking-widest text-center font-medium">
+        A linha vermelha indica o ponto de equilíbrio (Break-Even)
       </div>
     </div>
   );

@@ -34,7 +34,7 @@ const ExpenseDistributionChart = ({ data }: ExpenseDistributionChartProps) => {
               }
               barSize={isMobile ? 25 : 30}
             >
-              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(0,0,0,0.05)" />
+              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(255,255,255,0.05)" />
               <XAxis
                 type="number"
                 tick={isMobile ? false : { fill: "hsl(var(--muted-foreground))", fontSize: 10, fontFamily: 'Inter' }}
@@ -53,10 +53,12 @@ const ExpenseDistributionChart = ({ data }: ExpenseDistributionChartProps) => {
               <Tooltip
                 cursor={{ fill: 'rgba(197, 160, 40, 0.05)' }}
                 contentStyle={{
+                  backgroundColor: 'hsl(var(--card))',
+                  borderColor: 'hsl(var(--border))',
                   borderRadius: '4px',
-                  border: '1px solid rgba(197, 160, 40, 0.2)',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                  fontFamily: 'Inter'
+                  color: 'hsl(var(--foreground))',
+                  fontFamily: 'Inter',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
                 }}
                 formatter={(value) => [formatCurrency(value as number), "Total acumulado"]}
                 labelFormatter={label => label}

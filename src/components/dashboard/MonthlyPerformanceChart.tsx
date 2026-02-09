@@ -23,26 +23,30 @@ const MonthlyPerformanceChart = ({ data }: MonthlyPerformanceChartProps) => {
               : { top: 5, right: 30, left: 20, bottom: 5 }
             }
           >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
             <XAxis
               dataKey="month"
-              tick={{ fontSize: 10, fontFamily: 'Inter' }}
+              tick={{ fontSize: 10, fontFamily: 'Inter', fill: 'currentColor' }}
               axisLine={false}
               tickLine={false}
+              className="text-muted-foreground"
             />
             <YAxis
               tickFormatter={(value) => `R$ ${value}`}
-              tick={{ fontSize: 10, fontFamily: 'Inter' }}
+              tick={{ fontSize: 10, fontFamily: 'Inter', fill: 'currentColor' }}
               width={isMobile ? 40 : 60}
               axisLine={false}
               tickLine={false}
+              className="text-muted-foreground"
             />
             <Tooltip
               contentStyle={{
+                backgroundColor: 'hsl(var(--card))',
+                borderColor: 'hsl(var(--border))',
                 borderRadius: '4px',
-                border: '1px solid rgba(160, 0, 0, 0.2)',
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                fontFamily: 'Inter'
+                color: 'hsl(var(--foreground))',
+                fontFamily: 'Inter',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
               }}
               formatter={(value) => [`R$ ${Number(value).toFixed(2)}`, "Lucro Mensal"]}
             />
@@ -52,7 +56,7 @@ const MonthlyPerformanceChart = ({ data }: MonthlyPerformanceChartProps) => {
               name="Lucro"
               stroke="#A00000"
               strokeWidth={3}
-              dot={{ r: 4, fill: '#A00000', strokeWidth: 2, stroke: '#fff' }}
+              dot={{ r: 4, fill: '#A00000', strokeWidth: 2, stroke: 'hsl(var(--card))' }}
               activeDot={{ r: 6, strokeWidth: 0 }}
             />
           </LineChart>

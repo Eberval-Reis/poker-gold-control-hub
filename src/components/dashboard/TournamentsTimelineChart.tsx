@@ -15,8 +15,8 @@ const TournamentsTimelineChart = ({ data }: TournamentsTimelineChartProps) => {
   const [periodFilter, setPeriodFilter] = useState<PeriodFilter>('current-month');
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', { 
-      day: '2-digit', 
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
       month: '2-digit',
       year: '2-digit'
     });
@@ -58,11 +58,14 @@ const TournamentsTimelineChart = ({ data }: TournamentsTimelineChartProps) => {
   }, [data, periodFilter]);
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Torneios ao Longo do Tempo</h3>
+    <div className="bg-card p-6 rounded-sm border border-border/40 shadow-sm animate-reveal h-full">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
+        <h3 className="text-sm font-bold font-montserrat uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+          <div className="w-1 h-4 bg-poker-gold rounded-full" />
+          Torneios ao Longo do Tempo
+        </h3>
         <Select value={periodFilter} onValueChange={(value) => setPeriodFilter(value as PeriodFilter)}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[180px] bg-background">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -77,32 +80,46 @@ const TournamentsTimelineChart = ({ data }: TournamentsTimelineChartProps) => {
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={filteredData}
-            margin={isMobile 
+            margin={isMobile
               ? { top: 5, right: 10, left: 0, bottom: 60 }
               : { top: 5, right: 30, left: 20, bottom: 60 }
             }
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis 
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+            <XAxis
               dataKey="name"
               angle={-45}
               textAnchor="end"
-              tick={{ fontSize: isMobile ? 8 : 10 }}
+              tick={{ fontSize: isMobile ? 8 : 10, fill: 'currentColor' }}
+              className="text-muted-foreground"
               height={80}
+              axisLine={false}
+              tickLine={false}
             />
-            <YAxis 
+            <YAxis
               tickFormatter={isMobile ? (value) => `${value}` : (value) => `R$ ${value.toLocaleString('pt-BR')}`}
-              tick={{ fontSize: isMobile ? 10 : 12 }}
+              tick={{ fontSize: isMobile ? 10 : 12, fill: 'currentColor' }}
+              className="text-muted-foreground"
               width={isMobile ? 40 : 60}
+              axisLine={false}
+              tickLine={false}
             />
             <Tooltip
+              contentStyle={{
+                backgroundColor: 'hsl(var(--card))',
+                borderColor: 'hsl(var(--border))',
+                borderRadius: '4px',
+                color: 'hsl(var(--foreground))',
+                fontFamily: 'Inter',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
+              }}
               formatter={(value, name) => {
                 const labels: Record<string, string> = {
                   buyin: 'Buy-in Total',
                   prize: 'Premiação',
                   profit: 'Lucro/Prejuízo'
                 };
-                return [`R$ ${Number(value).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, labels[name as string] || name];
+                return [`R$ ${Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, labels[name as string] || name];
               }}
               labelFormatter={(label, payload) => {
                 if (payload && payload.length > 0) {
@@ -112,24 +129,25 @@ const TournamentsTimelineChart = ({ data }: TournamentsTimelineChartProps) => {
                 return label;
               }}
             />
-            <Bar dataKey="profit" radius={[4, 4, 0, 0]}>
+            <Bar dataKey="profit" radius={[2, 2, 0, 0]}>
               {filteredData.map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
+                <Cell
+                  key={`cell-${index}`}
                   fill={getBarColor(entry.profit)}
+                  className="transition-all duration-300 hover:brightness-110"
                 />
               ))}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <div className="mt-2 flex items-center justify-center gap-4 text-sm">
+      <div className="mt-4 flex items-center justify-center gap-6 text-[10px] uppercase tracking-widest font-medium text-muted-foreground">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-green-500 rounded"></div>
+          <div className="w-2 h-2 bg-green-500 rounded-full"></div>
           <span>Lucro</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 bg-red-500 rounded"></div>
+          <div className="w-2 h-2 bg-red-500 rounded-full"></div>
           <span>Prejuízo</span>
         </div>
       </div>

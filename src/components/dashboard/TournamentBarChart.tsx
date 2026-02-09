@@ -27,29 +27,33 @@ const TournamentBarChart = ({ data }: TournamentBarChartProps) => {
             }
             barSize={isMobile ? 25 : 30}
           >
-            <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(0,0,0,0.05)" />
+            <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(255,255,255,0.05)" />
             <XAxis
               type="number"
-              tick={isMobile ? false : { fontSize: 10, fontFamily: 'Inter' }}
+              tick={isMobile ? false : { fontSize: 10, fontFamily: 'Inter', fill: 'currentColor' }}
               tickFormatter={isMobile ? undefined : (value) => `R$ ${value.toLocaleString('pt-BR')}`}
               axisLine={false}
               tickLine={false}
+              className="text-muted-foreground"
             />
             <YAxis
               dataKey="month"
               type="category"
               width={isMobile ? 100 : 120}
-              tick={{ fontSize: isMobile ? 10 : 11, fontFamily: 'Inter', fontWeight: 500 }}
+              tick={{ fontSize: isMobile ? 10 : 11, fontFamily: 'Inter', fontWeight: 500, fill: 'currentColor' }}
               axisLine={false}
               tickLine={false}
+              className="text-muted-foreground"
             />
             <Tooltip
               cursor={{ fill: 'rgba(197, 160, 40, 0.05)' }}
               contentStyle={{
+                backgroundColor: 'hsl(var(--card))',
+                borderColor: 'hsl(var(--border))',
                 borderRadius: '4px',
-                border: '1px solid rgba(197, 160, 40, 0.2)',
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-                fontFamily: 'Inter'
+                color: 'hsl(var(--foreground))',
+                fontFamily: 'Inter',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.3)',
               }}
               formatter={(value) => [`R$ ${Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, "Premiação Total"]}
               labelFormatter={(label) => `Torneio: ${label}`}

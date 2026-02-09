@@ -44,14 +44,14 @@ const MetricCard: React.FC<MetricCardProps> = React.memo(({
                 <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{title}</span>
               </div>
               {typeof trend === "number" && (
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${trend >= 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${trend >= 0 ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"}`}>
                   {trend > 0 ? "+" : ""}{trend}%
                 </span>
               )}
             </div>
 
             <div className="flex flex-col">
-              <div className={`text-3xl font-extrabold font-montserrat tracking-tight ${color === "green" ? "text-green-600" : color === "red" ? "text-red-600" : "text-foreground"}`}>
+              <div className={`text-3xl font-extrabold font-montserrat tracking-tight ${color === "green" ? "text-green-500" : color === "red" ? "text-red-500" : "text-foreground"}`}>
                 {value}
               </div>
               {description && <p className="text-[10px] mt-1 text-muted-foreground font-medium uppercase tracking-tight">{description}</p>}
