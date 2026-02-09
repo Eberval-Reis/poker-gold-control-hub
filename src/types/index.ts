@@ -13,8 +13,9 @@ export type Event = Tables<'schedule_events'>;
 export type Expense = Tables<'expenses'> & {
     tournaments?: Tournament | null;
 };
-export type Performance = Tables<'tournament_performance'> & {
+export type PokerPerformance = Tables<'tournament_performance'> & {
     tournaments?: (Partial<Tournament> & { clubs?: { name: string } | null }) | null;
+    clubs?: { id: string; name: string } | null;
 };
 
 export type BackingOffer = Tables<'backing_offers'> & {

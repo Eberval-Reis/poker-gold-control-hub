@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useDashboardData } from "@/hooks/useDashboardData";
 import { Trophy, TrendingUp, DollarSign, Target, CreditCard, Repeat2, Receipt, Calculator } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { PokerPerformance } from "@/types";
 
 const Index = () => {
   const currentYear = new Date().getFullYear();
@@ -189,7 +190,7 @@ const Index = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        <RecentTournamentsTable data={(dashboardData.recentTournaments || []) as any} />
+        <RecentTournamentsTable data={(dashboardData.recentTournaments || []) as PokerPerformance[]} />
       </div>
     </div>
   );

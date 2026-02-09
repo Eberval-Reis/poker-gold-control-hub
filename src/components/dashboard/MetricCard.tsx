@@ -24,8 +24,12 @@ const MetricCard: React.FC<MetricCardProps> = React.memo(({
   loading = false
 }) => {
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-6">
+    <Card className="overflow-hidden border-border/40 hover:border-poker-gold/40 transition-all duration-500 hover:shadow-gold-glow animate-reveal group">
+      <CardContent className="p-6 relative">
+        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+          {icon}
+        </div>
+
         {loading ? (
           <div className="space-y-3">
             <Skeleton className="h-4 w-1/2" />
@@ -33,19 +37,25 @@ const MetricCard: React.FC<MetricCardProps> = React.memo(({
             {description && <Skeleton className="h-4 w-full" />}
           </div>
         ) : (
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              {/* Agora exibe APENAS o ícone visual, sem texto tipo "trophy" */}
-              <span className="inline-flex">{icon}</span>
-              <span className="text-sm font-medium text-muted-foreground">{title}</span>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="text-poker-gold">{icon}</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{title}</span>
+              </div>
               {typeof trend === "number" && (
-                <span className={`ml-1 text-xs ${trend >= 0 ? "text-green-600" : "text-red-600"}`}>
-                  {trend > 0 ? "▲" : trend < 0 ? "▼" : "—"} {Math.abs(trend)}
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${trend >= 0 ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                  {trend > 0 ? "+" : ""}{trend}%
                 </span>
               )}
             </div>
-            <div className={`text-2xl font-bold ${color === "green" ? "text-green-700" : color === "red" ? "text-red-700" : ""}`}>{value}</div>
-            {description && <p className="text-xs text-muted-foreground">{description}</p>}
+
+            <div className="flex flex-col">
+              <div className={`text-3xl font-extrabold font-montserrat tracking-tight ${color === "green" ? "text-green-600" : color === "red" ? "text-red-600" : "text-foreground"}`}>
+                {value}
+              </div>
+              {description && <p className="text-[10px] mt-1 text-muted-foreground font-medium uppercase tracking-tight">{description}</p>}
+            </div>
           </div>
         )}
       </CardContent>

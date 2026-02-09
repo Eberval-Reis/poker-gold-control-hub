@@ -7,38 +7,57 @@ interface MonthlyPerformanceChartProps {
 
 const MonthlyPerformanceChart = ({ data }: MonthlyPerformanceChartProps) => {
   const isMobile = useIsMobile();
-  
+
   return (
-    <div className={isMobile ? "h-[400px] w-full" : "h-[300px] w-full"}>
-      <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={data}
-          margin={isMobile 
-            ? { top: 5, right: 10, left: 0, bottom: 5 }
-            : { top: 5, right: 30, left: 20, bottom: 5 }
-          }
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis 
-            dataKey="month" 
-            tick={{ fontSize: isMobile ? 10 : 12 }}
-          />
-          <YAxis 
-            tickFormatter={isMobile ? (value) => `${value}` : (value) => `R$ ${value}`}
-            tick={{ fontSize: isMobile ? 10 : 12 }}
-            width={isMobile ? 40 : 60}
-          />
-          <Tooltip formatter={(value) => [`R$ ${Number(value).toFixed(2)}`, ""]} />
-          <Legend />
-          <Line 
-            type="monotone" 
-            dataKey="profit" 
-            name="Lucro" 
-            stroke="#006400" 
-            activeDot={{ r: 8 }} 
-          />
-        </LineChart>
-      </ResponsiveContainer>
+    <div className={`bg-card p-6 rounded-sm border border-border/40 shadow-sm animate-reveal ${isMobile ? "h-[400px] w-full" : "h-[300px] w-full"}`}>
+      <h3 className="text-sm font-bold font-montserrat uppercase tracking-widest mb-6 text-muted-foreground flex items-center gap-2">
+        <div className="w-1 h-4 bg-poker-red rounded-full" />
+        Performance Mensal
+      </h3>
+      <div className="h-[220px] w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart
+            data={data}
+            margin={isMobile
+              ? { top: 5, right: 10, left: 0, bottom: 5 }
+              : { top: 5, right: 30, left: 20, bottom: 5 }
+            }
+          >
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
+            <XAxis
+              dataKey="month"
+              tick={{ fontSize: 10, fontFamily: 'Inter' }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <YAxis
+              tickFormatter={(value) => `R$ ${value}`}
+              tick={{ fontSize: 10, fontFamily: 'Inter' }}
+              width={isMobile ? 40 : 60}
+              axisLine={false}
+              tickLine={false}
+            />
+            <Tooltip
+              contentStyle={{
+                borderRadius: '4px',
+                border: '1px solid rgba(160, 0, 0, 0.2)',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                fontFamily: 'Inter'
+              }}
+              formatter={(value) => [`R$ ${Number(value).toFixed(2)}`, "Lucro Mensal"]}
+            />
+            <Line
+              type="monotone"
+              dataKey="profit"
+              name="Lucro"
+              stroke="#A00000"
+              strokeWidth={3}
+              dot={{ r: 4, fill: '#A00000', strokeWidth: 2, stroke: '#fff' }}
+              activeDot={{ r: 6, strokeWidth: 0 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

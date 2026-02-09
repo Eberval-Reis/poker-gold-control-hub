@@ -22,16 +22,17 @@ const AppHeader = () => {
   };
 
   return (
-    <header className="bg-white dark:bg-background border-b border-gray-200 dark:border-border p-4 flex justify-between items-center transition-colors">
+    <header className="bg-background/80 backdrop-blur-md border-b border-border/40 p-4 flex justify-between items-center transition-all sticky top-0 z-30">
       <div className="flex items-center gap-2">
-        {/* Agora o trigger está sempre visível */}
-        <SidebarTrigger className="mr-2" />
-        <h1 className="text-xl font-bold">Poker Control</h1>
+        <SidebarTrigger className="mr-2 hover:text-poker-gold transition-colors" />
+        <h1 className="text-xl font-extrabold font-montserrat tracking-tight uppercase text-foreground">
+          Poker<span className="text-poker-gold">Gold</span>
+        </h1>
       </div>
       <div className="flex gap-1">
         <ThemeToggle />
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="icon"
           onClick={handleLogout}
           className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"

@@ -1,8 +1,8 @@
 import { supabase } from "@/integrations/supabase/client";
-import { Performance } from '@/types';
+import { PokerPerformance } from '@/types';
 
 // Individual functions for tournament performance operations
-export const getPerformances = async (): Promise<Performance[]> => {
+export const getPokerPerformances = async (): Promise<PokerPerformance[]> => {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
     throw new Error('User not authenticated');
@@ -33,10 +33,10 @@ export const getPerformances = async (): Promise<Performance[]> => {
     throw error;
   }
 
-  return (data || []) as unknown as Performance[];
+  return (data || []) as unknown as PokerPerformance[];
 };
 
-export const getPerformanceById = async (id: string): Promise<Performance | null> => {
+export const getPokerPerformanceById = async (id: string): Promise<PokerPerformance | null> => {
   const { data, error } = await supabase
     .from('tournament_performance')
     .select(`
@@ -66,19 +66,19 @@ export const getPerformanceById = async (id: string): Promise<Performance | null
     throw error;
   }
 
-  console.log('Performance data loaded:', data);
-  return data as unknown as Performance;
+  console.log('PokerPerformance data loaded:', data);
+  return data as unknown as PokerPerformance;
 };
 
 // Define a type that ensures buyin_amount and tournament_date are present, matching Supabase's requirements
-type PerformanceInsert = Omit<Partial<Performance>, 'buyin_amount' | 'tournament_date'> & {
+type PokerPerformanceInsert = Omit<Partial<PokerPerformance>, 'buyin_amount' | 'tournament_date'> & {
   buyin_amount: number;
   tournament_date: string;
 };
 
-export const createPerformance = async (
-  performanceData: Partial<Performance>
-): Promise<Performance> => {
+export const createPokerPerformance = async (
+  performanceData: Partial<PokerPerformance>
+): Promise<PokerPerformance> => {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
     throw new Error('User not authenticated');
@@ -95,7 +95,7 @@ export const createPerformance = async (
   }
 
   // Cast to the correct type with required fields guaranteed to be present
-  const dataToInsert = { ...performanceData, user_id: user.id } as unknown as PerformanceInsert & { user_id: string };
+  const dataToInsert = { ...performanceData, user_id: user.id } as unknown as PokerPerformanceInsert & { user_id: string };
 
   const { data, error } = await supabase
     .from('tournament_performance')
@@ -108,13 +108,13 @@ export const createPerformance = async (
     throw error;
   }
 
-  return data as Performance;
+  return data as PokerPerformance;
 };
 
-export const updatePerformance = async (
+export const updatePokerPerformance = async (
   id: string,
-  performanceData: Partial<Performance>
-): Promise<Performance> => {
+  performanceData: Partial<PokerPerformance>
+): Promise<PokerPerformance> => {
   const { data, error } = await supabase
     .from('tournament_performance')
     .update(performanceData)
@@ -127,10 +127,10 @@ export const updatePerformance = async (
     throw error;
   }
 
-  return data as Performance;
+  return data as PokerPerformance;
 };
 
-export const deletePerformance = async (id: string): Promise<{ success: boolean }> => {
+export const deletePokerPerformance = async (id: string): Promise<{ success: boolean }> => {
   const { error } = await supabase
     .from('tournament_performance')
     .delete()
@@ -146,9 +146,9 @@ export const deletePerformance = async (id: string): Promise<{ success: boolean 
 
 // Export tournamentPerformanceService object
 export const tournamentPerformanceService = {
-  getPerformances,
-  getPerformanceById,
-  createPerformance,
-  updatePerformance,
-  deletePerformance
+  getPerformances: getPokerPerformances,
+  getPerformanceById: getPokerPerformanceById,
+  createPerformance: createPokerPerformance,
+  updatePerformance: updatePokerPerformance,
+  deletePerformance: deletePokerPerformance
 };

@@ -2,14 +2,14 @@
 import React from "react";
 import PrizeBarChart from "./PrizeBarChart";
 
-import { Performance } from '@/types';
+import { PokerPerformance } from '@/types';
 
-interface PerformanceReportPreviewProps {
-  performances: Performance[];
+interface PokerPerformanceReportPreviewProps {
+  performances: PokerPerformance[];
   periodRange: { start: Date; end: Date };
 }
 
-const PerformanceReportPreview: React.FC<PerformanceReportPreviewProps> = ({
+const PokerPerformanceReportPreview: React.FC<PokerPerformanceReportPreviewProps> = ({
   performances,
   periodRange
 }) => {
@@ -33,4 +33,4 @@ const PerformanceReportPreview: React.FC<PerformanceReportPreviewProps> = ({
   );
 };
 
-export default PerformanceReportPreview;
+export default PokerPerformanceReportPreview;

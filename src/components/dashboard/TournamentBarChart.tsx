@@ -8,43 +8,58 @@ interface TournamentBarChartProps {
 
 const TournamentBarChart = ({ data }: TournamentBarChartProps) => {
   const isMobile = useIsMobile();
-  const colors = ['#006400', '#d4af37', '#0088FE', '#00C49F', '#FF8042'];
+  const colors = ['#C5A028', '#A00000', '#121212', '#454545', '#888888'];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
-      <h3 className="text-lg font-semibold mb-4">Premiação Acumulada por Torneio</h3>
+    <div className="bg-card p-6 rounded-sm border border-border/40 shadow-sm animate-reveal h-full">
+      <h3 className="text-sm font-bold font-montserrat uppercase tracking-widest mb-6 text-muted-foreground flex items-center gap-2">
+        <div className="w-1 h-4 bg-poker-gold rounded-full" />
+        Premiação Acumulada por Torneio
+      </h3>
       <div className={isMobile ? "h-[450px] w-full" : "h-[300px] w-full"}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             layout="vertical"
             data={data}
-            margin={isMobile 
+            margin={isMobile
               ? { top: 5, right: 5, left: 10, bottom: 5 }
               : { top: 5, right: 30, left: 20, bottom: 5 }
             }
-            barSize={isMobile ? 25 : 38}
+            barSize={isMobile ? 25 : 30}
           >
-            <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-            <XAxis 
-              type="number" 
-              tick={isMobile ? false : { fontSize: 11 }}
+            <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(0,0,0,0.05)" />
+            <XAxis
+              type="number"
+              tick={isMobile ? false : { fontSize: 10, fontFamily: 'Inter' }}
               tickFormatter={isMobile ? undefined : (value) => `R$ ${value.toLocaleString('pt-BR')}`}
+              axisLine={false}
+              tickLine={false}
             />
-            <YAxis 
-              dataKey="month" 
-              type="category" 
+            <YAxis
+              dataKey="month"
+              type="category"
               width={isMobile ? 100 : 120}
-              tick={{ fontSize: isMobile ? 10 : 12 }}
+              tick={{ fontSize: isMobile ? 10 : 11, fontFamily: 'Inter', fontWeight: 500 }}
+              axisLine={false}
+              tickLine={false}
             />
             <Tooltip
-              formatter={(value) => [`R$ ${Number(value).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`, "Premiação Total"]}
+              cursor={{ fill: 'rgba(197, 160, 40, 0.05)' }}
+              contentStyle={{
+                borderRadius: '4px',
+                border: '1px solid rgba(197, 160, 40, 0.2)',
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                fontFamily: 'Inter'
+              }}
+              formatter={(value) => [`R$ ${Number(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, "Premiação Total"]}
               labelFormatter={(label) => `Torneio: ${label}`}
             />
-            <Bar dataKey="profit" minPointSize={2}>
+            <Bar dataKey="profit" radius={[0, 2, 2, 0]}>
               {data.map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
+                <Cell
+                  key={`cell-${index}`}
                   fill={colors[index % colors.length]}
+                  className="transition-all duration-300 hover:brightness-110"
                 />
               ))}
             </Bar>

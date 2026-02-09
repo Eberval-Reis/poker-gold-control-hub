@@ -3,10 +3,10 @@ import React from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
 
-import { Performance } from '@/types';
+import { PokerPerformance } from '@/types';
 
 interface PrizeBarChartProps {
-  performances: Performance[];
+  performances: PokerPerformance[];
 }
 
 // Paleta "Sunset no Casino"

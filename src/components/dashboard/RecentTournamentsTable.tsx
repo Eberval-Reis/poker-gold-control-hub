@@ -1,10 +1,10 @@
 
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
-import { Performance } from '@/types';
+import { PokerPerformance } from '@/types';
 
 interface RecentTournamentsTableProps {
-  data: Performance[];
+  data: PokerPerformance[];
 }
 
 const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {
@@ -17,20 +17,20 @@ const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-sm border border-border/40 bg-card shadow-sm animate-reveal">
       <table className="w-full">
-        <thead>
-          <tr className="border-b">
-            <th className="text-left p-2">Torneio</th>
-            <th className="text-left p-2">Data</th>
-            <th className="text-left p-2">Buy-in</th>
-            <th className="text-left p-2">Rebuy</th>
-            <th className="text-left p-2">Addon</th>
-            <th className="text-left p-2">Prêmio</th>
-            <th className="text-left p-2">Resultado</th>
+        <thead className="bg-sidebar-background/50">
+          <tr className="border-b border-border/40">
+            <th className="text-left p-4 font-montserrat text-xs uppercase tracking-widest text-muted-foreground">Torneio</th>
+            <th className="text-left p-4 font-montserrat text-xs uppercase tracking-widest text-muted-foreground">Data</th>
+            <th className="text-left p-4 font-montserrat text-xs uppercase tracking-widest text-muted-foreground">Buy-in</th>
+            <th className="text-left p-4 font-montserrat text-xs uppercase tracking-widest text-muted-foreground">Rebuy</th>
+            <th className="text-left p-4 font-montserrat text-xs uppercase tracking-widest text-muted-foreground">Addon</th>
+            <th className="text-left p-4 font-montserrat text-xs uppercase tracking-widest text-muted-foreground">Prêmio</th>
+            <th className="text-left p-4 font-montserrat text-xs uppercase tracking-widest text-muted-foreground">Resultado</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="divide-y divide-border/20">
           {data.length > 0 ? (
             data.map((p, idx) => {
               const buyin = Number(p.buyin_amount || 0);
@@ -41,21 +41,21 @@ const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {
               const result = prize - invested;
               const tournamentName = p.tournaments?.name || 'Torneio não especificado';
               return (
-                <tr key={p.id || idx} className="hover:bg-gray-50">
-                  <td className="p-2 text-sm">{tournamentName}</td>
-                  <td className="p-2 text-sm">{p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR') : "-"}</td>
-                  <td className="p-2 text-sm">{formatCurrency(buyin)}</td>
-                  <td className="p-2 text-sm">{formatCurrency(rebuy)}</td>
-                  <td className="p-2 text-sm">{formatCurrency(addon)}</td>
-                  <td className="p-2 text-sm">{formatCurrency(prize)}</td>
-                  <td className="p-2 text-sm">
-                    <div className="flex items-center gap-1">
+                <tr key={p.id || idx} className="hover:bg-accent/30 transition-colors group">
+                  <td className="p-4 text-sm font-medium text-foreground">{tournamentName}</td>
+                  <td className="p-4 text-sm text-muted-foreground">{p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR') : "-"}</td>
+                  <td className="p-4 text-sm font-mono">{formatCurrency(buyin)}</td>
+                  <td className="p-4 text-sm font-mono">{formatCurrency(rebuy)}</td>
+                  <td className="p-4 text-sm font-mono">{formatCurrency(addon)}</td>
+                  <td className="p-4 text-sm font-mono">{formatCurrency(prize)}</td>
+                  <td className="p-4 text-sm">
+                    <div className="flex items-center gap-2">
                       {result >= 0 ? (
-                        <TrendingUp className="h-4 w-4 text-[#006400]" />
+                        <TrendingUp className="h-4 w-4 text-green-600" />
                       ) : (
-                        <TrendingDown className="h-4 w-4 text-[#8b0000]" />
+                        <TrendingDown className="h-4 w-4 text-destructive" />
                       )}
-                      <span className={result >= 0 ? 'text-[#006400]' : 'text-[#8b0000]'}>
+                      <span className={`font-bold font-mono ${result >= 0 ? 'text-green-600' : 'text-destructive'}`}>
                         {formatCurrency(result)}
                       </span>
                     </div>
@@ -65,7 +65,7 @@ const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {
             })
           ) : (
             <tr>
-              <td colSpan={7} className="p-4 text-center text-gray-500">
+              <td colSpan={7} className="p-8 text-center text-muted-foreground italic font-sans">
                 Nenhum registro de performance encontrado
               </td>
             </tr>

@@ -9,7 +9,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { pt } from 'date-fns/locale';
 
-import { Performance } from '@/types';
+import { PokerPerformance } from '@/types';
 
 interface DashboardFiltersProps {
   filters: {
@@ -18,7 +18,7 @@ interface DashboardFiltersProps {
     clubId: string;
   };
   setFilters: (filters: { timePeriod: string; gameType: string; clubId: string }) => void;
-  tournaments: Performance[];
+  tournaments: PokerPerformance[];
 }
 
 // Options for time period filter

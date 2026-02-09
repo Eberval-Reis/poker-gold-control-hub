@@ -64,12 +64,12 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				poker: {
-					background: '#d0d0d0',
-					gold: '#d4af37',
-					red: '#8b0000',
+					background: 'hsl(var(--background))',
+					gold: '#C5A028', /* Golden brushed feel */
+					red: '#A00000',  /* Crimson blood red */
 					text: {
-						dark: '#000000',
-						light: '#ffffff'
+						dark: '#121212',
+						light: '#F8F9FA'
 					}
 				}
 			},
@@ -80,28 +80,30 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
+				},
+				'reveal': {
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
+				},
+				'shine': {
+					'100%': { left: '125%' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'reveal': 'reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+				'shine': 'shine 0.75s infinite'
 			},
 			boxShadow: {
-				'poker': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+				'poker': '0 10px 30px -10px rgba(0, 0, 0, 0.1), 0 4px 10px -5px rgba(0, 0, 0, 0.05)',
+				'gold-glow': '0 0 15px rgba(197, 160, 40, 0.15)',
 			}
 		}
 	},

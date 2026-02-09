@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { PokerPerformance } from "@/types";
 
 // Tabela de tradução de categorias (suporta português e inglês)
 const EXPENSE_CATEGORY_MAP: Record<string, string> = {
@@ -30,19 +31,7 @@ const CATEGORY_KEYS = [
   "other",
 ];
 
-interface Performance {
-  buyin_amount: number;
-  rebuy_amount?: number;
-  rebuy_quantity?: number;
-  addon_enabled?: boolean;
-  addon_amount?: number;
-  prize_amount?: number;
-  created_at: string;
-  tournament_date: string;
-  tournaments?: {
-    name: string;
-  };
-}
+// O tipo TournamentPerformance foi substituído pelo PokerPerformance global em @/types
 
 interface Expense {
   amount: number;
@@ -64,7 +53,7 @@ interface DashboardData {
   tournamentPrizeData: { month: string; profit: number }[];
   tournamentsTimelineData: { name: string; date: string; buyin: number; prize: number; profit: number }[];
   expenseData: { category: string; amount: number }[];
-  recentTournaments: Performance[];
+  recentTournaments: PokerPerformance[];
   tournamentsTrend: number;
   profitTrend: number;
   roiTrend: number;
@@ -72,7 +61,7 @@ interface DashboardData {
 }
 
 type UseDashboardDataParams = {
-  performances: Performance[] | null | undefined;
+  performances: PokerPerformance[] | null | undefined;
   expenses: Expense[] | null | undefined;
   selectedYear: number | null;
   selectedMonth: number | null;

@@ -1,10 +1,10 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-import { Performance } from '@/types';
+import { PokerPerformance } from '@/types';
 
 interface OgiveChartProps {
-  performances: Performance[];
+  performances: PokerPerformance[];
 }
 
 const OgiveChart = ({ performances }: OgiveChartProps) => {
