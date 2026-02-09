@@ -89,10 +89,11 @@ const OgiveChart = ({ performances }: OgiveChartProps) => {
             <YAxis
               tick={{ fontSize: isMobile ? 10 : 12, fill: 'currentColor' }}
               className="text-muted-foreground"
-              width={isMobile ? 40 : 60}
+              width={isMobile ? 50 : 70}
               domain={[0, 100]}
               axisLine={false}
               tickLine={false}
+              tickFormatter={(value) => `${value}%`}
             />
             <Tooltip
               contentStyle={{
