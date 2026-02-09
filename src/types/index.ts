@@ -34,11 +34,11 @@ export interface ExpenseCategory {
 
 export interface ReportData {
     expenses: Expense[];
-    performances: Performance[];
+    performances: PokerPerformance[];
     expenseSumByCategory: { category: string; amount: number }[];
-    totalExpenses: number;
-    totalPrizes: number;
-    profit: number;
+    totalExpenses?: number;
+    totalPrizes?: number;
+    profit?: number;
     start: Date;
     end: Date;
     loading?: boolean;

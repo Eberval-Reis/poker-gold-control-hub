@@ -36,7 +36,7 @@ const RegisterClub = () => {
       <div className="bg-white rounded-lg p-6 shadow-sm mx-auto max-w-2xl">
         <ClubForm
           clubId={id}
-          clubData={clubData}
+          clubData={clubData as any}
           isLoading={isLoading}
         />
       </div>
