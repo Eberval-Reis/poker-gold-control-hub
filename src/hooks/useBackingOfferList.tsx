@@ -41,7 +41,7 @@ export async function fetchBackingOffers() {
 
   if (error) throw error;
 
-  const offers: BackingOffer[] = (data ?? []).map((offer: any) => ({
+  const offers: BackingOffer[] = (data ?? []).map((offer) => ({
     id: offer.id,
     tournament_id: offer.tournament_id,
     buy_in_amount: offer.buy_in_amount,
@@ -55,7 +55,7 @@ export async function fetchBackingOffers() {
     created_at: offer.created_at,
     updated_at: offer.updated_at,
     // New fields
-    offer_type: offer.offer_type || 'tournament',
+    offer_type: (offer.offer_type || 'tournament') as 'tournament' | 'bankroll',
     total_bankroll: offer.total_bankroll,
     period_description: offer.period_description,
     start_date: offer.start_date,

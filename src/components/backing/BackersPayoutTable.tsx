@@ -34,7 +34,7 @@ async function fetchBackersPayoutTable(): Promise<PayoutRow[]> {
 
   if (error) throw error;
 
-  return (data ?? []).map((item: any) => ({
+  return (data ?? []).map((item) => ({
     id: item.id,
     tournament:
       item.backing_offers?.tournaments?.name ??
@@ -64,7 +64,7 @@ const BackersPayoutTable: React.FC = () => {
   if (isLoading) {
     return (
       <div className="py-10 flex justify-center text-poker-gold">
-        <Loader2 className="animate-spin mr-2" /> 
+        <Loader2 className="animate-spin mr-2" />
         Carregando dados dos payouts...
       </div>
     );
@@ -114,8 +114,8 @@ const BackersPayoutTable: React.FC = () => {
               <td className="py-2 px-2 sm:px-3 text-right align-middle whitespace-nowrap">
                 {row.payout !== null
                   ? <span className={row.payout - row.invested >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
-                      R$ {row.payout.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                    </span>
+                    R$ {row.payout.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+                  </span>
                   : <span className="text-muted-foreground">-</span>
                 }
               </td>

@@ -1,6 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { Tournament } from '@/lib/supabase';
+import { Tournament } from '@/types';
 
 // Individual functions for tournament operations
 export const getTournaments = async (): Promise<Tournament[]> => {
@@ -13,12 +13,12 @@ export const getTournaments = async (): Promise<Tournament[]> => {
     .from('tournaments')
     .select('*')
     .eq('user_id', user.id);
-  
+
   if (error) {
     console.error('Error fetching tournaments:', error);
     throw error;
   }
-  
+
   // Buscar clubes e eventos separadamente por enquanto
   const [clubsData, eventsData] = await Promise.all([
     supabase.from('Cadastro Clube').select('id, name').eq('user_id', user.id),
@@ -28,10 +28,10 @@ export const getTournaments = async (): Promise<Tournament[]> => {
   const clubs = clubsData.data || [];
   const events = eventsData.data || [];
 
-  return data.map((item: any) => {
-    const club = clubs.find((c: any) => c.id === item.club_id);
-    const event = events.find((e: any) => e.id === item.event_id);
-    
+  return data.map((item) => {
+    const club = clubs.find((c) => c.id === item.club_id);
+    const event = events.find((e) => e.id === item.event_id);
+
     return {
       id: item.id,
       name: item.name,
@@ -49,8 +49,8 @@ export const getTournaments = async (): Promise<Tournament[]> => {
       time: item.time,
       event_id: item.event_id,
       initial_stack: item.initial_stack,
-      clubs: club ? { name: (club as any).name } : null,
-      event: event ? { name: (event as any).name, date: (event as any).date } : null
+      clubs: club ? { name: club.name } : null,
+      event: event ? { name: event.name, date: event.date } : null
     };
   }) as Tournament[];
 };
@@ -67,7 +67,7 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     .eq('id', id)
     .eq('user_id', user.id)
     .maybeSingle();
-  
+
   if (error) {
     if (error.code === 'PGRST116') { // Record not found
       return null;
@@ -75,7 +75,7 @@ export const getTournamentById = async (id: string): Promise<Tournament | null> 
     console.error('Error fetching tournament:', error);
     throw error;
   }
-  
+
   if (!data) return null;
 
   // Buscar clube e evento separadamente
@@ -115,7 +115,7 @@ export const createTournament = async (tournamentData: Partial<Tournament>): Pro
   if (!tournamentData.name || !tournamentData.club_id || !tournamentData.type) {
     throw new Error('Missing required tournament fields');
   }
-  
+
   const { data, error } = await supabase
     .from('tournaments')
     .insert({
@@ -136,12 +136,12 @@ export const createTournament = async (tournamentData: Partial<Tournament>): Pro
     })
     .select('*')
     .maybeSingle();
-  
+
   if (error) {
     console.error('Error creating tournament:', error);
     throw error;
   }
-  
+
   return data as Tournament;
 };
 
@@ -151,7 +151,7 @@ export const updateTournament = async (id: string, tournamentData: Partial<Tourn
     throw new Error('User not authenticated');
   }
 
-  const updateData: Record<string, any> = {};
+  const updateData: Record<string, string | number | null | undefined> = {};
   if (tournamentData.name !== undefined) updateData.name = tournamentData.name;
   if (tournamentData.club_id !== undefined) updateData.club_id = tournamentData.club_id;
   if (tournamentData.event_id !== undefined) updateData.event_id = tournamentData.event_id;
@@ -163,7 +163,7 @@ export const updateTournament = async (id: string, tournamentData: Partial<Tourn
   if (tournamentData.buyin_amount !== undefined) updateData.buyin_amount = tournamentData.buyin_amount;
   if (tournamentData.rebuy_amount !== undefined) updateData.rebuy_amount = tournamentData.rebuy_amount;
   if (tournamentData.addon_amount !== undefined) updateData.addon_amount = tournamentData.addon_amount;
-  
+
   const { data, error } = await supabase
     .from('tournaments')
     .update(updateData)
@@ -171,12 +171,12 @@ export const updateTournament = async (id: string, tournamentData: Partial<Tourn
     .eq('user_id', user.id)
     .select('*')
     .maybeSingle();
-  
+
   if (error) {
     console.error('Error updating tournament:', error);
     throw error;
   }
-  
+
   return data as Tournament;
 };
 
@@ -191,12 +191,12 @@ export const deleteTournament = async (id: string): Promise<{ success: boolean }
     .delete()
     .eq('id', id)
     .eq('user_id', user.id);
-  
+
   if (error) {
     console.error('Error deleting tournament:', error);
     throw error;
   }
-  
+
   return { success: true };
 };
 
@@ -207,7 +207,7 @@ export interface UniqueTournament extends Tournament {
 
 export const getUniqueTournaments = async (): Promise<UniqueTournament[]> => {
   const allTournaments = await getTournaments();
-  
+
   // Agrupar torneios por nome
   const tournamentsByName = allTournaments.reduce((acc, tournament) => {
     if (!acc[tournament.name]) {
@@ -220,7 +220,7 @@ export const getUniqueTournaments = async (): Promise<UniqueTournament[]> => {
   // Criar array de torneios únicos com dados agregados
   const uniqueTournaments: UniqueTournament[] = Object.entries(tournamentsByName).map(([name, tournaments]) => {
     // Pegar o torneio mais recente como representativo
-    const representative = tournaments.sort((a, b) => 
+    const representative = tournaments.sort((a, b) =>
       new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()
     )[0];
 
@@ -228,8 +228,8 @@ export const getUniqueTournaments = async (): Promise<UniqueTournament[]> => {
     const buyins = tournaments
       .map(t => t.buyin_amount)
       .filter((b): b is number => b !== null && b !== undefined);
-    const averageBuyin = buyins.length > 0 
-      ? buyins.reduce((sum, b) => sum + b, 0) / buyins.length 
+    const averageBuyin = buyins.length > 0
+      ? buyins.reduce((sum, b) => sum + b, 0) / buyins.length
       : undefined;
 
     return {

@@ -13,7 +13,8 @@ import { Trophy, TrendingUp, DollarSign, Target, CreditCard, Repeat2, Receipt, C
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Index = () => {
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState<number | null>(currentYear);
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
   // Carrega as performances dos torneios com informações do torneio
@@ -33,7 +34,7 @@ const Index = () => {
 
       if (selectedYear !== null) {
         query = query.gte("tournament_date", `${selectedYear}-01-01`).lte("tournament_date", `${selectedYear}-12-31`);
-        
+
         if (selectedMonth) {
           const month = String(selectedMonth).padStart(2, '0');
           query = query.gte("tournament_date", `${selectedYear}-${month}-01`).lte("tournament_date", `${selectedYear}-${month}-31`);
@@ -41,12 +42,12 @@ const Index = () => {
       }
 
       const { data, error } = await query;
-      
+
       if (error) {
         console.error("Erro ao buscar performances:", error);
         return [];
       }
-      
+
       console.log("Performances carregadas:", data);
       return data || [];
     },
@@ -100,7 +101,6 @@ const Index = () => {
   }
 
   // Gera lista de anos disponíveis (2020 até ano atual)
-  const currentYear = new Date().getFullYear();
   const availableYears = Array.from({ length: currentYear - 2019 }, (_, i) => currentYear - i);
 
   return (
@@ -111,8 +111,8 @@ const Index = () => {
           <p className="text-muted-foreground">Visão geral das suas performances no poker</p>
         </div>
         <div className="flex gap-2">
-          <Select 
-            value={selectedYear?.toString() || "all"} 
+          <Select
+            value={selectedYear?.toString() || "all"}
             onValueChange={(val) => setSelectedYear(val === "all" ? null : Number(val))}
           >
             <SelectTrigger className="w-[140px]">
@@ -189,7 +189,7 @@ const Index = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        <RecentTournamentsTable data={dashboardData.recentTournaments} />
+        <RecentTournamentsTable data={(dashboardData.recentTournaments || []) as any} />
       </div>
     </div>
   );

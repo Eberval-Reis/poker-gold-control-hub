@@ -83,12 +83,12 @@ export function useReportData({ reportType, period, startDate, endDate }: UseRep
     error: performancesError,
   } = useQuery({
     queryKey: ["tournament-performances"],
-    queryFn: tournamentPerformanceService.getTournamentPerformances,
+    queryFn: tournamentPerformanceService.getPerformances,
   });
 
   // Memoização para performance!
   const filteredExpenses = useMemo(() => {
-    return expenses.filter((exp: any) => {
+    return expenses.filter((exp) => {
       if (!exp.date) return false;
       const d = new Date(exp.date);
       return d >= start && d <= end;
@@ -97,7 +97,7 @@ export function useReportData({ reportType, period, startDate, endDate }: UseRep
   }, [expenses, start.getTime(), end.getTime()]);
 
   const filteredPerformances = useMemo(() => {
-    return performances.filter((pf: any) => {
+    return performances.filter((pf) => {
       if (!pf.created_at) return false;
       const d = new Date(pf.created_at);
       return d >= start && d <= end;
@@ -106,21 +106,21 @@ export function useReportData({ reportType, period, startDate, endDate }: UseRep
   }, [performances, start.getTime(), end.getTime()]);
 
   const expenseCategories = useMemo(() => Array.from(
-    new Set(filteredExpenses.map((exp: any) => exp.type || "Outro"))
+    new Set(filteredExpenses.map((exp) => exp.type || "Outro"))
   ), [filteredExpenses]);
 
   const expenseSumByCategory = useMemo(() =>
     expenseCategories.map((cat) => ({
       category: translateExpenseCategory(cat),
       amount: filteredExpenses
-        .filter((exp: any) => (exp.type || "Outro") === cat)
+        .filter((exp) => (exp.type || "Outro") === cat)
         .reduce((sum, exp) => sum + Number(exp.amount), 0),
     })),
     [expenseCategories, filteredExpenses]
   );
 
   const translatedExpenses = useMemo(() =>
-    filteredExpenses.map((exp: any) => ({
+    filteredExpenses.map((exp) => ({
       ...exp,
       type: translateExpenseCategory(exp.type || "Outro"),
     })), [filteredExpenses]
@@ -128,7 +128,6 @@ export function useReportData({ reportType, period, startDate, endDate }: UseRep
 
   // Logs para debugar performance
   if (process.env.NODE_ENV === "development") {
-    // eslint-disable-next-line no-console
     console.log("useReportData", { reportType, period, start, end, expenseSumByCategory });
   }
 

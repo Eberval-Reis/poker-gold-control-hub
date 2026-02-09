@@ -6,9 +6,9 @@ export interface PaginationConfig {
   total: number;
 }
 
-export interface UsePaginationReturn {
+export interface UsePaginationReturn<T> {
   pagination: PaginationConfig;
-  paginatedData: any[];
+  paginatedData: T[];
   totalPages: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
@@ -22,7 +22,7 @@ export interface UsePaginationReturn {
 export const usePagination = <T>(
   data: T[],
   initialPageSize: number = 10
-): UsePaginationReturn => {
+): UsePaginationReturn<T> => {
   const [pagination, setPagination] = useState<PaginationConfig>({
     page: 1,
     pageSize: initialPageSize,

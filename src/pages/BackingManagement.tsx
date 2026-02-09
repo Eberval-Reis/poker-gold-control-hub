@@ -17,27 +17,21 @@ const BackingManagement = () => {
   const isMobile = useIsMobile();
 
   const handleTabSelect = (v: string) => {
-    // Se selecionou cadastro de torneio, define a modalidade
-    if (v === "cadastro" && modalidadeSelecionada !== "bankroll") {
-      setModalidadeSelecionada("torneio");
-    }
-    // Se selecionou cadastro de bankroll, define a modalidade
-    if (v === "bankroll" && modalidadeSelecionada !== "torneio") {
-      setModalidadeSelecionada("bankroll");
-    }
+    if (v === "cadastro") setModalidadeSelecionada("torneio");
+    if (v === "bankroll") setModalidadeSelecionada("bankroll");
     setCurrentTab(v);
   };
 
   const getTabOptions = () => [
-    { 
-      value: "cadastro", 
+    {
+      value: "cadastro",
       label: "Cadastrar Torneio",
-      disabled: modalidadeSelecionada === "bankroll"
+      disabled: false
     },
-    { 
-      value: "bankroll", 
+    {
+      value: "bankroll",
       label: "Cadastrar Bankroll",
-      disabled: modalidadeSelecionada === "torneio"
+      disabled: false
     },
     { value: "vender", label: "Vender Ações", disabled: false },
     { value: "controle", label: "Controle de Backers", disabled: false },

@@ -15,7 +15,7 @@ export interface DREData {
   totalCustos: number;
   totalLiquido: number;
   loading: boolean;
-  error: any;
+  error: unknown;
 }
 
 export interface UseDREReportDataOptions {
@@ -63,7 +63,7 @@ function getPeriodRange(period: PeriodType, startDate?: Date, endDate?: Date) {
 
 export function useDREReportData({ period, startDate, endDate, eventId, tournamentId }: UseDREReportDataOptions): DREData & { start: Date; end: Date } {
   const { start, end } = getPeriodRange(period, startDate, endDate);
-  
+
   const startStr = start.toISOString().split("T")[0];
   const endStr = end.toISOString().split("T")[0];
 
@@ -90,7 +90,7 @@ export function useDREReportData({ period, startDate, endDate, eventId, tourname
 
       // Filtrar por evento se especificado
       if (eventId && data) {
-        return data.filter((p: any) => p.tournaments?.event_id === eventId);
+        return data.filter((p) => p.tournaments?.event_id === eventId);
       }
 
       return data || [];
@@ -120,7 +120,7 @@ export function useDREReportData({ period, startDate, endDate, eventId, tourname
 
       // Filtrar por evento se especificado
       if (eventId && data) {
-        return data.filter((e: any) => e.tournaments?.event_id === eventId);
+        return data.filter((e) => e.tournaments?.event_id === eventId);
       }
 
       return data || [];
@@ -135,7 +135,7 @@ export function useDREReportData({ period, startDate, endDate, eventId, tourname
   } = useQuery({
     queryKey: ["dre-backing", startStr, endStr, eventId, tournamentId],
     queryFn: async () => {
-      let query = supabase
+      const query = supabase
         .from("backing_investments")
         .select("*, backing_offers(id, tournament_id, tournament_date, tournaments(id, name, event_id))")
         .gte("created_at", start.toISOString())
@@ -148,12 +148,12 @@ export function useDREReportData({ period, startDate, endDate, eventId, tourname
 
       // Filtrar por torneio se especificado
       if (tournamentId) {
-        filtered = filtered.filter((bi: any) => bi.backing_offers?.tournament_id === tournamentId);
+        filtered = filtered.filter((bi) => bi.backing_offers?.tournament_id === tournamentId);
       }
 
       // Filtrar por evento se especificado
       if (eventId) {
-        filtered = filtered.filter((bi: any) => bi.backing_offers?.tournaments?.event_id === eventId);
+        filtered = filtered.filter((bi) => bi.backing_offers?.tournaments?.event_id === eventId);
       }
 
       return filtered;
@@ -162,25 +162,25 @@ export function useDREReportData({ period, startDate, endDate, eventId, tourname
 
   // Calcular totais
   const dreData = useMemo(() => {
-    const receita = performances.reduce((sum: number, p: any) => sum + Number(p.prize_amount || 0), 0);
-    const cavalagem = backingInvestments.reduce((sum: number, bi: any) => sum + Number(bi.amount_paid || 0), 0);
+    const receita = performances.reduce((sum: number, p) => sum + Number(p.prize_amount || 0), 0);
+    const cavalagem = backingInvestments.reduce((sum: number, bi) => sum + Number(bi.amount_paid || 0), 0);
     const totalBruto = receita + cavalagem;
-    
+
     // Custos de Torneio (da tabela tournament_performance)
-    const buyins = performances.reduce((sum: number, p: any) => sum + Number(p.buyin_amount || 0), 0);
-    const rebuys = performances.reduce((sum: number, p: any) => {
+    const buyins = performances.reduce((sum: number, p) => sum + Number(p.buyin_amount || 0), 0);
+    const rebuys = performances.reduce((sum: number, p) => {
       const rebuyAmount = Number(p.rebuy_amount || 0);
       const rebuyQty = Number(p.rebuy_quantity || 0);
       return sum + (rebuyAmount * rebuyQty);
     }, 0);
-    const addons = performances.reduce((sum: number, p: any) => {
+    const addons = performances.reduce((sum: number, p) => {
       return p.addon_enabled ? sum + Number(p.addon_amount || 0) : sum;
     }, 0);
     const custosTorneio = buyins + rebuys + addons;
-    
+
     // Despesas gerais (transporte, alimentação, etc. - tabela expenses)
-    const despesas = expenses.reduce((sum: number, e: any) => sum + Number(e.amount || 0), 0);
-    
+    const despesas = expenses.reduce((sum: number, e) => sum + Number(e.amount || 0), 0);
+
     const totalCustos = custosTorneio + despesas;
     const totalLiquido = totalBruto - totalCustos;
 

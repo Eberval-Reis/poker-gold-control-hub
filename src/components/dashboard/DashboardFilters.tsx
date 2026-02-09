@@ -9,14 +9,16 @@ import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { pt } from 'date-fns/locale';
 
+import { Performance } from '@/types';
+
 interface DashboardFiltersProps {
   filters: {
     timePeriod: string;
     gameType: string;
     clubId: string;
   };
-  setFilters: (filters: any) => void;
-  tournaments: any[];
+  setFilters: (filters: { timePeriod: string; gameType: string; clubId: string }) => void;
+  tournaments: Performance[];
 }
 
 // Options for time period filter
@@ -36,11 +38,12 @@ const gameTypes = [
 
 const DashboardFilters = ({ filters, setFilters, tournaments }: DashboardFiltersProps) => {
   // Extract unique clubs from tournaments
-  const clubs = tournaments.reduce((acc, tournament) => {
-    if (tournament.clubs && !acc.some(club => club.id === tournament.clubs.id)) {
+  const clubs = tournaments.reduce((acc: { id: string; name: string }[], tournament) => {
+    const club = tournament.clubs;
+    if (club && !acc.some(c => c.id === club.id)) {
       acc.push({
-        id: tournament.club_id,
-        name: tournament.clubs.name
+        id: tournament.club_id || '',
+        name: club.name
       });
     }
     return acc;
@@ -57,7 +60,7 @@ const DashboardFilters = ({ filters, setFilters, tournaments }: DashboardFilters
           <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
             <Select
               value={filters.timePeriod}
-              onValueChange={(value) => setFilters({...filters, timePeriod: value})}
+              onValueChange={(value) => setFilters({ ...filters, timePeriod: value })}
             >
               <SelectTrigger className="w-[180px] bg-white">
                 <SelectValue placeholder="Período" />
@@ -70,10 +73,10 @@ const DashboardFilters = ({ filters, setFilters, tournaments }: DashboardFilters
                 ))}
               </SelectContent>
             </Select>
-            
+
             <Select
               value={filters.gameType}
-              onValueChange={(value) => setFilters({...filters, gameType: value})}
+              onValueChange={(value) => setFilters({ ...filters, gameType: value })}
             >
               <SelectTrigger className="w-[180px] bg-white">
                 <SelectValue placeholder="Tipo de Jogo" />
@@ -86,10 +89,10 @@ const DashboardFilters = ({ filters, setFilters, tournaments }: DashboardFilters
                 ))}
               </SelectContent>
             </Select>
-            
+
             <Select
               value={filters.clubId}
-              onValueChange={(value) => setFilters({...filters, clubId: value})}
+              onValueChange={(value) => setFilters({ ...filters, clubId: value })}
             >
               <SelectTrigger className="w-[180px] bg-white">
                 <SelectValue placeholder="Clube" />
@@ -104,8 +107,8 @@ const DashboardFilters = ({ filters, setFilters, tournaments }: DashboardFilters
               </SelectContent>
             </Select>
           </div>
-          
-          <Button 
+
+          <Button
             variant="outline"
             className="bg-white border-[#d4af37] text-[#d4af37] hover:text-[#d4af37] hover:bg-[#d4af37]/10"
             onClick={handleExportPDF}

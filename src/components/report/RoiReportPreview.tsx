@@ -1,10 +1,11 @@
 
 import React from "react";
 import RoiLineChart from "./RoiLineChart";
+import { Performance, Expense } from "@/types";
 
 interface RoiReportPreviewProps {
-  performances: any[];
-  expenses: any[];
+  performances: Performance[];
+  expenses: Expense[];
   periodRange: { start: Date; end: Date };
 }
 

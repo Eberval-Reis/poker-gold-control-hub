@@ -29,13 +29,14 @@ type FormValues = {
 };
 
 // Helper runtime type guard
-function isBacker(obj: any): obj is Backer {
+function isBacker(obj: unknown): obj is Backer {
+  const o = obj as Record<string, unknown>;
   return (
     typeof obj === "object" &&
     obj !== null &&
-    typeof obj.id === "string" &&
-    typeof obj.name === "string" &&
-    typeof obj.whatsapp === "string"
+    typeof o.id === "string" &&
+    typeof o.name === "string" &&
+    typeof o.whatsapp === "string"
   );
 }
 
@@ -81,23 +82,23 @@ export default function BackerSelectWithModal({
 
   async function onSubmit(form: FormValues) {
     setModalLoading(true);
-    
+
     // Obter o usuário autenticado
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
       toast({ title: "Erro de autenticação", description: "Você precisa estar logado", variant: "destructive" });
       setModalLoading(false);
       return;
     }
-    
+
     const { data, error } = await supabase
       .from("financiadores")
       .insert([{ ...form, user_id: user.id }])
       .select()
       .maybeSingle();
     setModalLoading(false);
-    
+
     if (!error && data && data.id) {
       await fetchBackers();
       onChange(data.id);

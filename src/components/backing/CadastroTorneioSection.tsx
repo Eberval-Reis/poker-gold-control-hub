@@ -29,9 +29,9 @@ const CadastroTorneioSection = () => {
     const loadUserName = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const name = user.user_metadata?.full_name 
-          || user.user_metadata?.name 
-          || user.email?.split('@')[0] 
+        const name = user.user_metadata?.full_name
+          || user.user_metadata?.name
+          || user.email?.split('@')[0]
           || '';
         setPlayerName(name);
       }
@@ -85,15 +85,15 @@ const CadastroTorneioSection = () => {
   // Função para salvar o cadastro do torneio/backing_offer
   async function handleSalvarTorneio(e: React.FormEvent) {
     e.preventDefault();
-    
+
     // Obter o usuário autenticado
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
       toast({ title: "Erro de autenticação", description: "Você precisa estar logado", variant: "destructive" });
       return;
     }
-    
+
     // Validações
     if (!playerName.trim() || !selectedTorneio || !buyIn || !date) {
       toast({ title: "Preencha todos os campos obrigatórios", variant: "destructive" });
@@ -128,8 +128,9 @@ const CadastroTorneioSection = () => {
       setMaxPercent("80");
       setMarkup("1.5");
       setCavEnable(false);
-    } catch (err: any) {
-      toast({ title: "Erro ao cadastrar torneio", description: err.message, variant: "destructive" });
+    } catch (err: unknown) {
+      const error = err as Error;
+      toast({ title: "Erro ao cadastrar torneio", description: error.message, variant: "destructive" });
     }
     setSaving(false);
   }
@@ -137,7 +138,7 @@ const CadastroTorneioSection = () => {
   return (
     <div className="space-y-5 max-w-full w-full mx-auto px-0 sm:px-2 overflow-x-hidden">
       <h2 className="text-lg sm:text-xl font-semibold text-center sm:text-left">Cadastro do Torneio</h2>
-      <form 
+      <form
         className="space-y-3 sm:space-y-4"
         onSubmit={handleSalvarTorneio}
         style={{ maxWidth: '100%', width: '100%' }}

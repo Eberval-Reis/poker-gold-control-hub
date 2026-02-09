@@ -2,8 +2,10 @@
 import React from "react";
 import PrizeBarChart from "./PrizeBarChart";
 
+import { Performance } from '@/types';
+
 interface PerformanceReportPreviewProps {
-  performances: any[];
+  performances: Performance[];
   periodRange: { start: Date; end: Date };
 }
 

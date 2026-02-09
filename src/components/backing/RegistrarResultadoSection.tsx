@@ -68,9 +68,10 @@ const RegistrarResultadoSection = () => {
       toast({ title: "Resultado salvo com sucesso!" });
       setPrize("");
       setStatus("busto");
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const error = err as Error;
       // Busca erro de constraint referente ao result_type
-      const dbConstraintMsg = typeof err.message === "string" && err.message.includes("backing_results_result_type_check");
+      const dbConstraintMsg = typeof error.message === "string" && error.message.includes("backing_results_result_type_check");
       if (dbConstraintMsg) {
         toast({
           title: "Erro ao salvar",
@@ -80,7 +81,7 @@ const RegistrarResultadoSection = () => {
       } else {
         toast({
           title: "Erro ao salvar resultado",
-          description: err?.message || "Ocorreu um erro inesperado ao salvar.",
+          description: error?.message || "Ocorreu um erro inesperado ao salvar.",
           variant: "destructive",
         });
       }
@@ -139,25 +140,25 @@ const RegistrarResultadoSection = () => {
                   )}
                   <span className="text-muted-foreground">Torneio:</span>
                   <span className="font-medium text-foreground">{offer.tournament_name}</span>
-                  
+
                   <span className="text-muted-foreground">Data:</span>
                   <span className="font-medium text-foreground">
                     {new Date(offer.tournament_date).toLocaleDateString('pt-BR')}
                   </span>
-                  
+
                   <span className="text-muted-foreground">Buy-in:</span>
                   <span className="font-medium text-foreground">
                     R$ {Number(offer.buy_in_amount).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
-                  
+
                   <span className="text-muted-foreground">% Vendido:</span>
                   <span className="font-medium text-foreground">
                     {(100 - offer.available_percentage).toFixed(1)}%
                   </span>
-                  
+
                   <span className="text-muted-foreground">Markup:</span>
                   <span className="font-medium text-foreground">{offer.markup_percentage}x</span>
-                  
+
                   <span className="text-muted-foreground">Jogador:</span>
                   <span className="font-medium text-foreground">{offer.player_name}</span>
                 </div>

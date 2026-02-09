@@ -21,20 +21,20 @@ const ClubField = ({ form, tournaments }: ClubFieldProps) => {
   // Function to get club name - prioritize direct club_id, fallback to tournament's club
   const getClubName = () => {
     // If we have a direct club_id stored, try to find it from the selected tournament
-    if (clubId && selectedTournament?.clubs && 'id' in selectedTournament.clubs && (selectedTournament.clubs as any).id === clubId) {
+    if (clubId && selectedTournament?.clubs && 'id' in selectedTournament.clubs && (selectedTournament.clubs as Record<string, unknown>).id === clubId) {
       return selectedTournament.clubs.name;
     }
-    
+
     // Fallback to tournament's club
     if (selectedTournament?.clubs?.name) {
       return selectedTournament.clubs.name;
     }
-    
+
     // If loading
     if (selectedTournamentId && tournaments.length > 0) {
       return 'Carregando...';
     }
-    
+
     return '';
   };
 
@@ -42,8 +42,8 @@ const ClubField = ({ form, tournaments }: ClubFieldProps) => {
     <FormItem>
       <FormLabel>Clube</FormLabel>
       <FormControl>
-        <Input 
-          value={getClubName()} 
+        <Input
+          value={getClubName()}
           placeholder="Clube será preenchido automaticamente"
           readOnly
           className="bg-muted text-muted-foreground"

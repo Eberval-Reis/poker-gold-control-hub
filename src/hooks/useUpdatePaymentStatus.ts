@@ -33,7 +33,7 @@ export function useUpdatePaymentStatus() {
       });
       queryClient.invalidateQueries({ queryKey: ["backing_investments"] });
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast({
         variant: "destructive",
         title: "Erro ao atualizar status",

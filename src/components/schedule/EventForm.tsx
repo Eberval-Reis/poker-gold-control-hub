@@ -99,7 +99,7 @@ export const EventForm: React.FC<EventFormProps> = ({
   // Atualiza tournamentName quando tournamentId muda
   useEffect(() => {
     const selectedId = watch("tournamentId");
-    const found = tournaments?.find((t: any) => t.id === selectedId);
+    const found = tournaments?.find((t) => t.id === selectedId);
     if (found) setValue("tournamentName", found.name);
     // eslint-disable-next-line
   }, [watch("tournamentId"), tournaments]);
@@ -129,7 +129,7 @@ export const EventForm: React.FC<EventFormProps> = ({
 
     // Assegura que os campos buyIn e rebuys são números
     const buyIn = typeof data.buyIn === "string" ? parseFloat(data.buyIn) : data.buyIn;
-    const rebuys = typeof data.rebuys === "string" ? parseInt(data.rebuys as any, 10) : data.rebuys;
+    const rebuys = typeof data.rebuys === "string" ? parseInt(data.rebuys, 10) : data.rebuys;
 
     onSubmit({
       ...data,
@@ -167,10 +167,10 @@ export const EventForm: React.FC<EventFormProps> = ({
               )}
             />
           </div>
-          <Button 
-            type="button" 
-            variant="outline" 
-            size="icon" 
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
             onClick={() => setQuickModalOpen(true)}
             className="h-10 w-10 flex-shrink-0"
           >

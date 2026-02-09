@@ -82,7 +82,7 @@ const EventTournamentFilters: React.FC<EventTournamentFiltersProps> = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os Eventos</SelectItem>
-            {events.map((event: any) => (
+            {events.map((event) => (
               <SelectItem key={event.id} value={event.id}>
                 {event.name}
               </SelectItem>
@@ -99,7 +99,7 @@ const EventTournamentFilters: React.FC<EventTournamentFiltersProps> = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os Torneios</SelectItem>
-            {tournaments.map((tournament: any) => (
+            {tournaments.map((tournament) => (
               <SelectItem key={tournament.id} value={tournament.id}>
                 {tournament.name}
               </SelectItem>

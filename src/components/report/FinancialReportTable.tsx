@@ -2,9 +2,11 @@
 import React from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 
+import { Performance, Expense } from '@/types';
+
 interface FinancialReportTableProps {
-  performances: any[];
-  expenses: any[];
+  performances: Performance[];
+  expenses: Expense[];
 }
 
 const FinancialReportTable: React.FC<FinancialReportTableProps> = ({
@@ -13,16 +15,16 @@ const FinancialReportTable: React.FC<FinancialReportTableProps> = ({
 }) => {
   // Helper para buscar despesas por torneio
   function getTournamentExpenses(tournamentId: string) {
-    return expenses.filter((e: any) => e.tournament_id === tournamentId);
+    return expenses.filter((e) => e.tournament_id === tournamentId);
   }
 
-  const rows = performances.map((perf: any, idx: number) => {
+  const rows = performances.map((perf, idx: number) => {
     const buyin = Number(perf.buyin_amount || 0);
     const rebuy = Number(perf.rebuy_amount || 0) * Number(perf.rebuy_quantity || 0);
     const prize = Number(perf.prize_amount || 0);
     const tournamentId = perf.tournament_id;
     const expenseArr = getTournamentExpenses(tournamentId);
-    const expenseTotal = expenseArr.reduce((acc: number, e: any) => acc + Number(e.amount), 0);
+    const expenseTotal = expenseArr.reduce((acc: number, e) => acc + Number(e.amount), 0);
 
     // Resultado: Premiação - (Buyin + Rebuy) - Despesas
     const resultado = prize - (buyin + rebuy) - expenseTotal;
@@ -75,8 +77,8 @@ const FinancialReportTable: React.FC<FinancialReportTableProps> = ({
                 row.resultado > 0
                   ? "text-green-700 font-semibold"
                   : row.resultado < 0
-                  ? "text-red-700 font-semibold"
-                  : ""
+                    ? "text-red-700 font-semibold"
+                    : ""
               }>
                 R$ {row.resultado.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </TableCell>

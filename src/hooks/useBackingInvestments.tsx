@@ -44,7 +44,7 @@ export async function fetchBackingInvestments() {
     `);
   if (error) throw error;
 
-  return (data ?? []).map((inv: any) => ({
+  return (data ?? []).map((inv) => ({
     id: inv.id,
     percentage_bought: Number(inv.percentage_bought),
     amount_paid: Number(inv.amount_paid),
@@ -53,18 +53,18 @@ export async function fetchBackingInvestments() {
     backing_offer_id: inv.backing_offer_id,
     offer: inv.backing_offers
       ? {
-          buy_in_amount: Number(inv.backing_offers.buy_in_amount),
-          player_name: inv.backing_offers.player_name,
-          tournament_date: inv.backing_offers.tournament_date,
-          available_percentage: Number(inv.backing_offers.available_percentage),
-          markup_percentage: Number(inv.backing_offers.markup_percentage),
-          tournaments: {
-            name: inv.backing_offers.tournaments?.name ?? "-",
-            schedule_events: inv.backing_offers.tournaments?.schedule_events
-              ? { name: inv.backing_offers.tournaments.schedule_events.name }
-              : null,
-          },
-        }
+        buy_in_amount: Number(inv.backing_offers.buy_in_amount),
+        player_name: inv.backing_offers.player_name,
+        tournament_date: inv.backing_offers.tournament_date,
+        available_percentage: Number(inv.backing_offers.available_percentage),
+        markup_percentage: Number(inv.backing_offers.markup_percentage),
+        tournaments: {
+          name: inv.backing_offers.tournaments?.name ?? "-",
+          schedule_events: inv.backing_offers.tournaments?.schedule_events
+            ? { name: inv.backing_offers.tournaments.schedule_events.name }
+            : null,
+        },
+      }
       : null,
   }));
 }

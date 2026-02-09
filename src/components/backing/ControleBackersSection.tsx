@@ -6,9 +6,11 @@ import BackersOfferHeader from "./BackersOfferHeader";
 import BackersInvestmentsTable from "./BackersInvestmentsTable";
 // Removido: import BackersPayoutTable from "./BackersPayoutTable";
 
+import { BackingInvestment } from "@/hooks/useBackingInvestments";
+
 type InvestmentGroup = {
-  offer: any;
-  investments: any[];
+  offer: BackingInvestment['offer'];
+  investments: BackingInvestment[];
 };
 
 const ControleBackersSection = () => {
@@ -53,7 +55,7 @@ const ControleBackersSection = () => {
         const { offer, investments } = group;
         const buyin = offer?.buy_in_amount ?? 0;
         const total = investments.reduce(
-          (sum: number, b: any) => sum + b.amount_paid,
+          (sum: number, b) => sum + b.amount_paid,
           0
         );
         const eventName = offer?.tournaments?.schedule_events?.name || null;

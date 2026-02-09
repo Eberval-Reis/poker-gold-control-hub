@@ -88,7 +88,7 @@ function renderCustomizedLabel(
 }
 
 // Memoização: só renderiza novamente se os dados realmente mudarem
-const ExpenseReportChart: React.FC<{ data: any[] }> = React.memo(({ data }) => {
+const ExpenseReportChart: React.FC<ExpenseReportChartProps> = React.memo(({ data }) => {
   if (!data || data.length === 0) {
     return null;
   }
@@ -126,7 +126,7 @@ const ExpenseReportChart: React.FC<{ data: any[] }> = React.memo(({ data }) => {
             ))}
           </Pie>
           <Tooltip
-            formatter={(value: any) =>
+            formatter={(value) =>
               Number(value).toLocaleString("pt-BR", {
                 style: "currency",
                 currency: "BRL",

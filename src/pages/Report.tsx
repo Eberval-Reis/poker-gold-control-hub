@@ -19,35 +19,35 @@ const quickReports: {
   period: PeriodType,
   extra?: { startDate?: Date, endDate?: Date },
 }[] = [
-  {
-    title: "ROI Mensal",
-    description: "Análise do retorno sobre investimento",
-    icon: <TrendingUp className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
-    reportType: "roi",
-    period: "month",
-  },
-  {
-    title: "Atividade Semanal",
-    description: "Torneios jogados na semana",
-    icon: <Calendar className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
-    reportType: "performance",
-    period: "week",
-  },
-  {
-    title: "Despesas Mensais",
-    description: "Gastos relacionados ao poker",
-    icon: <DollarSign className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
-    reportType: "expenses",
-    period: "month",
-  },
-  {
-    title: "DRE Mensal",
-    description: "Demonstração do resultado",
-    icon: <BarChart3 className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
-    reportType: "dre",
-    period: "month",
-  },
-];
+    {
+      title: "ROI Mensal",
+      description: "Análise do retorno sobre investimento",
+      icon: <TrendingUp className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+      reportType: "roi",
+      period: "month",
+    },
+    {
+      title: "Atividade Semanal",
+      description: "Torneios jogados na semana",
+      icon: <Calendar className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+      reportType: "performance",
+      period: "week",
+    },
+    {
+      title: "Despesas Mensais",
+      description: "Gastos relacionados ao poker",
+      icon: <DollarSign className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+      reportType: "expenses",
+      period: "month",
+    },
+    {
+      title: "DRE Mensal",
+      description: "Demonstração do resultado",
+      icon: <BarChart3 className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+      reportType: "dre",
+      period: "month",
+    },
+  ];
 
 const Report = () => {
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ const Report = () => {
   const [comparisonEnd, setComparisonEnd] = useState<Date>();
   const [reportReady, setReportReady] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  
+
   // DRE filters
   const [eventId, setEventId] = useState<string>();
   const [tournamentId, setTournamentId] = useState<string>();
@@ -99,18 +99,18 @@ const Report = () => {
     },
   });
 
-  const selectedEventName = events.find((e: any) => e.id === eventId)?.name;
-  const selectedTournamentName = tournaments.find((t: any) => t.id === tournamentId)?.name;
+  const selectedEventName = events.find((e) => e.id === eventId)?.name;
+  const selectedTournamentName = tournaments.find((t) => t.id === tournamentId)?.name;
 
   // Atualizar filtro: só aplica categoria se não for "all" e tipo for "expenses"
   const filteredExpenses =
     reportType === "expenses" && selectedCategory !== "all"
-      ? reportData.expenses.filter((e: any) => e.type === selectedCategory)
+      ? reportData.expenses.filter((e) => e.type === selectedCategory)
       : reportData.expenses;
 
   const filteredExpenseSumByCategory =
     reportType === "expenses" && selectedCategory !== "all"
-      ? reportData.expenseSumByCategory.filter((c: any) => c.category === selectedCategory)
+      ? reportData.expenseSumByCategory.filter((c) => c.category === selectedCategory)
       : reportData.expenseSumByCategory;
 
   const filteredReportData = {
@@ -167,7 +167,7 @@ const Report = () => {
 
   // Busca todas categorias possíveis (no período!)
   const allCategories = Array.from(
-    new Set((reportData.expenseSumByCategory || []).map((c: any) => c.category))
+    new Set((reportData.expenseSumByCategory || []).map((c) => c.category))
   );
 
   return (
@@ -217,7 +217,7 @@ const Report = () => {
           <CardTitle>Prévia do Relatório</CardTitle>
         </CardHeader>
         <CardContent>
-          <ReportPreview 
+          <ReportPreview
             reportReady={reportReady}
             reportType={reportType}
             reportData={filteredReportData}

@@ -1,6 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
+import { BackingOffer, BackingInvestment } from "@/types";
 
 export interface DashboardMetric {
   roi: number;
@@ -46,7 +47,7 @@ async function fetchDashboardData(): Promise<Omit<DashboardMetric, "isLoading">>
   const backersSet = new Set<string>();
   let backersProfit = 0;
 
-  (data || []).forEach((offer: any) => {
+  (data || []).forEach((offer) => {
     const buyin = Number(offer.buy_in_amount) || 0;
     const prize = offer.backing_results?.[0]?.prize_amount || 0;
     const net_prize = offer.backing_results?.[0]?.net_prize || 0;
@@ -54,7 +55,7 @@ async function fetchDashboardData(): Promise<Omit<DashboardMetric, "isLoading">>
     // Somar apostas/investimentos desse offer
     let offerInvested = 0;
     if (offer.backing_investments) {
-      offer.backing_investments.forEach((inv: any) => {
+      offer.backing_investments.forEach((inv) => {
         offerInvested += Number(inv.amount_paid) || 0;
         if (inv.backer_name) backersSet.add(inv.backer_name);
       });

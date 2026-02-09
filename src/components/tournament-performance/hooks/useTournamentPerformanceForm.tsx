@@ -8,21 +8,21 @@ import { toast } from '@/hooks/use-toast';
 import { tournamentPerformanceFormSchema, TournamentPerformanceFormData, calculateTotalInvested, calculateProfitLoss, calculateROI } from '../TournamentPerformanceFormSchema';
 import { tournamentPerformanceService } from '@/services/tournament-performance.service';
 import { tournamentService } from '@/services/tournament.service';
-import { TournamentPerformance, Tournament } from '@/lib/supabase';
+import { Tournament } from '@/types';
 
 export function useTournamentPerformanceForm() {
   const navigate = useNavigate();
   const { id } = useParams();
   const queryClient = useQueryClient();
   const isEditing = Boolean(id);
-  
+
   const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
   const [financialSummary, setFinancialSummary] = useState({
     totalInvested: 0,
     profitLoss: 0,
     roi: 0
   });
-  
+
   const form = useForm<TournamentPerformanceFormData>({
     resolver: zodResolver(tournamentPerformanceFormSchema),
     defaultValues: {
@@ -51,7 +51,7 @@ export function useTournamentPerformanceForm() {
   const addonAmount = form.watch('addon_amount');
   const prizeAmount = form.watch('prize_amount');
   const itmAchieved = form.watch('itm_achieved');
-  
+
   // Recalculate financial summary when relevant values change
   useEffect(() => {
     const buyinNum = parseFloat(buyinAmount || '0');
@@ -59,7 +59,7 @@ export function useTournamentPerformanceForm() {
     const rebuyQtyNum = parseInt(rebuyQuantity || '0');
     const addonAmountNum = parseFloat(addonAmount || '0');
     const prizeAmountNum = parseFloat(prizeAmount || '0');
-    
+
     const totalInvested = calculateTotalInvested(
       buyinNum,
       rebuyAmountNum || undefined,
@@ -67,17 +67,17 @@ export function useTournamentPerformanceForm() {
       addonEnabled,
       addonAmountNum || undefined
     );
-    
+
     const profitLoss = calculateProfitLoss(prizeAmountNum || 0, totalInvested);
     const roi = calculateROI(profitLoss, totalInvested);
-    
+
     setFinancialSummary({
       totalInvested,
       profitLoss,
       roi
     });
   }, [buyinAmount, rebuyAmount, rebuyQuantity, addonEnabled, addonAmount, prizeAmount]);
-  
+
   // Fetch tournaments for dropdown with club information
   const { data: allTournaments = [] } = useQuery({
     queryKey: ['tournaments'],
@@ -92,7 +92,7 @@ export function useTournamentPerformanceForm() {
     }
     return acc;
   }, []);
-  
+
   // Get performance data if editing
   const { data: performanceData, isLoading: isLoadingPerformance, error: performanceError } = useQuery({
     queryKey: ['tournament-performance', id],
@@ -105,11 +105,11 @@ export function useTournamentPerformanceForm() {
     if (performanceData && tournaments.length > 0) {
       console.log('Loading performance data:', performanceData);
       console.log('Available tournaments:', tournaments);
-      
+
       // Find the tournament in the tournaments list using the tournament_id
       const tournament = tournaments.find(t => t.id === performanceData.tournament_id);
       console.log('Found tournament:', tournament);
-      
+
       if (tournament) {
         setSelectedTournament(tournament);
       } else {
@@ -117,19 +117,31 @@ export function useTournamentPerformanceForm() {
         if (performanceData.tournaments) {
           const tempTournament: Tournament = {
             id: performanceData.tournament_id,
-            name: performanceData.tournaments.name || 'Torneio não especificado',
-            club_id: '', // We don't have this from the performance data
-            type: '', // We don't have this either
-            clubs: performanceData.tournaments.clubs,
-            // ... other tournament fields with defaults
+            name: performanceData.tournaments?.name || 'Torneio não especificado',
+            club_id: performanceData.club_id || '',
+            type: '',
+            addon_amount: 0,
+            blind_structure: '',
+            buyin_amount: 0,
+            created_at: '',
+            date: '',
+            event_id: null,
+            initial_stack: '',
+            notes: '',
+            prizes: '',
+            rebuy_amount: 0,
+            time: '',
+            updated_at: '',
+            user_id: '',
+            clubs: performanceData.tournaments?.clubs ? { name: performanceData.tournaments.clubs.name } : null,
           };
           setSelectedTournament(tempTournament);
         }
       }
-      
+
       form.reset({
         tournament_id: performanceData.tournament_id,
-        club_id: (performanceData as any).club_id || tournament?.club_id || '',
+        club_id: (performanceData as { club_id?: string }).club_id || tournament?.club_id || '',
         tournament_date: performanceData.tournament_date ? new Date(performanceData.tournament_date + 'T12:00:00') : new Date(),
         buyin_amount: performanceData.buyin_amount?.toString() || '',
         rebuy_amount: performanceData.rebuy_amount?.toString() || '',
@@ -165,9 +177,9 @@ export function useTournamentPerformanceForm() {
       console.log('Submitting performance data:', data);
       console.log('Tournament date being saved:', data.tournament_date);
       console.log('Tournament date ISO string:', data.tournament_date.toISOString());
-      
+
       // Convert form data to database format
-      const performanceData: any = {
+      const performanceData: Record<string, unknown> = {
         tournament_id: data.tournament_id,
         club_id: data.club_id || selectedTournament?.club_id || null,
         tournament_date: data.tournament_date.toISOString().split('T')[0], // Convert to YYYY-MM-DD format
@@ -183,7 +195,7 @@ export function useTournamentPerformanceForm() {
         ft_photo_url: data.ft_photo_url || null,
         news_link: data.news_link || null,
       };
-      
+
       return isEditing
         ? tournamentPerformanceService.updateTournamentPerformance(id as string, performanceData)
         : tournamentPerformanceService.createTournamentPerformance(performanceData);
@@ -217,7 +229,7 @@ export function useTournamentPerformanceForm() {
       });
       return;
     }
-    
+
     console.log('Submitting data:', data);
     mutation.mutate(data);
   };
@@ -226,14 +238,14 @@ export function useTournamentPerformanceForm() {
   const handleTournamentChange = (tournamentId: string) => {
     const tournament = tournaments.find(t => t.id === tournamentId);
     setSelectedTournament(tournament || null);
-    
+
     // Preencher automaticamente os campos com os valores do torneio
     if (tournament) {
       // Set club_id from selected tournament
       if (tournament.club_id) {
         form.setValue('club_id', tournament.club_id);
       }
-      
+
       if (tournament.buyin_amount) {
         form.setValue('buyin_amount', tournament.buyin_amount.toString());
       }
@@ -245,7 +257,7 @@ export function useTournamentPerformanceForm() {
       }
     }
   };
-  
+
   return {
     form,
     financialSummary,

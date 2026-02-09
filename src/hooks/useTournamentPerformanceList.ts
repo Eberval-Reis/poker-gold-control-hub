@@ -6,10 +6,10 @@ import { tournamentPerformanceService } from '@/services/tournament-performance.
 
 export const useTournamentPerformanceList = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  
+
   const { data: performances = [], isLoading, refetch } = useQuery({
     queryKey: ['tournament-performances'],
-    queryFn: tournamentPerformanceService.getTournamentPerformances,
+    queryFn: tournamentPerformanceService.getPerformances,
   });
 
   const handleDeleteClick = (id: string) => {
@@ -18,9 +18,9 @@ export const useTournamentPerformanceList = () => {
 
   const handleDelete = async () => {
     if (!deleteId) return;
-    
+
     try {
-      await tournamentPerformanceService.deleteTournamentPerformance(deleteId);
+      await tournamentPerformanceService.deletePerformance(deleteId);
       toast({
         title: "Desempenho excluído com sucesso",
         description: "O registro foi removido permanentemente.",

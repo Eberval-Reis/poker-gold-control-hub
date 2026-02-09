@@ -31,9 +31,9 @@ export function useBackerInvestmentDelete() {
         title: "Investimento removido",
         description: "O investimento do backer foi excluído com sucesso.",
       });
-      queryClient.invalidateQueries({queryKey: ["backing_investments"]});
+      queryClient.invalidateQueries({ queryKey: ["backing_investments"] });
     },
-    onError: (error: any) => {
+    onError: (error) => {
       toast({
         variant: "destructive",
         title: "Não foi possível excluir",

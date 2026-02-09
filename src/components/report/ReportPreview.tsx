@@ -12,10 +12,12 @@ import { useReportComparisonData } from "@/hooks/useReportComparisonData";
 import DREReportPreview from "./DREReportPreview";
 import { DREData } from "@/hooks/useDREReportData";
 
+import { ReportData } from '@/types';
+
 interface ReportPreviewProps {
   reportReady: boolean;
   reportType: ReportType;
-  reportData: any;
+  reportData: ReportData;
   comparisonA?: { period: { start?: Date; end?: Date } };
   comparisonB?: { period: { start?: Date; end?: Date } };
   // DRE props
@@ -31,16 +33,33 @@ const expenseTableColumns = [
   { label: "Valor (R$)", key: "amount" }
 ];
 
-const ReportPreview: React.FC<ReportPreviewProps> = ({ 
-  reportReady, 
-  reportType, 
-  reportData, 
-  comparisonA, 
+const ReportPreview: React.FC<ReportPreviewProps> = ({
+  reportReady,
+  reportType,
+  reportData,
+  comparisonA,
   comparisonB,
   dreData,
   eventName,
   tournamentName,
 }) => {
+  const isComparison = reportReady && reportType === "comparison";
+
+  const { kpisA, kpisB, loading: comparisonLoading, error: comparisonError } = useReportComparisonData(
+    {
+      reportType: "performance",
+      period: "custom",
+      startDate: comparisonA?.period.start,
+      endDate: comparisonA?.period.end,
+    },
+    {
+      reportType: "performance",
+      period: "custom",
+      startDate: comparisonB?.period.start,
+      endDate: comparisonB?.period.end,
+    }
+  );
+
   if (!reportReady) {
     return (
       <div className="text-center py-12">
@@ -56,22 +75,8 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({
   }
 
   if (reportType === "comparison") {
-    const { kpisA, kpisB, loading, error } = useReportComparisonData(
-      {
-        reportType: "performance",
-        period: "custom",
-        startDate: comparisonA?.period.start,
-        endDate: comparisonA?.period.end,
-      },
-      {
-        reportType: "performance",
-        period: "custom",
-        startDate: comparisonB?.period.start,
-        endDate: comparisonB?.period.end,
-      }
-    );
-    if (loading) return <div className="py-8 text-center">Carregando comparação...</div>;
-    if (error) return <div className="text-red-700 py-4">Erro ao carregar dados: {String(error)}</div>;
+    if (comparisonLoading) return <div className="py-8 text-center">Carregando comparação...</div>;
+    if (comparisonError) return <div className="text-red-700 py-4">Erro ao carregar dados: {String(comparisonError)}</div>;
 
     return <ComparisonReport dataA={kpisA} dataB={kpisB} />;
   }
@@ -95,7 +100,7 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({
           </h3>
           {/* Exportação */}
           <ExportButtons
-            tableData={reportData.expenses.map((e: any) => ({
+            tableData={reportData.expenses.map((e) => ({
               date: e.date ? new Date(e.date).toLocaleDateString("pt-BR") : "-",
               tournament: e.tournaments?.name || "-",
               type: e.type,
@@ -126,13 +131,13 @@ const ReportPreview: React.FC<ReportPreviewProps> = ({
           {/* Exportação para financeiro também */}
           <ExportButtons
             tableData={[
-              ...reportData.performances.map((perf: any) => ({
+              ...reportData.performances.map((perf) => ({
                 tipo: "Prêmio",
                 data: perf.created_at ? new Date(perf.created_at).toLocaleDateString("pt-BR") : "-",
                 torneio: perf.tournaments?.name ?? "-",
                 valor: Number(perf.prize_amount ?? 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" }),
               })),
-              ...reportData.expenses.map((exp: any) => ({
+              ...reportData.expenses.map((exp) => ({
                 tipo: "Despesa",
                 data: exp.date ? new Date(exp.date).toLocaleDateString("pt-BR") : "-",
                 torneio: exp.tournaments?.name || "-",

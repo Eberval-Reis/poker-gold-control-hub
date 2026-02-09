@@ -19,9 +19,11 @@ import ContactsSection from './ContactsSection';
 import ObservationsSection from './ObservationsSection';
 import FormActions from '@/components/expense/FormActions';
 
+import { Tables } from '@/integrations/supabase/types';
+
 interface ClubFormProps {
   clubId?: string;
-  clubData?: any;
+  clubData?: Tables<'Cadastro Clube'>;
   isLoading?: boolean;
 }
 
@@ -30,7 +32,7 @@ const ClubForm = ({ clubId, clubData, isLoading = false }: ClubFormProps) => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const isEditing = Boolean(clubId);
-  
+
   const form = useForm<ClubFormData>({
     resolver: zodResolver(clubFormSchema),
     defaultValues: {
@@ -43,7 +45,7 @@ const ClubForm = ({ clubId, clubData, isLoading = false }: ClubFormProps) => {
       observations: '',
     },
   });
-  
+
   // Set form values when club data is available
   useEffect(() => {
     if (clubData) {
@@ -56,14 +58,14 @@ const ClubForm = ({ clubId, clubData, isLoading = false }: ClubFormProps) => {
         address_link: clubData.address_link || '',
         observations: clubData.observations || '',
       });
-      
+
       // Expand additional section if any field is filled
       if (clubData.phone || clubData.contact_person || clubData.reference || clubData.address_link) {
         setIsOpen(true);
       }
     }
   }, [clubData, form]);
-  
+
   // Create or update club mutation
   const mutation = useMutation({
     mutationFn: (data: ClubFormData) => {
@@ -76,7 +78,7 @@ const ClubForm = ({ clubId, clubData, isLoading = false }: ClubFormProps) => {
         address_link: data.address_link,
         observations: data.observations,
       };
-      
+
       return isEditing
         ? clubService.updateClub(clubId as string, formattedData)
         : clubService.createClub(formattedData);
@@ -97,7 +99,7 @@ const ClubForm = ({ clubId, clubData, isLoading = false }: ClubFormProps) => {
       });
     },
   });
-  
+
   const onSubmit = (data: ClubFormData) => {
     mutation.mutate(data);
   };
@@ -129,7 +131,7 @@ const ClubForm = ({ clubId, clubData, isLoading = false }: ClubFormProps) => {
               </Button>
             </CollapsibleTrigger>
           </div>
-          
+
           <CollapsibleContent className="space-y-4">
             <ContactsSection form={form} />
           </CollapsibleContent>
@@ -139,10 +141,10 @@ const ClubForm = ({ clubId, clubData, isLoading = false }: ClubFormProps) => {
         <ObservationsSection form={form} />
 
         {/* Form Actions */}
-        <FormActions 
-          isSubmitting={mutation.isPending} 
-          isEditing={isEditing} 
-          onCancel={onCancel} 
+        <FormActions
+          isSubmitting={mutation.isPending}
+          isEditing={isEditing}
+          onCancel={onCancel}
         />
       </form>
     </Form>

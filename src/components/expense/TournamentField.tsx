@@ -5,15 +5,16 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/comp
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UseFormReturn } from 'react-hook-form';
 import { ExpenseFormData } from './ExpenseFormSchema';
+import { Tournament } from '@/types';
 
 interface TournamentFieldProps {
   form: UseFormReturn<ExpenseFormData>;
-  tournaments: any[];
+  tournaments: Tournament[];
 }
 
 const TournamentField = ({ form, tournaments }: TournamentFieldProps) => {
   // Helper function to format tournament display name
-  const getTournamentDisplay = (tournament: any) => {
+  const getTournamentDisplay = (tournament: Tournament) => {
     const date = new Date(tournament.date);
     if (isValid(date)) {
       return `${tournament.name} - ${format(date, 'dd/MM/yyyy')}`;
@@ -35,7 +36,7 @@ const TournamentField = ({ form, tournaments }: TournamentFieldProps) => {
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              {tournaments.map((tournament: any) => (
+              {tournaments.map((tournament) => (
                 <SelectItem key={tournament.id} value={tournament.id}>
                   {getTournamentDisplay(tournament)}
                 </SelectItem>

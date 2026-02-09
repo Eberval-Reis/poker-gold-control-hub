@@ -40,6 +40,7 @@ export interface TournamentPerformance {
   id: string;
   tournament_id: string;
   tournament_date: string;
+  club_id?: string;
   buyin_amount: number;
   rebuy_amount?: number;
   rebuy_quantity?: number;

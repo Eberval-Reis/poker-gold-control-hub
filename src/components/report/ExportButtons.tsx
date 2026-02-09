@@ -6,7 +6,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 interface ExportButtonsProps {
-  tableData: any[];
+  tableData: Record<string, unknown>[];
   columns: { label: string; key: string }[];
   filePrefix: string;
 }

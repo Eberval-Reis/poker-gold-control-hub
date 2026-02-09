@@ -28,12 +28,12 @@ interface CSVRow {
 function parseCSV(csvText: string): CSVRow[] {
   const lines = csvText.split('\n');
   const headers = lines[0].split(',').map(h => h.replace(/"/g, ''));
-  
+
   return lines.slice(1)
     .filter(line => line.trim())
     .map(line => {
       const values = line.split(',').map(v => v.replace(/"/g, ''));
-      const row: any = {};
+      const row: Record<string, string> = {};
       headers.forEach((header, index) => {
         row[header] = values[index] || '';
       });
@@ -53,7 +53,7 @@ async function findOrCreateClub(clubName: string, userId: string): Promise<strin
       })
       .select('id')
       .single();
-    
+
     if (error) throw error;
     return data.id;
   }
@@ -127,7 +127,7 @@ Deno.serve(async (req) => {
 
   try {
     const { csvData } = await req.json();
-    
+
     if (!csvData) {
       throw new Error('CSV data is required');
     }
@@ -159,7 +159,7 @@ Deno.serve(async (req) => {
 
     for (const row of csvRows) {
       results.processed++;
-      
+
       try {
         // Skip rows without essential data
         if (!row.data_torneio || !row.nome_torneio || !row.valor_buy_in) {
@@ -179,20 +179,20 @@ Deno.serve(async (req) => {
         // Find or create club
         const clubName = row.clube_nome_manual || 'Clube não especificado';
         const clubId = await findOrCreateClub(clubName, user.id);
-        
+
         if (clubName && clubName !== 'Clube não especificado' && !results.clubsCreated.includes(clubName)) {
           results.clubsCreated.push(clubName);
         }
 
         // Find or create tournament
         const tournamentId = await findOrCreateTournament(
-          row.nome_torneio, 
-          clubId, 
-          tournamentDate, 
-          buyinAmount, 
+          row.nome_torneio,
+          clubId,
+          tournamentDate,
+          buyinAmount,
           user.id
         );
-        
+
         if (!results.tournamentsCreated.includes(row.nome_torneio)) {
           results.tournamentsCreated.push(row.nome_torneio);
         }
@@ -200,15 +200,15 @@ Deno.serve(async (req) => {
         // Parse performance data with proper boolean handling
         const rebuyQuantity = row.qtd_rebuys && row.qtd_rebuys.trim() ? parseInt(row.qtd_rebuys) : 0;
         const rebuyAmount = row.valor_unitario_rebuy && row.valor_unitario_rebuy.trim() ? parseFloat(row.valor_unitario_rebuy) : null;
-        
+
         // Handle addon - enabled if explicitly "true" or has a value > 0
         const addonAmount = row.valor_addon && row.valor_addon.trim() ? parseFloat(row.valor_addon) : null;
         const addonEnabled = row.fez_addon === 'true' || (addonAmount && addonAmount > 0) ? true : false;
-        
+
         // Handle boolean fields - only true if explicitly "true", false otherwise
         const itmAchieved = row.itm === 'true' ? true : false;
         const finalTableAchieved = row.ft === 'true' ? true : false;
-        
+
         const position = row.colocacao && row.colocacao.trim() ? parseInt(row.colocacao) : null;
         const prizeAmount = row.valor_premiacao && row.valor_premiacao.trim() ? parseFloat(row.valor_premiacao) : null;
 

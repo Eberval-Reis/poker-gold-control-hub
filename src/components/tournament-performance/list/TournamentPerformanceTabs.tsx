@@ -16,25 +16,25 @@ const TournamentPerformanceTabs = ({
   onDeleteClick
 }: TournamentPerformanceTabsProps) => {
   const [filter, setFilter] = useState<'all' | 'profit' | 'loss'>('all');
-  
+
   // Filtered performances based on selected tab
   const filteredPerformances = performances.filter((performance) => {
     if (filter === 'all') return true;
-    
+
     const buyinAmount = performance.buyin_amount || 0;
     const rebuyAmount = performance.rebuy_amount || 0;
     const rebuyQuantity = performance.rebuy_quantity || 0;
     const addonAmount = performance.addon_enabled ? (performance.addon_amount || 0) : 0;
     const prizeAmount = performance.prize_amount || 0;
-    
+
     const totalInvested = buyinAmount + (rebuyAmount * rebuyQuantity) + addonAmount;
     const profitLoss = prizeAmount - totalInvested;
-    
+
     return filter === 'profit' ? profitLoss >= 0 : profitLoss < 0;
   });
 
   return (
-    <Tabs defaultValue="all" onValueChange={(value) => setFilter(value as any)} className="h-full flex flex-col">
+    <Tabs defaultValue="all" onValueChange={(value) => setFilter(value as 'all' | 'profit' | 'loss')} className="h-full flex flex-col">
       <TabsList className="mb-4 flex-shrink-0">
         <TabsTrigger value="all">Todos</TabsTrigger>
         <TabsTrigger value="profit">Lucro</TabsTrigger>
@@ -42,9 +42,9 @@ const TournamentPerformanceTabs = ({
       </TabsList>
 
       <TabsContent value={filter} className="flex-1 overflow-y-auto mt-0">
-        <TournamentPerformanceGrid 
-          performances={filteredPerformances} 
-          isLoading={isLoading} 
+        <TournamentPerformanceGrid
+          performances={filteredPerformances}
+          isLoading={isLoading}
           onDeleteClick={onDeleteClick}
         />
       </TabsContent>

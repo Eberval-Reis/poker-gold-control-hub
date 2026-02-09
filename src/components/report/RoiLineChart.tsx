@@ -2,13 +2,14 @@
 import React from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
+import { Performance } from "@/types";
 
 /**
  * Cálculo do ROI do torneio:
  * (prize_amount - investido) / investido * 100
  * Investido = buyin + (rebuy_amount * rebuy_quantity) + addon_amount (se houver)
  */
-function calcularInvestido(perf: any) {
+function calcularInvestido(perf: Performance) {
   return (
     Number(perf.buyin_amount || 0) +
     Number(perf.rebuy_amount || 0) * Number(perf.rebuy_quantity || 0) +
@@ -16,7 +17,7 @@ function calcularInvestido(perf: any) {
   );
 }
 
-const RoiLineChart = ({ performances }: { performances: any[] }) => {
+const RoiLineChart = ({ performances }: { performances: Performance[] }) => {
   const data = performances.map((perf, idx) => {
     const investido = calcularInvestido(perf);
     const premio = Number(perf.prize_amount || 0);

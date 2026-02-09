@@ -64,7 +64,7 @@ interface DashboardData {
   tournamentPrizeData: { month: string; profit: number }[];
   tournamentsTimelineData: { name: string; date: string; buyin: number; prize: number; profit: number }[];
   expenseData: { category: string; amount: number }[];
-  recentTournaments: any[];
+  recentTournaments: Performance[];
   tournamentsTrend: number;
   profitTrend: number;
   roiTrend: number;
@@ -114,13 +114,13 @@ export function useDashboardData({
     console.log("Despesas recebidas para processamento:", expenses);
 
     const totalTournaments = performances.length;
-    
+
     // Calcular novos totais solicitados
     const totalBuyin = performances.reduce((sum, p) => sum + Number(p.buyin_amount || 0), 0);
     const totalRebuy = performances.reduce((sum, p) => sum + (Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0)), 0);
     const totalPrizes = performances.reduce((sum, p) => sum + Number(p.prize_amount || 0), 0);
     const totalExpenses = expenses.reduce((sum, e) => sum + Number(e.amount || 0), 0);
-    
+
     const totalProfit = performances.reduce((sum, p) => {
       const buyin = Number(p.buyin_amount || 0);
       const rebuy = Number(p.rebuy_amount || 0) * Number(p.rebuy_quantity || 0);
@@ -132,7 +132,7 @@ export function useDashboardData({
 
     // Adicionar addon ao cálculo do resultado final
     const totalAddon = performances.reduce((sum, p) => sum + (p.addon_enabled ? Number(p.addon_amount || 0) : 0), 0);
-    
+
     // Resultado = Ganho Total - Total Investido (buy-in + rebuy + addon) - Despesas
     const finalResult = totalPrizes - totalBuyin - totalRebuy - totalAddon - totalExpenses;
 
@@ -169,13 +169,13 @@ export function useDashboardData({
 
     // Nova lógica: Premiação acumulada por nome de torneio
     const tournamentPrizeMap = new Map<string, number>();
-    
+
     performances.forEach((p) => {
       const tournamentName = p.tournaments?.name || "Torneio não especificado";
       const prize = Number(p.prize_amount || 0);
-      
+
       console.log(`Processando: ${tournamentName} - Premiação: R$ ${prize}`);
-      
+
       if (tournamentPrizeMap.has(tournamentName)) {
         tournamentPrizeMap.set(tournamentName, tournamentPrizeMap.get(tournamentName)! + prize);
       } else {
@@ -201,7 +201,7 @@ export function useDashboardData({
         const totalInvested = buyin + rebuy + addon;
         const prize = Number(p.prize_amount || 0);
         const profit = prize - totalInvested;
-        
+
         return {
           name: p.tournaments?.name || "Torneio não especificado",
           date: p.tournament_date,
@@ -216,7 +216,7 @@ export function useDashboardData({
 
     // Gráfico de despesas: garantir todas categorias traduzidas, mas exibir apenas com movimentação
     console.log("Despesas recebidas para processamento:", expenses);
-    
+
     const expenseSum: Record<string, number> = {};
     expenses.forEach((exp) => {
       const key = (exp.type || "outro").toLowerCase();
@@ -233,11 +233,11 @@ export function useDashboardData({
         category: EXPENSE_CATEGORY_MAP[key],
         amount: expenseSum[key] ?? 0,
       }));
-    
+
     console.log("Dados ANTES do filtro:", expenseDataBeforeFilter);
-    
+
     const expenseData = expenseDataBeforeFilter.filter(e => e.amount > 0);
-    
+
     console.log("Dados DEPOIS do filtro (>0):", expenseData);
 
     // Inclui qualquer categoria extra (custom) encontrada nos dados mas não no padrão

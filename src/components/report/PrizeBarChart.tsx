@@ -3,8 +3,10 @@ import React from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { ChartContainer } from "@/components/ui/chart";
 
+import { Performance } from '@/types';
+
 interface PrizeBarChartProps {
-  performances: any[];
+  performances: Performance[];
 }
 
 // Paleta "Sunset no Casino"
@@ -19,7 +21,7 @@ const PrizeBarChart: React.FC<PrizeBarChartProps> = ({ performances }) => {
     );
   }
 
-  const data = performances.map((perf: any, idx: number) => ({
+  const data = performances.map((perf, idx: number) => ({
     name: perf.tournaments?.name || `Torneio ${idx + 1}`,
     prize: Number(perf.prize_amount || 0)
   }))
@@ -37,8 +39,8 @@ const PrizeBarChart: React.FC<PrizeBarChartProps> = ({ performances }) => {
             margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
           >
             <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-            <XAxis 
-              type="number" 
+            <XAxis
+              type="number"
               tickFormatter={value => `R$ ${value.toLocaleString('pt-BR')}`}
             />
             <YAxis

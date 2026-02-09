@@ -1,8 +1,10 @@
 
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
+import { Performance } from '@/types';
+
 interface RecentTournamentsTableProps {
-  data: any[];
+  data: Performance[];
 }
 
 const RecentTournamentsTable = ({ data }: RecentTournamentsTableProps) => {

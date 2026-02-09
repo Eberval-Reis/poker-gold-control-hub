@@ -13,12 +13,12 @@ export const getExpenses = async (): Promise<Expense[]> => {
     .from('expenses')
     .select('*, tournaments(name)')
     .eq('user_id', user.id);
-  
+
   if (error) {
     console.error('Error fetching expenses:', error);
     throw error;
   }
-  
+
   return data || [];
 };
 
@@ -28,7 +28,7 @@ export const getExpenseById = async (id: string): Promise<Expense | null> => {
     .select('*, tournaments(name)')
     .eq('id', id)
     .single();
-  
+
   if (error) {
     if (error.code === 'PGRST116') { // Record not found
       return null;
@@ -36,7 +36,7 @@ export const getExpenseById = async (id: string): Promise<Expense | null> => {
     console.error('Error fetching expense:', error);
     throw error;
   }
-  
+
   return data;
 };
 
@@ -50,7 +50,7 @@ export const createExpense = async (expenseData: Partial<Expense>, receipt?: Fil
   if (!expenseData.type || !expenseData.amount || !expenseData.date) {
     throw new Error('Missing required expense fields');
   }
-  
+
   // Upload receipt if provided
   if (receipt) {
     const fileName = `${Date.now()}-${receipt.name}`;
@@ -58,21 +58,21 @@ export const createExpense = async (expenseData: Partial<Expense>, receipt?: Fil
       .storage
       .from('receipts')
       .upload(fileName, receipt);
-    
+
     if (uploadError) {
       console.error('Error uploading receipt:', uploadError);
       throw uploadError;
     }
-    
+
     // Get public URL for the uploaded file
     const { data: urlData } = supabase
       .storage
       .from('receipts')
       .getPublicUrl(fileName);
-    
+
     expenseData.receipt_url = urlData?.publicUrl;
   }
-  
+
   // Insert expense record
   const { data, error } = await supabase
     .from('expenses')
@@ -87,12 +87,12 @@ export const createExpense = async (expenseData: Partial<Expense>, receipt?: Fil
     })
     .select()
     .single();
-  
+
   if (error) {
     console.error('Error creating expense:', error);
     throw error;
   }
-  
+
   return data;
 };
 
@@ -104,42 +104,42 @@ export const updateExpense = async (id: string, expenseData: Partial<Expense>, r
       .storage
       .from('receipts')
       .upload(fileName, receipt);
-    
+
     if (uploadError) {
       console.error('Error uploading receipt:', uploadError);
       throw uploadError;
     }
-    
+
     // Get public URL for the uploaded file
     const { data: urlData } = supabase
       .storage
       .from('receipts')
       .getPublicUrl(fileName);
-    
+
     expenseData.receipt_url = urlData?.publicUrl;
   }
-  
+
   // Update expense record - only include properties that are present in expenseData
-  const updateData: Record<string, any> = {};
+  const updateData: Record<string, unknown> = {};
   if (expenseData.type !== undefined) updateData.type = expenseData.type;
   if (expenseData.amount !== undefined) updateData.amount = expenseData.amount;
   if (expenseData.date !== undefined) updateData.date = expenseData.date;
   if (expenseData.tournament_id !== undefined) updateData.tournament_id = expenseData.tournament_id;
   if (expenseData.description !== undefined) updateData.description = expenseData.description;
   if (expenseData.receipt_url !== undefined) updateData.receipt_url = expenseData.receipt_url;
-  
+
   const { data, error } = await supabase
     .from('expenses')
     .update(updateData)
     .eq('id', id)
     .select()
     .single();
-  
+
   if (error) {
     console.error('Error updating expense:', error);
     throw error;
   }
-  
+
   return data;
 };
 
@@ -150,18 +150,18 @@ export const deleteExpense = async (id: string): Promise<{ success: boolean }> =
     .select('receipt_url')
     .eq('id', id)
     .single();
-  
+
   // Delete the expense record
   const { error } = await supabase
     .from('expenses')
     .delete()
     .eq('id', id);
-  
+
   if (error) {
     console.error('Error deleting expense:', error);
     throw error;
   }
-  
+
   // If there was a receipt, try to delete it from storage
   // Note: This isn't critical, so we won't throw an error if it fails
   if (expense?.receipt_url) {
@@ -174,7 +174,7 @@ export const deleteExpense = async (id: string): Promise<{ success: boolean }> =
       console.warn('Could not delete receipt file:', storageError);
     }
   }
-  
+
   return { success: true };
 };
 

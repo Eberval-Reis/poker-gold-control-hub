@@ -2,22 +2,24 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
+import { BeforeInstallPromptEvent } from "@/types";
+
 // A2HS install prompt component
 const PWAInstallPrompt: React.FC = () => {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const handler = (e: any) => {
+    const handler = (e: Event) => {
       // Prevent the mini-infobar from appearing on mobile
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as unknown as BeforeInstallPromptEvent);
       setVisible(true);
     };
 
-    window.addEventListener("beforeinstallprompt", handler as any);
+    window.addEventListener("beforeinstallprompt", handler);
 
-    return () => window.removeEventListener("beforeinstallprompt", handler as any);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
   if (!visible) return null;

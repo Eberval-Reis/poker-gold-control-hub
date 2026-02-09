@@ -75,14 +75,11 @@ const TournamentForm: React.FC<TournamentFormProps> = ({
     const data = isEditing ? fetchedTournamentData : propTournamentData;
     if (data && !clubsLoading && !isLoading) {
       // Tratar event_id NULL como 'regular-clube' (valor padrão)
-      let safeEventId = data.event_id;
-      if (!safeEventId) {
-        safeEventId = 'regular-clube'; // Valor padrão quando NULL
-      }
-      
-      let safeClubId = data.club_id;
+      const safeEventId = data.event_id || 'regular-clube';
+
+      const safeClubId = data.club_id;
       const safeClubIdValue = normalizeUuid(safeClubId) || '';
-      
+
       form.reset({
         name: data.name || '',
         club_id: safeClubIdValue,

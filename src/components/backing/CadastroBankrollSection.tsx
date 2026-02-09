@@ -22,9 +22,9 @@ const CadastroBankrollSection = () => {
     const loadUserName = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const name = user.user_metadata?.full_name 
-          || user.user_metadata?.name 
-          || user.email?.split('@')[0] 
+        const name = user.user_metadata?.full_name
+          || user.user_metadata?.name
+          || user.email?.split('@')[0]
           || '';
         setPlayerName(name);
       }
@@ -34,24 +34,24 @@ const CadastroBankrollSection = () => {
 
   async function handleSalvarBankroll(e: React.FormEvent) {
     e.preventDefault();
-    
+
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
       toast({ title: "Erro de autenticação", description: "Você precisa estar logado", variant: "destructive" });
       return;
     }
-    
+
     if (!playerName.trim() || !totalBankroll || !periodDescription.trim()) {
       toast({ title: "Preencha todos os campos obrigatórios", variant: "destructive" });
       return;
     }
-    
+
     if (Number(maxPercent) < 5 || Number(maxPercent) > 100) {
       toast({ title: "Percentual para venda deve ser entre 5% e 100%", variant: "destructive" });
       return;
     }
-    
+
     // Markup é opcional - usa 1 como padrão se não informado
 
     setSaving(true);
@@ -67,13 +67,13 @@ const CadastroBankrollSection = () => {
         markup_percentage: markup ? Number(markup) : 1,
         buy_in_amount: Number(totalBankroll), // For compatibility, use total as buy_in
         tournament_date: startDate || new Date().toISOString().split('T')[0],
-        tournament_id: null as any, // Bankroll offers don't have tournament_id
+        tournament_id: null, // Bankroll offers don't have tournament_id
         status: "open",
         user_id: user.id,
       });
-      
+
       if (error) throw error;
-      
+
       toast({ title: "Bankroll cadastrado com sucesso!" });
       setPlayerName("");
       setTotalBankroll("");
@@ -82,8 +82,9 @@ const CadastroBankrollSection = () => {
       setEndDate("");
       setMaxPercent("50");
       setMarkup("1.2");
-    } catch (err: any) {
-      toast({ title: "Erro ao cadastrar bankroll", description: err.message, variant: "destructive" });
+    } catch (err: unknown) {
+      const error = err as Error;
+      toast({ title: "Erro ao cadastrar bankroll", description: error.message, variant: "destructive" });
     }
     setSaving(false);
   }
@@ -94,10 +95,10 @@ const CadastroBankrollSection = () => {
       <p className="text-sm text-muted-foreground">
         Ofereça um valor total para jogar em um período/evento. Os financiadores compram porcentagens desse valor.
       </p>
-      
+
       <form className="space-y-3 sm:space-y-4" onSubmit={handleSalvarBankroll}>
         <PlayerInfoFields playerName={playerName} setPlayerName={setPlayerName} />
-        
+
         <div className="space-y-2">
           <label className="block text-sm font-medium text-gray-700">
             Valor Total do Bankroll (R$) *
@@ -147,11 +148,11 @@ const CadastroBankrollSection = () => {
           </div>
         </div>
 
-        <CavFields 
-          maxPercent={maxPercent} 
-          setMaxPercent={setMaxPercent} 
-          markup={markup} 
-          setMarkup={setMarkup} 
+        <CavFields
+          maxPercent={maxPercent}
+          setMaxPercent={setMaxPercent}
+          markup={markup}
+          setMarkup={setMarkup}
         />
 
         <div className="bg-muted rounded-lg p-4 space-y-2">
@@ -160,7 +161,7 @@ const CadastroBankrollSection = () => {
             Valor Total: <span className="font-bold">R$ {Number(totalBankroll || 0).toLocaleString()}</span>
           </p>
           <p className="text-sm">
-            Disponível para venda: <span className="font-bold">{maxPercent}%</span> = 
+            Disponível para venda: <span className="font-bold">{maxPercent}%</span> =
             <span className="font-bold"> R$ {((Number(totalBankroll || 0) * Number(maxPercent)) / 100).toLocaleString()}</span>
           </p>
           <p className="text-sm">

@@ -8,6 +8,7 @@ import EditInvestmentModal from "./EditInvestmentModal";
 import { useUpdatePaymentStatus } from "@/hooks/useUpdatePaymentStatus";
 import { toast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { BackingInvestment } from "@/hooks/useBackingInvestments";
 
 // Helper hook para buscar se existem payouts vinculados a cada investimento
 function useInvestmentsWithPayouts(investments: { id: string }[]) {
@@ -29,7 +30,7 @@ function useInvestmentsWithPayouts(investments: { id: string }[]) {
       const map: Record<string, boolean> = {};
       if (!error && data) {
         for (const id of ids) {
-          map[id] = data.some((p: any) => p.backing_investment_id === id);
+          map[id] = data.some((p) => p.backing_investment_id === id);
         }
       }
       setInvestmentsWithPayouts(map);
@@ -40,18 +41,13 @@ function useInvestmentsWithPayouts(investments: { id: string }[]) {
   return investmentsWithPayouts;
 }
 
-interface Investment {
-  id: string;
-  backer_name: string;
-  percentage_bought: number;
-  amount_paid: number;
-  payment_status: string | null;
+interface Investment extends BackingInvestment {
   buy_in_amount?: number;
   markup_percentage?: number;
 }
 
 interface BackersInvestmentsTableProps {
-  investments: Investment[];
+  investments: BackingInvestment[];
 }
 
 // Apenas visualização, sem toggle/click
@@ -68,7 +64,7 @@ const statusLabel = (
           ? "border-yellow-500 text-yellow-600"
           : "border-green-500 text-green-600")
       }
-      // não tem mais cursor pointer
+    // não tem mais cursor pointer
     >
       {isPending ? (
         <>
@@ -110,8 +106,8 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
     // OBS: Dependerá da estrutura do objeto que chega em investments!
     // Supondo que a linha "b" tenha offer (ver useBackingInvestments.tsx)
     // Como estamos apenas passando para o modal, garantimos que as props sejam passadas.
-    const offer = (b: any) => b.offer || b; // b.offer ou b, se já vier direto
-    return (b: any) => ({
+    const offer = (b: Investment) => b.offer || b;
+    return (b: Investment) => ({
       buy_in_amount: offer(b).buy_in_amount || 0,
       markup_percentage: offer(b).markup_percentage || 1,
     });
@@ -144,8 +140,9 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
       });
 
       setEditing(null);
-    } catch (e: any) {
-      toast({ title: "Erro ao editar investimento", description: e.message, variant: "destructive" });
+    } catch (e: unknown) {
+      const error = e as Error;
+      toast({ title: "Erro ao editar investimento", description: error.message, variant: "destructive" });
     }
     setUpdating(false);
   }
@@ -159,11 +156,11 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
         investment={
           editing
             ? {
-                ...editing,
-                // pegar os valores corretos
-                buy_in_amount: editing.buy_in_amount,
-                markup_percentage: editing.markup_percentage,
-              }
+              ...editing,
+              // pegar os valores corretos
+              buy_in_amount: editing.buy_in_amount,
+              markup_percentage: editing.markup_percentage,
+            }
             : null
         }
         buy_in_amount={editing?.buy_in_amount}
@@ -189,7 +186,7 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {investments.map((b: any) => {
+          {investments.map((b: BackingInvestment) => {
             const hasPayouts = investmentsWithPayouts[b.id];
             // Pegue informações do buy_in e markup através de offer (ver fetchBackingInvestments)
             const buy_in_amount = b.offer?.buy_in_amount ?? 0;
@@ -241,15 +238,11 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
                         hasPayouts
                           ? undefined
                           : () =>
-                              setEditing({
-                                id: b.id,
-                                percentage_bought: b.percentage_bought,
-                                amount_paid: b.amount_paid,
-                                payment_status: b.payment_status,
-                                backer_name: b.backer_name,
-                                buy_in_amount, // PROPS ADICIONAIS
-                                markup_percentage,
-                              })
+                            setEditing({
+                              ...b,
+                              buy_in_amount, // PROPS ADICIONAIS
+                              markup_percentage,
+                            })
                       }
                     >
                       <Edit size={15} />
