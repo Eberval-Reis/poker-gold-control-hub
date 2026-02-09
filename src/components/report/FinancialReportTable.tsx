@@ -2,10 +2,10 @@
 import React from "react";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 
-import { Performance, Expense } from '@/types';
+import { PokerPerformance, Expense } from '@/types';
 
 interface FinancialReportTableProps {
-  performances: Performance[];
+  performances: PokerPerformance[];
   expenses: Expense[];
 }
 

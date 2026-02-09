@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-r
 import { UsePaginationReturn } from '@/hooks/usePagination';
 
 interface PaginationControlsProps {
-  pagination: UsePaginationReturn;
+  pagination: UsePaginationReturn<unknown>;
   className?: string;
 }
 

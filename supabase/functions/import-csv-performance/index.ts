@@ -37,7 +37,7 @@ function parseCSV(csvText: string): CSVRow[] {
       headers.forEach((header, index) => {
         row[header] = values[index] || '';
       });
-      return row as CSVRow;
+      return row as unknown as CSVRow;
     });
 }
 
@@ -256,7 +256,7 @@ Deno.serve(async (req) => {
 
       } catch (error) {
         console.error(`Error processing row ${results.processed}:`, error);
-        results.errors.push(`Row ${results.processed}: ${error.message}`);
+        results.errors.push(`Row ${results.processed}: ${(error as Error).message}`);
       }
     }
 
@@ -270,7 +270,7 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('CSV import error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: (error as Error).message }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,

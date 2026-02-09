@@ -1,10 +1,10 @@
 
 import React from "react";
 import FinancialReportTable from "./FinancialReportTable";
-import { Performance, Expense } from "@/types";
+import { PokerPerformance, Expense } from "@/types";
 
 interface FinancialReportPreviewProps {
-  performances: Performance[];
+  performances: PokerPerformance[];
   expenses: Expense[];
   periodRange: { start: Date; end: Date };
 }

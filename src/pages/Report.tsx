@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ReportConfigForm from "@/components/report/ReportConfigForm";
 import ReportPreview from "@/components/report/ReportPreview";
 import { useReportData, ReportType, PeriodType } from "@/hooks/useReportData";
+import { ReportData } from "@/types";
 import { useDREReportData } from "@/hooks/useDREReportData";
 import ExpenseAdvancedFilters from "@/components/report/ExpenseAdvancedFilters";
 import { useQuery } from "@tanstack/react-query";
@@ -220,7 +221,7 @@ const Report = () => {
           <ReportPreview
             reportReady={reportReady}
             reportType={reportType}
-            reportData={filteredReportData}
+            reportData={filteredReportData as ReportData}
             comparisonA={{ period: { start: comparisonStart, end: comparisonEnd } }}
             comparisonB={{ period: { start: startDate, end: endDate } }}
             dreData={dreData}

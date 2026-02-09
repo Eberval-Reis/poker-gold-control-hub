@@ -96,7 +96,7 @@ export function useTournamentPerformanceForm() {
   // Get performance data if editing
   const { data: performanceData, isLoading: isLoadingPerformance, error: performanceError } = useQuery({
     queryKey: ['tournament-performance', id],
-    queryFn: () => tournamentPerformanceService.getTournamentPerformanceById(id as string),
+    queryFn: () => tournamentPerformanceService.getPerformanceById(id as string),
     enabled: !!id,
   });
 
@@ -197,8 +197,8 @@ export function useTournamentPerformanceForm() {
       };
 
       return isEditing
-        ? tournamentPerformanceService.updateTournamentPerformance(id as string, performanceData)
-        : tournamentPerformanceService.createTournamentPerformance(performanceData);
+        ? tournamentPerformanceService.updatePerformance(id as string, performanceData)
+        : tournamentPerformanceService.createPerformance(performanceData);
     },
     onSuccess: () => {
       console.log('Performance saved successfully');
