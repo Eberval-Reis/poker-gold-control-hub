@@ -18,6 +18,29 @@ const Index = () => {
   const [selectedYear, setSelectedYear] = useState<number | null>(currentYear);
   const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
 
+  // Fetch all performances to extract available years
+  const { data: allPerformancesForYears } = useQuery({
+    queryKey: ["tournament_performance_years"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("tournament_performance")
+        .select("tournament_date");
+      return data || [];
+    },
+  });
+
+  // Extract unique years from actual data
+  const availableYears = (() => {
+    const years = new Set<number>();
+    years.add(currentYear);
+    (allPerformancesForYears || []).forEach((p) => {
+      if (p.tournament_date) {
+        years.add(new Date(p.tournament_date).getFullYear());
+      }
+    });
+    return Array.from(years).sort((a, b) => b - a);
+  })();
+
   // Carrega as performances dos torneios com informações do torneio
   const { data: performances, isLoading: isLoadingPerformances } = useQuery({
     queryKey: ["tournament_performance", selectedYear, selectedMonth],
@@ -101,8 +124,7 @@ const Index = () => {
     );
   }
 
-  // Gera lista de anos disponíveis (2020 até ano atual)
-  const availableYears = Array.from({ length: currentYear - 2019 }, (_, i) => currentYear - i);
+  // Years are now computed above from actual data
 
   return (
     <div className="p-6">
