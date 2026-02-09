@@ -141,3 +141,33 @@
 .animate-reveal {
   animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* Custom Scrollbar - Poker Gold Theme */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.35) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--primary) / 0.35);
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--primary) / 0.55);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
