@@ -22,7 +22,7 @@ const ExpenseDistributionChart = ({ data }: ExpenseDistributionChartProps) => {
         <div className="w-1 h-4 bg-poker-gold rounded-full" />
         Despesas acumuladas por categoria
       </h3>
-      <div className={isMobile ? "h-[450px] w-full" : "h-[300px] w-full"}>
+      <div className={isMobile ? "h-[350px] w-full" : "h-[250px] w-full"}>
         {data.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
