@@ -9,12 +9,12 @@ const MonthlyPerformanceChart = ({ data }: MonthlyPerformanceChartProps) => {
   const isMobile = useIsMobile();
 
   return (
-    <div className={`bg-card p-6 rounded-sm border border-border/40 shadow-sm animate-reveal ${isMobile ? "h-[400px] w-full" : "h-[300px] w-full"}`}>
+    <div className="bg-card p-6 rounded-sm border border-border/40 shadow-sm animate-reveal h-full">
       <h3 className="text-sm font-bold font-montserrat uppercase tracking-widest mb-6 text-muted-foreground flex items-center gap-2">
         <div className="w-1 h-4 bg-poker-red rounded-full" />
         Performance Mensal
       </h3>
-      <div className="h-[220px] w-full">
+      <div className={isMobile ? "h-[350px] w-full" : "h-[250px] w-full"}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}
