@@ -53,7 +53,7 @@ export const createExpense = async (expenseData: Partial<Expense>, receipt?: Fil
 
   // Upload receipt if provided
   if (receipt) {
-    const fileName = `${Date.now()}-${receipt.name}`;
+    const fileName = `${user.id}/${Date.now()}-${receipt.name}`;
     const { data: fileData, error: uploadError } = await supabase
       .storage
       .from('receipts')
@@ -98,8 +98,14 @@ export const createExpense = async (expenseData: Partial<Expense>, receipt?: Fil
 
 export const updateExpense = async (id: string, expenseData: Partial<Expense>, receipt?: File): Promise<Expense> => {
   // Upload new receipt if provided
+  // Get user for scoped file path
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError || !user) {
+    throw new Error('User not authenticated');
+  }
+
   if (receipt) {
-    const fileName = `${Date.now()}-${receipt.name}`;
+    const fileName = `${user.id}/${Date.now()}-${receipt.name}`;
     const { data: fileData, error: uploadError } = await supabase
       .storage
       .from('receipts')
@@ -166,7 +172,9 @@ export const deleteExpense = async (id: string): Promise<{ success: boolean }> =
   // Note: This isn't critical, so we won't throw an error if it fails
   if (expense?.receipt_url) {
     try {
-      const filePath = expense.receipt_url.split('/').pop() || '';
+      // Extract the user_id/timestamp-filename path from the URL
+      const urlParts = expense.receipt_url.split('/receipts/');
+      const filePath = urlParts.length > 1 ? urlParts[1] : expense.receipt_url.split('/').pop() || '';
       if (filePath) {
         await supabase.storage.from('receipts').remove([filePath]);
       }
