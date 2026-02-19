@@ -74,7 +74,7 @@ const TournamentPerformanceList = () => {
             <CSVImportDialog onImportComplete={refetch} />
             <Button
               onClick={() => navigate('/register-tournament-performance')}
-              className="bg-[#d4af37] text-white hover:bg-[#d4af37]/90"
+              className="bg-poker-gold text-white hover:bg-poker-gold/90"
               size="sm"
             >
               <Plus className="mr-2 h-4 w-4" />

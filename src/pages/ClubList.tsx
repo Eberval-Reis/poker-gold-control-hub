@@ -32,13 +32,11 @@ const ClubList = () => {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   
-  // Fetch clubs
   const { data: clubs = [], isLoading, error } = useQuery({
     queryKey: ['clubs'],
     queryFn: clubService.getClubs,
   });
   
-  // Delete club mutation
   const deleteClub = useMutation({
     mutationFn: (id: string) => clubService.deleteClub(id),
     onSuccess: () => {
@@ -57,7 +55,6 @@ const ClubList = () => {
     },
   });
   
-  // Filter clubs based on search term
   const filteredClubs = clubs.filter(club => 
     club.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     club.location.toLowerCase().includes(searchTerm.toLowerCase())
@@ -68,7 +65,6 @@ const ClubList = () => {
   };
   
   return (
-    // Removido tudo relacionado ao Sidebar e Header antigos - mantém apenas o conteúdo principal
     <div className="container mx-auto p-6">
       {/* Header */}
       <div className="mb-8">
@@ -81,18 +77,17 @@ const ClubList = () => {
           >
             <ArrowLeft className="h-6 w-6" />
           </Button>
-          <h1 className="text-2xl font-bold text-poker-text-dark">Clubes de Poker</h1>
+          <h1 className="text-2xl font-bold text-foreground">Clubes de Poker</h1>
         </div>
-        <p className="text-[#5a5a5a]">
+        <p className="text-muted-foreground">
           Gerencie seus clubes e sedes de poker
         </p>
       </div>
       
       {/* Actions Row */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        {/* Search */}
         <div className="relative w-full md:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por nome ou local..."
             className="pl-10"
@@ -101,7 +96,6 @@ const ClubList = () => {
           />
         </div>
         
-        {/* Add New Button */}
         <Button
           className="bg-poker-gold hover:bg-poker-gold/90 text-poker-text-light gap-2 w-full md:w-auto"
           onClick={() => navigate('/register-club')}
@@ -118,13 +112,13 @@ const ClubList = () => {
         </div>
       ) : error ? (
         <div className="flex justify-center p-8">
-          <p className="text-red-500">Erro ao carregar clubes</p>
+          <p className="text-destructive">Erro ao carregar clubes</p>
         </div>
       ) : filteredClubs.length === 0 ? (
-        <div className="text-center p-8 bg-white rounded-lg shadow">
-          <Building className="h-12 w-12 mx-auto text-gray-400" />
-          <h3 className="mt-4 text-lg font-medium">Nenhum clube encontrado</h3>
-          <p className="mt-2 text-gray-500">
+        <div className="text-center p-8 bg-card rounded-lg shadow">
+          <Building className="h-12 w-12 mx-auto text-muted-foreground" />
+          <h3 className="mt-4 text-lg font-medium text-foreground">Nenhum clube encontrado</h3>
+          <p className="mt-2 text-muted-foreground">
             {searchTerm 
               ? "Nenhum clube corresponde à sua busca. Tente outros termos." 
               : "Você ainda não tem nenhum clube cadastrado."}
@@ -139,7 +133,7 @@ const ClubList = () => {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-card rounded-lg shadow overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
@@ -160,7 +154,7 @@ const ClubList = () => {
                       <Button 
                         variant="ghost" 
                         size="sm" 
-                        className="h-8 w-8 p-0 text-blue-600"
+                        className="h-8 w-8 p-0 text-primary hover:bg-primary/10"
                         onClick={() => navigate(`/register-club/${club.id}`)}
                       >
                         <Pencil className="h-4 w-4" />
@@ -172,7 +166,7 @@ const ClubList = () => {
                           <Button 
                             variant="ghost" 
                             size="sm" 
-                            className="h-8 w-8 p-0 text-red-600"
+                            className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10"
                           >
                             <Trash2 className="h-4 w-4" />
                             <span className="sr-only">Excluir</span>
@@ -189,7 +183,7 @@ const ClubList = () => {
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancelar</AlertDialogCancel>
                             <AlertDialogAction 
-                              className="bg-red-600"
+                              className="bg-destructive text-destructive-foreground"
                               onClick={() => handleDelete(club.id)}
                             >
                               Excluir

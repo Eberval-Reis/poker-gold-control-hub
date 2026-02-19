@@ -28,20 +28,18 @@ const FinalTableList = () => {
 
   return (
     <div className="container mx-auto p-6">
-      {/* Header da página */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-2">
-          <Trophy className="h-8 w-8 text-[#d4af37]" />
-          <h1 className="text-2xl font-bold text-poker-text-dark">
+          <Trophy className="h-8 w-8 text-poker-gold" />
+          <h1 className="text-2xl font-bold text-foreground">
             Minhas Final Tables
           </h1>
         </div>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Visualize todos os torneios onde você chegou à Final Table
         </p>
       </div>
 
-      {/* Filtros */}
       <FinalTableFilters
         filters={filters}
         onFilterChange={updateFilter}
@@ -49,11 +47,10 @@ const FinalTableList = () => {
         allPerformances={allPerformances}
       />
 
-      {/* Lista de Final Tables */}
       {performances.length === 0 ? (
         <div className="text-center py-10">
-          <Trophy className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg">
+          <Trophy className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground text-lg">
             {allPerformances.length === 0
               ? 'Você ainda não registrou nenhuma Final Table.'
               : 'Nenhuma Final Table encontrada com os filtros aplicados.'
@@ -62,7 +59,7 @@ const FinalTableList = () => {
         </div>
       ) : (
         <>
-          <div className="mb-4 text-sm text-gray-600">
+          <div className="mb-4 text-sm text-muted-foreground">
             Exibindo {pagination.paginatedData.length} de {performances.length} Final Tables filtradas ({allPerformances.length} total)
           </div>
 

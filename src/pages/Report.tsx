@@ -11,7 +11,6 @@ import ExpenseAdvancedFilters from "@/components/report/ExpenseAdvancedFilters";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-// Update the quickReports type!
 const quickReports: {
   title: string,
   description: string,
@@ -23,28 +22,28 @@ const quickReports: {
     {
       title: "ROI Mensal",
       description: "Análise do retorno sobre investimento",
-      icon: <TrendingUp className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+      icon: <TrendingUp className="h-8 w-8 mx-auto text-poker-gold mb-2" />,
       reportType: "roi",
       period: "month",
     },
     {
       title: "Atividade Semanal",
       description: "Torneios jogados na semana",
-      icon: <Calendar className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+      icon: <Calendar className="h-8 w-8 mx-auto text-poker-gold mb-2" />,
       reportType: "performance",
       period: "week",
     },
     {
       title: "Despesas Mensais",
       description: "Gastos relacionados ao poker",
-      icon: <DollarSign className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+      icon: <DollarSign className="h-8 w-8 mx-auto text-poker-gold mb-2" />,
       reportType: "expenses",
       period: "month",
     },
     {
       title: "DRE Mensal",
       description: "Demonstração do resultado",
-      icon: <BarChart3 className="h-8 w-8 mx-auto text-[#d4af37] mb-2" />,
+      icon: <BarChart3 className="h-8 w-8 mx-auto text-poker-gold mb-2" />,
       reportType: "dre",
       period: "month",
     },
@@ -52,7 +51,6 @@ const quickReports: {
 
 const Report = () => {
   const navigate = useNavigate();
-  // Ajustar para "all" ao invés de ""
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [period, setPeriod] = useState<PeriodType>("month");
   const [reportType, setReportType] = useState<ReportType>("performance");
@@ -63,27 +61,12 @@ const Report = () => {
   const [reportReady, setReportReady] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  // DRE filters
   const [eventId, setEventId] = useState<string>();
   const [tournamentId, setTournamentId] = useState<string>();
 
-  const reportData = useReportData({
-    reportType,
-    period,
-    startDate,
-    endDate,
-  });
+  const reportData = useReportData({ reportType, period, startDate, endDate });
+  const dreData = useDREReportData({ period, startDate, endDate, eventId, tournamentId });
 
-  // DRE data
-  const dreData = useDREReportData({
-    period,
-    startDate,
-    endDate,
-    eventId,
-    tournamentId,
-  });
-
-  // Fetch event and tournament names for display
   const { data: events = [] } = useQuery({
     queryKey: ["events-names"],
     queryFn: async () => {
@@ -103,7 +86,6 @@ const Report = () => {
   const selectedEventName = events.find((e) => e.id === eventId)?.name;
   const selectedTournamentName = tournaments.find((t) => t.id === tournamentId)?.name;
 
-  // Atualizar filtro: só aplica categoria se não for "all" e tipo for "expenses"
   const filteredExpenses =
     reportType === "expenses" && selectedCategory !== "all"
       ? reportData.expenses.filter((e) => e.type === selectedCategory)
@@ -120,7 +102,6 @@ const Report = () => {
     expenseSumByCategory: reportType === "expenses" ? filteredExpenseSumByCategory : reportData.expenseSumByCategory,
   };
 
-  // Novo: gerar reportReady de comparação com validação simples
   const handleGenerateReport = () => {
     if (reportType === "comparison") {
       if (!comparisonStart || !comparisonEnd || !startDate || !endDate) {
@@ -142,7 +123,6 @@ const Report = () => {
       setReportReady(true);
       return;
     }
-    // ...existing validation...
     setFormError(null);
     setReportReady(true);
   };
@@ -150,7 +130,6 @@ const Report = () => {
   const handleQuickReport = (item: typeof quickReports[0]) => {
     setPeriod(item.period);
     setReportType(item.reportType);
-    // Limpa datas se não for custom
     if (item.period !== "custom") {
       setStartDate(undefined);
       setEndDate(undefined);
@@ -158,7 +137,6 @@ const Report = () => {
       setStartDate(item.extra?.startDate);
       setEndDate(item.extra?.endDate);
     }
-    // Reset DRE filters
     setEventId(undefined);
     setTournamentId(undefined);
     setFormError(null);
@@ -166,7 +144,6 @@ const Report = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  // Busca todas categorias possíveis (no período!)
   const allCategories = Array.from(
     new Set((reportData.expenseSumByCategory || []).map((c) => c.category))
   );
@@ -175,13 +152,12 @@ const Report = () => {
     <div className="container mx-auto p-3 sm:p-4 md:p-6 overflow-x-hidden">
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
-          <FileText className="h-6 w-6 text-[#d4af37]" />
-          <h1 className="text-2xl font-bold text-poker-text-dark">Relatórios</h1>
+          <FileText className="h-6 w-6 text-poker-gold" />
+          <h1 className="text-2xl font-bold text-foreground">Relatórios</h1>
         </div>
-        <p className="text-gray-600">Gere relatórios detalhados sobre seu desempenho</p>
+        <p className="text-muted-foreground">Gere relatórios detalhados sobre seu desempenho</p>
       </div>
 
-      {/* Report Configuration */}
       <ReportConfigForm
         period={period}
         setPeriod={setPeriod}
@@ -203,7 +179,6 @@ const Report = () => {
         setTournamentId={setTournamentId}
       />
 
-      {/* Filtro Avançado para Despesas */}
       {reportType === "expenses" && reportReady && (
         <ExpenseAdvancedFilters
           categories={allCategories}
@@ -212,7 +187,6 @@ const Report = () => {
         />
       )}
 
-      {/* Report Preview */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Prévia do Relatório</CardTitle>
@@ -231,11 +205,10 @@ const Report = () => {
         </CardContent>
       </Card>
 
-      {/* Quick Reports */}
       <div className="mt-8">
-        <h2 className="text-lg font-semibold mb-4">Relatórios Rápidos</h2>
+        <h2 className="text-lg font-semibold mb-4 text-foreground">Relatórios Rápidos</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {quickReports.map((item, idx) => (
+          {quickReports.map((item) => (
             <Card
               key={item.title}
               className="cursor-pointer hover:shadow-md transition-shadow min-w-0"
@@ -248,8 +221,8 @@ const Report = () => {
             >
               <CardContent className="p-4 text-center">
                 {item.icon}
-                <h3 className="font-medium">{item.title}</h3>
-                <p className="text-sm text-gray-500">{item.description}</p>
+                <h3 className="font-medium text-foreground">{item.title}</h3>
+                <p className="text-sm text-muted-foreground">{item.description}</p>
               </CardContent>
             </Card>
           ))}

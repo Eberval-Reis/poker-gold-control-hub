@@ -30,18 +30,11 @@ const ExpenseList = () => {
     mutationFn: expenseService.deleteExpense,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['expenses'] });
-      toast({
-        title: "Sucesso",
-        description: "Despesa excluída com sucesso.",
-      });
+      toast({ title: "Sucesso", description: "Despesa excluída com sucesso." });
     },
     onError: (error) => {
       console.error('Delete error:', error);
-      toast({
-        title: "Erro",
-        description: "Erro ao excluir despesa.",
-        variant: "destructive",
-      });
+      toast({ title: "Erro", description: "Erro ao excluir despesa.", variant: "destructive" });
     },
   });
 
@@ -80,7 +73,7 @@ const ExpenseList = () => {
     return (
       <div className="container mx-auto p-6">
         <div className="text-center py-8">
-          <p className="text-red-600">Erro ao carregar despesas: {error.message}</p>
+          <p className="text-destructive">Erro ao carregar despesas: {error.message}</p>
         </div>
       </div>
     );
@@ -90,14 +83,14 @@ const ExpenseList = () => {
     <div className="container mx-auto p-6">
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
-          <FileText className="h-6 w-6 text-[#d4af37]" />
-          <h1 className="text-2xl font-bold text-poker-text-dark">Lista de Despesas</h1>
+          <FileText className="h-6 w-6 text-poker-gold" />
+          <h1 className="text-2xl font-bold text-foreground">Lista de Despesas</h1>
         </div>
-        <p className="text-gray-600">Gerencie suas despesas relacionadas aos torneios</p>
+        <p className="text-muted-foreground">Gerencie suas despesas relacionadas aos torneios</p>
       </div>
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
             placeholder="Buscar despesas..."
             value={searchTerm}
@@ -122,8 +115,8 @@ const ExpenseList = () => {
           {filteredExpenses.length === 0 ? (
             <Card>
               <CardContent className="text-center py-8">
-                <FileText className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                <p className="text-gray-600">
+                <FileText className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                <p className="text-muted-foreground">
                   {searchTerm ? 'Nenhuma despesa encontrada para sua busca.' : 'Nenhuma despesa cadastrada ainda.'}
                 </p>
                 {!searchTerm && (
@@ -168,17 +161,17 @@ const ExpenseList = () => {
                   <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Valor</p>
-                        <p className="text-lg font-semibold text-green-600">
+                        <p className="text-sm font-medium text-muted-foreground">Valor</p>
+                        <p className="text-lg font-semibold text-emerald-500">
                           R$ {Number(expense.amount).toFixed(2)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Data</p>
+                        <p className="text-sm font-medium text-muted-foreground">Data</p>
                         <p className="text-sm">{formatDateToBR(expense.date)}</p>
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-600">Torneio</p>
+                        <p className="text-sm font-medium text-muted-foreground">Torneio</p>
                         <p className="text-sm">
                           {expense.tournaments?.name || 'Não associado'}
                         </p>
@@ -186,8 +179,8 @@ const ExpenseList = () => {
                     </div>
                     {expense.description && (
                       <div className="mt-3">
-                        <p className="text-sm font-medium text-gray-600">Descrição</p>
-                        <p className="text-sm text-gray-800">{expense.description}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Descrição</p>
+                        <p className="text-sm text-foreground">{expense.description}</p>
                       </div>
                     )}
                   </CardContent>
