@@ -89,9 +89,9 @@ const TournamentList = () => {
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <h1 className="text-xl md:text-2xl font-bold text-poker-text-dark">Torneios de Poker</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-foreground">Torneios de Poker</h1>
           </div>
-          <p className="text-[#5a5a5a] text-sm md:text-base">
+          <p className="text-muted-foreground text-sm md:text-base">
             Gerencie seus torneios e competições
           </p>
         </div>
@@ -100,7 +100,7 @@ const TournamentList = () => {
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mb-4 md:mb-6 flex-shrink-0">
           {/* Search */}
           <div className="relative w-full sm:max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Buscar por nome ou tipo..."
               className="pl-10"
@@ -131,10 +131,10 @@ const TournamentList = () => {
               <p className="text-red-500">Erro ao carregar torneios</p>
             </div>
           ) : filteredTournaments.length === 0 ? (
-            <div className="text-center p-6 md:p-8 bg-white rounded-lg shadow">
-              <TrendingUp className="h-10 w-10 md:h-12 md:w-12 mx-auto text-gray-400" />
-              <h3 className="mt-4 text-base md:text-lg font-medium">Nenhum torneio encontrado</h3>
-              <p className="mt-2 text-gray-500 text-sm md:text-base">
+            <div className="text-center p-6 md:p-8 bg-card rounded-lg shadow">
+              <TrendingUp className="h-10 w-10 md:h-12 md:w-12 mx-auto text-muted-foreground" />
+              <h3 className="mt-4 text-base md:text-lg font-medium text-foreground">Nenhum torneio encontrado</h3>
+              <p className="mt-2 text-muted-foreground text-sm md:text-base">
                 {searchTerm 
                   ? "Nenhum torneio corresponde à sua busca. Tente outros termos." 
                   : "Você ainda não tem nenhum torneio cadastrado."}
@@ -149,10 +149,10 @@ const TournamentList = () => {
               )}
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow h-full flex flex-col overflow-hidden">
+            <div className="bg-card rounded-lg shadow h-full flex flex-col overflow-hidden">
               <div className="flex-1 overflow-auto">
                 <Table>
-                  <TableHeader className="sticky top-0 bg-white z-10">
+                  <TableHeader className="sticky top-0 bg-card z-10">
                     <TableRow>
                       <TableHead className="w-[30%] min-w-[120px]">Nome</TableHead>
                       <TableHead className="w-[20%] min-w-[100px] hidden md:table-cell">Clube</TableHead>
@@ -166,7 +166,7 @@ const TournamentList = () => {
                       <TableRow key={tournament.id}>
                         <TableCell className="font-medium">
                           <div className="truncate pr-2">{tournament.name}</div>
-                          <div className="md:hidden text-xs text-gray-500 mt-1 truncate">
+                          <div className="md:hidden text-xs text-muted-foreground mt-1 truncate">
                             {tournament.clubs?.name || 'Clube não especificado'}
                           </div>
                           {tournament.occurrences > 1 && (
@@ -202,7 +202,7 @@ const TournamentList = () => {
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50"
+                              className="h-8 w-8 p-0 text-primary hover:bg-primary/10"
                               onClick={() => navigate(`/register-tournament/${tournament.id}`)}
                             >
                               <Pencil className="h-3 w-3" />
@@ -214,7 +214,7 @@ const TournamentList = () => {
                                 <Button 
                                   variant="ghost" 
                                   size="sm" 
-                                  className="h-8 w-8 p-0 text-red-600 hover:bg-red-50"
+                                  className="h-8 w-8 p-0 text-destructive hover:bg-destructive/10"
                                 >
                                   <Trash2 className="h-3 w-3" />
                                   <span className="sr-only">Excluir</span>
