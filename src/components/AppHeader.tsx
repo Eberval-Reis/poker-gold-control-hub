@@ -26,7 +26,7 @@ const AppHeader = () => {
       <div className="flex items-center gap-2">
         <SidebarTrigger className="mr-2 hover:text-poker-gold transition-colors" />
         <h1 className="text-xl font-extrabold font-montserrat tracking-tight uppercase text-foreground">
-          Poker<span className="text-poker-gold">Gold</span>
+          Poker<span className="text-poker-gold" style={{ fontFamily: "'Caveat', cursive", fontSize: '1.5rem', textTransform: 'none' }}>Control</span>
         </h1>
       </div>
       <div className="flex gap-1">
