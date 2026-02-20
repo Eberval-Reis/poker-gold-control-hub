@@ -20,7 +20,7 @@ const DescriptionField = ({ form }: DescriptionFieldProps) => {
           <FormControl>
             <Input
               placeholder="Detalhes da despesa (ex: 'Gasolina para torneio em SP')"
-              className="bg-white"
+              className="bg-background"
               {...field}
             />
           </FormControl>

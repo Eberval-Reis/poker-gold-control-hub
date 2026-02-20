@@ -27,7 +27,7 @@ const AmountField = ({ form }: AmountFieldProps) => {
               type="number"
               step="0.01"
               min="0"
-              className="bg-white"
+              className="bg-background"
               {...field}
             />
           </FormControl>

@@ -47,14 +47,14 @@ const ReceiptField = ({ form, receiptFileName, setReceiptFileName, isEditing }: 
               <Button
                 type="button"
                 variant="outline"
-                className="bg-white"
+                className="bg-background"
                 onClick={() => document.getElementById('receipt-upload')?.click()}
               >
                 {isEditing && receiptFileName ? 'Trocar comprovante' : 'Anexar Foto/PDF'}
               </Button>
               
               {receiptFileName && (
-                <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
                   <span className="text-sm text-muted-foreground max-w-[200px] truncate">
                     {receiptFileName}
                   </span>

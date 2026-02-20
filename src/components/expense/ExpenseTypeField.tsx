@@ -23,7 +23,7 @@ const ExpenseTypeField = ({ form }: ExpenseTypeFieldProps) => {
           </FormLabel>
           <Select onValueChange={field.onChange} value={field.value}>
             <FormControl>
-              <SelectTrigger className="bg-white">
+              <SelectTrigger>
                 <SelectValue placeholder="Selecione o tipo de despesa" />
               </SelectTrigger>
             </FormControl>
