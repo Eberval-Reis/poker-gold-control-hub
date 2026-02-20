@@ -161,7 +161,7 @@ export default function BackerSelectWithModal({
               <Plus className="w-5 h-5 text-poker-gold" />
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="bg-card border-border">
             <DialogTitle>Cadastrar novo Financiador</DialogTitle>
             <form
               className="flex flex-col gap-3 pt-4"

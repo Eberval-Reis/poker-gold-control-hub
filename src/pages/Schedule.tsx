@@ -189,8 +189,8 @@ const SchedulePage = () => {
       </div>
       {/* Modal Form */}
       {showForm && (
-        <div className="fixed inset-0 z-40 bg-black/70 flex items-center justify-center backdrop-blur-sm animate-fade-in">
-          <div className="relative">
+        <div className="fixed inset-0 z-40 bg-black/70 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <EventForm
               onSubmit={handleSave}
               onCancel={() => {

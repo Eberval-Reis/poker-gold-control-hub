@@ -80,7 +80,7 @@ const ExpenseList = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-3 sm:p-6">
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
           <FileText className="h-6 w-6 text-poker-gold" />
@@ -186,7 +186,7 @@ const ExpenseList = () => {
                   </CardContent>
                 </Card>
               ))}
-              
+
               {filteredExpenses.length > 0 && (
                 <div className="mt-6">
                   <PaginationControls pagination={pagination} />
@@ -196,7 +196,7 @@ const ExpenseList = () => {
           )}
         </div>
       )}
-      
+
       <DeleteExpenseDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}

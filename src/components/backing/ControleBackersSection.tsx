@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useBackingInvestments } from "@/hooks/useBackingInvestments";
 import { Loader2 } from "lucide-react";
@@ -7,6 +6,7 @@ import BackersInvestmentsTable from "./BackersInvestmentsTable";
 // Removido: import BackersPayoutTable from "./BackersPayoutTable";
 
 import { BackingInvestment } from "@/hooks/useBackingInvestments";
+import { useTheme } from "next-themes";
 
 type InvestmentGroup = {
   offer: BackingInvestment['offer'];
@@ -15,6 +15,15 @@ type InvestmentGroup = {
 
 const ControleBackersSection = () => {
   const { data, isLoading, error } = useBackingInvestments();
+  const { resolvedTheme } = useTheme();
+  const [isDark, setIsDark] = React.useState(
+    () => typeof document !== 'undefined'
+      ? document.documentElement.classList.contains('dark')
+      : true
+  );
+  React.useEffect(() => {
+    if (resolvedTheme) setIsDark(resolvedTheme === 'dark');
+  }, [resolvedTheme]);
 
   if (isLoading) {
     return (
@@ -63,7 +72,11 @@ const ControleBackersSection = () => {
         const playerName = offer?.player_name || "-";
 
         return (
-          <div key={idx} className="mb-10">
+          <div
+            key={idx}
+            className="mb-6 rounded-lg overflow-hidden border border-border"
+            style={{ background: isDark ? 'hsl(222, 47%, 7%)' : 'hsl(0, 0%, 100%)' }}
+          >
             <BackersOfferHeader
               eventName={eventName}
               tournamentName={tournamentName}
@@ -71,7 +84,7 @@ const ControleBackersSection = () => {
             />
             <BackersInvestmentsTable investments={investments} />
             <div className="flex justify-end items-center gap-4 mt-2 ">
-              <span className="font-bold text-base text-gray-900">
+              <span className="font-bold text-base text-foreground">
                 Total Arrecadado: R$ {total.toLocaleString(undefined, { minimumFractionDigits: 2 })} ({buyin > 0 ? ((total / buyin) * 100).toFixed(0) : "0"}% do buy-in)
               </span>
             </div>

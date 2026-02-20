@@ -127,7 +127,7 @@ const Index = () => {
   // Years are now computed above from actual data
 
   return (
-    <div className="p-6">
+    <div className="p-3 sm:p-6">
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground mb-2">Dashboard</h1>
