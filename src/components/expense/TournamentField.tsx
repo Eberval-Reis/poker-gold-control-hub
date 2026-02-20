@@ -31,7 +31,7 @@ const TournamentField = ({ form, tournaments }: TournamentFieldProps) => {
           <FormLabel>Torneio Relacionado (opcional)</FormLabel>
           <Select onValueChange={field.onChange} value={field.value}>
             <FormControl>
-              <SelectTrigger className="bg-white">
+              <SelectTrigger>
                 <SelectValue placeholder="Vincular a um torneio específico" />
               </SelectTrigger>
             </FormControl>
