@@ -23,7 +23,7 @@ const TournamentStructureSection: React.FC<TournamentStructureSectionProps> = ({
 }) => {
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-poker-text-dark">Estrutura do Torneio</h2>
+      <h2 className="text-xl font-semibold text-foreground">Estrutura do Torneio</h2>
       
       <FormField
         control={form.control}
@@ -36,7 +36,7 @@ const TournamentStructureSection: React.FC<TournamentStructureSectionProps> = ({
                 type="number"
                 placeholder="Ex: 20000"
                 {...field}
-                className="border-[#a0a0a0]"
+                className="border-border"
               />
             </FormControl>
           </FormItem>
@@ -63,7 +63,7 @@ const TournamentStructureSection: React.FC<TournamentStructureSectionProps> = ({
               <Textarea
                 placeholder="Descreva os níveis de blinds"
                 {...field}
-                className="border-[#a0a0a0]"
+                className="border-border"
               />
             </FormControl>
           </FormItem>

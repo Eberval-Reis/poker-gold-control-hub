@@ -87,7 +87,7 @@ const BasicInformationSection: React.FC<BasicInformationSectionProps> = ({ form,
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-poker-text-dark">Informações Básicas</h2>
+      <h2 className="text-xl font-semibold text-foreground">Informações Básicas</h2>
 
       {/* Evento da agenda + botão novo */}
       <div className="flex items-end gap-2">

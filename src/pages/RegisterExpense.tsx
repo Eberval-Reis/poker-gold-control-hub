@@ -16,7 +16,7 @@ const RegisterExpense = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="text-poker-gold hover:text-poker-gold hover:bg-gray-100"
+            className="text-poker-gold hover:text-poker-gold hover:bg-muted"
             onClick={() => navigate('/expenses')}
           >
             <ArrowLeft size={24} />

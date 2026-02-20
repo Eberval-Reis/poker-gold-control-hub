@@ -19,7 +19,7 @@ const ObservationsSection = ({ form }: ObservationsSectionProps) => {
           <FormLabel>Observações</FormLabel>
           <FormControl>
             <Textarea
-              className="border-[#a0a0a0]"
+              className="border-border"
               placeholder="Digite suas observações aqui..."
               {...field}
             />

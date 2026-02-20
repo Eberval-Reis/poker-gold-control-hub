@@ -25,7 +25,7 @@ const ContactsSection = ({ form }: ContactsSectionProps) => {
             <FormControl>
               <Input
                 placeholder="(00) 00000-0000"
-                className="border-[#a0a0a0]"
+                className="border-border"
                 {...field}
               />
             </FormControl>
@@ -44,7 +44,7 @@ const ContactsSection = ({ form }: ContactsSectionProps) => {
               Pessoa de Contato
             </FormLabel>
             <FormControl>
-              <Input className="border-[#a0a0a0]" {...field} />
+              <Input className="border-border" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -61,7 +61,7 @@ const ContactsSection = ({ form }: ContactsSectionProps) => {
               Ponto de Referência
             </FormLabel>
             <FormControl>
-              <Input className="border-[#a0a0a0]" {...field} />
+              <Input className="border-border" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -80,7 +80,7 @@ const ContactsSection = ({ form }: ContactsSectionProps) => {
             <FormControl>
               <Input
                 type="url"
-                className="border-[#a0a0a0]"
+                className="border-border"
                 {...field}
               />
             </FormControl>

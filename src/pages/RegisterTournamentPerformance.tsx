@@ -17,15 +17,15 @@ const RegisterTournamentPerformance = () => {
               variant="ghost"
               size="icon"
               onClick={() => navigate('/tournament-performances')}
-              className="text-blue-600 hover:text-blue-800"
+              className="text-poker-gold hover:text-poker-gold/80"
             >
               <ArrowLeft className="h-6 w-6" />
             </Button>
-            <h1 className="text-2xl font-bold text-gray-900">
+            <h1 className="text-2xl font-bold text-foreground">
               {id ? 'Editar Movimento do Torneio' : 'Registrar Movimento do Torneio'}
             </h1>
           </div>
-          <p className="text-gray-600">Registre todos os gastos e ganhos do torneio</p>
+          <p className="text-muted-foreground">Registre todos os gastos e ganhos do torneio</p>
         </div>
 
         <TournamentPerformanceForm />

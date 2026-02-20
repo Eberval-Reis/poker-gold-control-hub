@@ -11,8 +11,8 @@ interface CostsSectionProps {
 
 const CostsSection = ({ form }: CostsSectionProps) => {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm">
-      <h2 className="text-lg font-medium mb-4">Custos</h2>
+    <div className="bg-card p-4 rounded-lg shadow-sm border">
+      <h2 className="text-lg font-medium mb-4 text-foreground">Custos</h2>
       <div className="space-y-4">
         <BuyinField form={form} />
         <RebuyFields form={form} />
