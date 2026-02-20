@@ -35,7 +35,7 @@ const RebuyFields = ({ form }: RebuyFieldsProps) => {
               <FormLabel>Valor do Rebuy (R$)</FormLabel>
               <FormControl>
                 <div className="relative">
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                     R$
                   </div>
                   <Input
@@ -76,8 +76,8 @@ const RebuyFields = ({ form }: RebuyFieldsProps) => {
       {/* Total rebuys calculated field */}
       <div className="mt-2">
         <div className="text-sm font-medium">Total em Rebuys:</div>
-        <div className="p-2 bg-gray-100 rounded flex items-center">
-          <span className="text-gray-700 font-medium">R$ {totalRebuy.toFixed(2)}</span>
+        <div className="p-2 bg-muted rounded flex items-center">
+          <span className="text-foreground font-medium">R$ {totalRebuy.toFixed(2)}</span>
         </div>
       </div>
     </div>
