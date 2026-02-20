@@ -9,8 +9,8 @@ interface ResultsSectionProps {
 
 const ResultsSection = ({ form }: ResultsSectionProps) => {
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm">
-      <h2 className="text-lg font-medium mb-4">Resultados</h2>
+    <div className="bg-card p-4 rounded-lg shadow-sm border">
+      <h2 className="text-lg font-medium mb-4 text-foreground">Resultados</h2>
       <ResultsFields form={form} />
     </div>
   );

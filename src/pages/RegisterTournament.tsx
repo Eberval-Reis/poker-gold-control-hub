@@ -20,13 +20,13 @@ const RegisterTournament = () => {
           >
             <ArrowLeft className="h-6 w-6" />
           </Button>
-          <h1 className="text-2xl font-bold text-poker-text-dark">
+          <h1 className="text-2xl font-bold text-foreground">
             {id ? 'Editar Torneio' : 'Cadastrar Torneio'}
           </h1>
         </div>
-        <p className="text-gray-600">Cadastre um novo torneio no sistema</p>
+        <p className="text-muted-foreground">Cadastre um novo torneio no sistema</p>
       </div>
-      <div className="bg-white rounded-lg p-6 shadow-sm">
+      <div className="bg-card rounded-lg p-6 shadow-sm">
         <TournamentForm tournamentId={id} />
       </div>
     </div>

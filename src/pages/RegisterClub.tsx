@@ -28,12 +28,12 @@ const RegisterClub = () => {
           >
             <ArrowLeft className="h-6 w-6" />
           </Button>
-          <h1 className="text-2xl font-bold text-poker-text-dark">
+          <h1 className="text-2xl font-bold text-foreground">
             {id ? 'Editar Clube' : 'Cadastrar Clube'}
           </h1>
         </div>
       </div>
-      <div className="bg-white rounded-lg p-6 shadow-sm mx-auto max-w-2xl">
+      <div className="bg-card rounded-lg p-6 shadow-sm mx-auto max-w-2xl">
         <ClubForm
           clubId={id}
           clubData={clubData as any}

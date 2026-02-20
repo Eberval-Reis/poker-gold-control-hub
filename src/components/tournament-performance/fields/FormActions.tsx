@@ -14,7 +14,7 @@ const FormActions = ({ isSubmitting, isEditing, onCancel }: FormActionsProps) =>
         type="button"
         variant="outline"
         onClick={onCancel}
-        className="border-[#d4af37] text-[#d4af37] hover:bg-[#d4af37]/10"
+        className="border-poker-gold text-poker-gold hover:bg-poker-gold/10"
         disabled={isSubmitting}
       >
         Cancelar
@@ -23,7 +23,7 @@ const FormActions = ({ isSubmitting, isEditing, onCancel }: FormActionsProps) =>
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="bg-[#d4af37] text-white hover:bg-[#d4af37]/90"
+        className="bg-poker-gold text-white hover:bg-poker-gold/90"
       >
         {isSubmitting ? 'Salvando...' : isEditing ? 'Atualizar' : 'Salvar'}
       </Button>
