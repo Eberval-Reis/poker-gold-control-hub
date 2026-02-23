@@ -42,7 +42,7 @@ const BackingManagement = () => {
   const tabOptions = getTabOptions();
 
   return (
-    <div className="container mx-auto px-2 sm:px-4 py-5 sm:py-8 max-w-2xl sm:max-w-4xl overflow-hidden">
+    <div className="mx-auto px-3 sm:px-4 py-5 sm:py-8 w-full max-w-2xl sm:max-w-4xl overflow-x-hidden">
       <h1 className="text-2xl sm:text-2xl font-bold text-poker-gold mb-2 sm:mb-4 text-center sm:text-left">
         Gestão de Cavalagem
       </h1>
@@ -81,7 +81,7 @@ const BackingManagement = () => {
         </div>
       )}
 
-      <Tabs value={currentTab} onValueChange={handleTabSelect} className="w-full">
+      <Tabs value={currentTab} onValueChange={handleTabSelect} className="w-full overflow-x-hidden">
         {!isMobile && (
           <TabsList
             className="mb-6 w-full max-w-full flex gap-1 bg-muted rounded-md overflow-x-auto"
