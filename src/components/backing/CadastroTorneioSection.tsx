@@ -183,7 +183,7 @@ const CadastroTorneioSection = () => {
       {/* Modal de edição de evento */}
       {editModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-card border border-border rounded-lg p-6 w-[94vw] max-w-xs shadow space-y-3 relative">
+          <div className="bg-card rounded-lg p-6 w-[94vw] max-w-xs shadow space-y-3 relative border border-border">
             <button
               className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
               type="button"

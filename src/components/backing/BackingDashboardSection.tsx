@@ -45,9 +45,9 @@ const BackingDashboardSection = () => {
   }
 
   return (
-    <div className="space-y-6 w-full overflow-hidden">
+    <div className="space-y-6 w-full overflow-x-hidden">
       <h2 className="text-xl font-semibold">Dashboard</h2>
-
+      
       {/* Métricas principais - Grid responsivo */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card>
@@ -114,25 +114,25 @@ const BackingDashboardSection = () => {
             ) : (
               <div className="h-[180px] sm:h-[200px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={revenueByTournament}
+                  <BarChart 
+                    data={revenueByTournament} 
                     margin={{ left: 0, right: 5, top: 5, bottom: 5 }}
                   >
-                    <XAxis
-                      dataKey="name"
-                      tick={{ fontSize: 10 }}
+                    <XAxis 
+                      dataKey="name" 
+                      tick={{ fontSize: 10 }} 
                       interval={0}
                       angle={-30}
                       textAnchor="end"
                       height={50}
                       tickFormatter={(value) => value.length > 10 ? `${value.slice(0, 10)}...` : value}
                     />
-                    <YAxis
-                      tick={{ fontSize: 10 }}
+                    <YAxis 
+                      tick={{ fontSize: 10 }} 
                       width={40}
-                      tickFormatter={(value) => value >= 1000 ? `${(value / 1000).toFixed(0)}k` : value}
+                      tickFormatter={(value) => value >= 1000 ? `${(value/1000).toFixed(0)}k` : value}
                     />
-                    <Tooltip
+                    <Tooltip 
                       formatter={(value: number) => [`R$ ${value.toLocaleString("pt-BR")}`, "Receita"]}
                       contentStyle={{ fontSize: 12 }}
                     />
@@ -175,11 +175,11 @@ const BackingDashboardSection = () => {
                         <Cell key={idx} fill={chartColors[idx % chartColors.length]} />
                       ))}
                     </Pie>
-                    <Legend
+                    <Legend 
                       wrapperStyle={{ fontSize: 11, paddingTop: 5 }}
                       iconSize={10}
                     />
-                    <Tooltip
+                    <Tooltip 
                       formatter={(value: number) => [`R$ ${value.toLocaleString("pt-BR")}`, "Lucro"]}
                       contentStyle={{ fontSize: 12 }}
                     />
@@ -193,7 +193,12 @@ const BackingDashboardSection = () => {
 
       {/* Tabela de payouts */}
       <Card className="overflow-hidden">
-        <CardContent className="p-0">
+        <CardHeader className="pb-2 px-3 sm:px-4">
+          <CardTitle className="text-sm sm:text-base">
+            Investimento & Retorno por Backer
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0 overflow-x-auto">
           <BackersPayoutTable />
         </CardContent>
       </Card>

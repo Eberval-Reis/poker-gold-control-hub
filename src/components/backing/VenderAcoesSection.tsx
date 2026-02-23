@@ -7,22 +7,12 @@ import { useBackingOfferList, BackingOffer } from "@/hooks/useBackingOfferList";
 import { toast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { useTheme } from "next-themes";
 
 const VenderAcoesSection = () => {
   const [percent, setPercent] = React.useState(5);
   const [backerId, setBackerId] = React.useState<string | null>(null);
   const [selectedOfferId, setSelectedOfferId] = React.useState<string | null>(null);
   const [isPaid, setIsPaid] = React.useState(false);
-  const { resolvedTheme } = useTheme();
-  const [isDark, setIsDark] = React.useState(
-    () => typeof document !== 'undefined'
-      ? document.documentElement.classList.contains('dark')
-      : true
-  );
-  React.useEffect(() => {
-    if (resolvedTheme) setIsDark(resolvedTheme === 'dark');
-  }, [resolvedTheme]);
 
   const { data: offers, isLoading, error } = useBackingOfferList();
   const selectedOffer: BackingOffer | undefined = offers?.find(o => o.id === selectedOfferId);
@@ -54,8 +44,8 @@ const VenderAcoesSection = () => {
   }
 
   const isBankroll = selectedOffer?.offer_type === 'bankroll';
-  const baseAmount = isBankroll
-    ? (selectedOffer?.total_bankroll ?? 0)
+  const baseAmount = isBankroll 
+    ? (selectedOffer?.total_bankroll ?? 0) 
     : (selectedOffer?.buy_in_amount ?? 0);
   const markup = selectedOffer?.markup_percentage ?? 1;
   const disponivel = selectedOffer?.available_percentage ?? 0;
@@ -105,9 +95,9 @@ const VenderAcoesSection = () => {
     }
 
     toast({ title: "Salvando investimento..." });
-
+    
     const amountPaid = Number((baseAmount * (percent / 100) * markup).toFixed(2));
-
+    
     const { data, error } = await supabase
       .from("backing_investments")
       .insert([
@@ -135,9 +125,9 @@ const VenderAcoesSection = () => {
   }
 
   return (
-    <div className="space-y-7 max-w-lg mx-auto px-3 sm:px-2 overflow-x-hidden">
+    <div className="space-y-7 max-w-lg mx-auto px-2 overflow-x-hidden">
       <h2 className="text-2xl font-bold text-poker-gold mb-1">Vender Ações</h2>
-
+      
       <div>
         <label className="block text-poker-gold font-semibold mb-1" htmlFor="offerselect">
           Oferta para venda de ação
@@ -150,24 +140,21 @@ const VenderAcoesSection = () => {
         >
           {offers?.map(offer => (
             <option key={offer.id} value={offer.id}>
-              {offer.offer_type === 'bankroll'
-                ? `[Bankroll] ${offer.period_description || offer.player_name}`
+              {offer.offer_type === 'bankroll' 
+                ? `[Bankroll] ${offer.period_description || offer.player_name}` 
                 : offer.tournament_name || "—"}
             </option>
           ))}
         </select>
       </div>
 
-      <div
-        className="rounded-xl p-5 flex flex-col gap-1 border border-poker-gold/10 shadow-sm min-w-0"
-        style={{ background: isDark ? 'hsl(222, 47%, 12%)' : 'hsl(220, 15%, 96%)' }}
-      >
+      <div className="bg-muted rounded-xl p-5 flex flex-col gap-1 border border-poker-gold/10 shadow-sm min-w-0">
         <div className="flex items-center gap-2 mb-2">
           <Badge variant={isBankroll ? "secondary" : "default"}>
             {isBankroll ? "Bankroll" : "Torneio"}
           </Badge>
         </div>
-
+        
         {isBankroll ? (
           <>
             <span className="font-bold text-lg text-poker-gold mb-0" style={{ lineHeight: 1.1 }}>
@@ -203,7 +190,7 @@ const VenderAcoesSection = () => {
             </span>
           </>
         )}
-
+        
         <span className="text-muted-foreground">
           Ações Disponíveis: <span className="font-bold">{disponivel}%</span>
         </span>
@@ -212,12 +199,8 @@ const VenderAcoesSection = () => {
         </span>
       </div>
 
-      <form
-        className="flex flex-col gap-5 rounded-xl px-4 py-6 shadow border min-w-0"
-        style={{
-          background: isDark ? 'hsl(222, 47%, 7%)' : 'hsl(0, 0%, 100%)',
-          borderColor: isDark ? 'hsl(222, 47%, 15%)' : 'hsl(220, 15%, 90%)'
-        }}
+      <form 
+        className="flex flex-col gap-5 bg-card rounded-xl px-2 py-6 shadow border border-border min-w-0"
         onSubmit={handleSubmit}
       >
         <BackerSelectWithModal value={backerId} onChange={setBackerId} />
@@ -244,7 +227,7 @@ const VenderAcoesSection = () => {
             readOnly
             value={
               selectedOffer
-                ? `R$ ${(baseAmount * (percent / 100) * markup).toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+                ? `R$ ${(baseAmount * (percent / 100) * markup).toLocaleString(undefined, {maximumFractionDigits:2})}`
                 : ""
             }
             className="w-full p-2 rounded border border-input bg-background text-base"
