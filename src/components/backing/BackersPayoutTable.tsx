@@ -85,8 +85,8 @@ const BackersPayoutTable: React.FC = () => {
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-xs sm:text-sm">
+    <div className="overflow-x-auto max-w-full">
+      <table className="w-full text-xs sm:text-sm min-w-[400px]">
         <thead>
           <tr className="bg-muted border-b">
             <th className="py-2 px-2 sm:px-3 text-left align-middle font-medium whitespace-nowrap">Torneio</th>

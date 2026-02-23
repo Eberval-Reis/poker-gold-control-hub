@@ -45,7 +45,7 @@ const BackingDashboardSection = () => {
   }
 
   return (
-    <div className="space-y-6 w-full overflow-hidden">
+    <div className="space-y-6 w-full overflow-hidden max-w-full">
       <h2 className="text-xl font-semibold">Dashboard</h2>
       
       {/* Métricas principais - Grid responsivo */}

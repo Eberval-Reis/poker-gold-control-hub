@@ -42,7 +42,7 @@ const BackingManagement = () => {
   const tabOptions = getTabOptions();
 
   return (
-    <div className="container mx-auto px-1 sm:px-2 py-5 sm:py-8 max-w-2xl sm:max-w-4xl">
+    <div className="container mx-auto px-2 sm:px-4 py-5 sm:py-8 max-w-2xl sm:max-w-4xl overflow-hidden">
       <h1 className="text-2xl sm:text-2xl font-bold text-poker-gold mb-2 sm:mb-4 text-center sm:text-left">
         Gestão de Cavalagem
       </h1>
@@ -70,7 +70,7 @@ const BackingManagement = () => {
             id="tab-select"
             value={currentTab}
             onChange={e => handleTabSelect(e.target.value)}
-            className="w-full p-2 rounded border border-input bg-muted font-semibold text-poker-gold"
+            className="w-full p-2 rounded border border-input bg-muted font-semibold text-poker-gold truncate max-w-full"
           >
             {tabOptions.map(opt => (
               <option key={opt.value} value={opt.value} disabled={opt.disabled}>
