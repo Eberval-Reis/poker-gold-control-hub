@@ -45,7 +45,7 @@ const BackingDashboardSection = () => {
   }
 
   return (
-    <div className="space-y-6 w-full overflow-hidden max-w-full">
+    <div className="space-y-6 w-full overflow-x-hidden">
       <h2 className="text-xl font-semibold">Dashboard</h2>
       
       {/* Métricas principais - Grid responsivo */}
@@ -198,7 +198,7 @@ const BackingDashboardSection = () => {
             Investimento & Retorno por Backer
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent className="p-0 overflow-x-auto">
           <BackersPayoutTable />
         </CardContent>
       </Card>
