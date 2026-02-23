@@ -31,19 +31,14 @@ const AppSidebar = () => {
   const { isMobile, setOpenMobile } = useSidebar();
 
   const menuItems = [
-    // Visão geral
     { path: '/', icon: Home, label: 'Dashboard' },
-    // Planejamento
-    { path: '/schedule', icon: Calendar, label: 'Agenda' },
-    { path: '/tournaments', icon: Trophy, label: 'Torneios' },
     { path: '/clubs', icon: Building2, label: 'Clubes' },
-    // Registro de atividade
+    { path: '/tournaments', icon: Trophy, label: 'Torneios' },
     { path: '/tournament-performances', icon: BarChart3, label: 'Performances' },
-    { path: '/final-tables', icon: Users, label: 'Final Tables' },
-    // Financeiro
     { path: '/expenses', icon: CreditCard, label: 'Despesas' },
     { path: '/backing-management', icon: DollarSign, label: 'Gestão Cavalagem' },
-    // Análise
+    { path: '/final-tables', icon: Users, label: 'Final Tables' },
+    { path: '/schedule', icon: Calendar, label: 'Agenda' },
     { path: '/report', icon: FileText, label: 'Relatórios' },
   ];
 
