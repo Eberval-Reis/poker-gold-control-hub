@@ -85,33 +85,33 @@ const BackersPayoutTable: React.FC = () => {
   }
 
   return (
-    <div className="overflow-x-auto max-w-full">
-      <table className="w-full text-xs sm:text-sm min-w-[300px]">
+    <div className="overflow-x-auto max-w-full -mx-0">
+      <table className="w-full text-xs sm:text-sm min-w-[500px]">
         <thead>
           <tr className="bg-muted border-b">
-            <th className="py-2 px-1 sm:px-3 text-left align-middle font-medium whitespace-nowrap">Torneio</th>
-            <th className="py-2 px-1 sm:px-3 text-left align-middle font-medium whitespace-nowrap">Backer</th>
-            <th className="py-2 px-1 sm:px-3 text-center align-middle font-medium whitespace-nowrap">% Ações</th>
-            <th className="py-2 px-1 sm:px-3 text-right align-middle font-medium whitespace-nowrap">Investido</th>
-            <th className="py-2 px-1 sm:px-3 text-right align-middle font-medium whitespace-nowrap">Retorno</th>
+            <th className="py-2 px-1 sm:px-3 text-left align-middle font-medium">Torneio</th>
+            <th className="py-2 px-1 sm:px-3 text-left align-middle font-medium">Backer</th>
+            <th className="py-2 px-1 sm:px-3 text-center align-middle font-medium">% Ações</th>
+            <th className="py-2 px-1 sm:px-3 text-right align-middle font-medium">Investido</th>
+            <th className="py-2 px-1 sm:px-3 text-right align-middle font-medium">Retorno</th>
           </tr>
         </thead>
         <tbody>
           {data.map((row) => (
             <tr key={row.id} className="border-b last:border-0 hover:bg-muted/50">
-              <td className="py-2 px-1 sm:px-3 text-left align-middle max-w-[100px] sm:max-w-[120px] truncate">
+              <td className="py-2 px-1 sm:px-3 text-left align-middle max-w-[120px] sm:max-w-[150px] break-words">
                 {row.tournament}
               </td>
-              <td className="py-2 px-1 sm:px-3 text-left align-middle whitespace-nowrap">
+              <td className="py-2 px-1 sm:px-3 text-left align-middle">
                 {row.backer}
               </td>
-              <td className="py-2 px-1 sm:px-3 text-center align-middle whitespace-nowrap">
+              <td className="py-2 px-1 sm:px-3 text-center align-middle">
                 {row.percentage}%
               </td>
               <td className="py-2 px-1 sm:px-3 text-right align-middle whitespace-nowrap">
                 R$ {row.invested.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
               </td>
-              <td className="py-2 px-1 sm:px-3 text-right align-middle whitespace-nowrap">
+              <td className="py-2 px-1 sm:px-3 text-right align-middle">
                 {row.payout !== null
                   ? <span className={row.payout - row.invested >= 0 ? "text-green-600 font-medium" : "text-red-600 font-medium"}>
                     R$ {row.payout.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}

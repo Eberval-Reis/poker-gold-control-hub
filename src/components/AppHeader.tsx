@@ -22,11 +22,11 @@ const AppHeader = () => {
   };
 
   return (
-    <header className="bg-background/80 backdrop-blur-md border-b border-border/40 p-4 flex justify-between items-center transition-all sticky top-0 z-30">
-      <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
-        <SidebarTrigger className="mr-1 sm:mr-2 hover:text-poker-gold transition-colors flex-shrink-0" />
-        <h1 className="text-lg sm:text-xl font-extrabold font-montserrat tracking-tight uppercase text-foreground truncate">
-          Poker<span className="text-poker-gold" style={{ fontFamily: "'Caveat', cursive", fontSize: '1.4rem', textTransform: 'none' }}>Control</span>
+    <header className="bg-background/80 backdrop-blur-md border-b border-border/40 p-3 sm:p-4 flex justify-between items-center transition-all sticky top-0 z-30">
+      <div className="flex items-center gap-0.5 sm:gap-2 min-w-0 flex-1">
+        <SidebarTrigger className="mr-0.5 sm:mr-2 hover:text-poker-gold transition-colors flex-shrink-0" />
+        <h1 className="text-base sm:text-xl font-extrabold font-montserrat tracking-tight uppercase text-foreground truncate min-w-0 flex-shrink">
+          Poker<span className="text-poker-gold" style={{ fontFamily: "'Caveat', cursive", fontSize: '1.2rem', textTransform: 'none' }}>Control</span>
         </h1>
       </div>
       <div className="flex gap-1">

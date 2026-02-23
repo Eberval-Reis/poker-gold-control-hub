@@ -42,7 +42,7 @@ const BackingManagement = () => {
   const tabOptions = getTabOptions();
 
   return (
-    <div className="mx-auto px-1 sm:px-4 py-4 sm:py-8 w-full max-w-2xl sm:max-w-4xl overflow-x-hidden">
+    <div className="mx-auto px-0 sm:px-4 py-4 sm:py-8 w-full max-w-2xl sm:max-w-4xl overflow-x-hidden">
       <h1 className="text-xl sm:text-2xl font-bold text-poker-gold mb-2 sm:mb-4 text-center sm:text-left">
         Gestão de Cavalagem
       </h1>

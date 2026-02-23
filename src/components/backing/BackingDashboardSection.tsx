@@ -51,14 +51,14 @@ const BackingDashboardSection = () => {
       {/* Métricas principais - Grid responsivo */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <Card>
-          <CardContent className="p-3 sm:p-4">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1.5 sm:p-2 rounded-lg bg-green-100 dark:bg-green-900/30 shrink-0">
-                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
+          <CardContent className="p-2 sm:p-4">
+            <div className="flex items-center gap-1.5 sm:gap-3">
+              <div className="p-1 sm:p-2 rounded-lg bg-green-100 dark:bg-green-900/30 shrink-0">
+                <TrendingUp className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-green-600 dark:text-green-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">ROI Total</p>
-                <p className={`text-lg sm:text-xl font-bold ${roi >= 0 ? "text-green-600" : "text-red-600"}`}>
+                <p className="text-[10px] sm:text-sm text-muted-foreground truncate">ROI Total</p>
+                <p className={`text-base sm:text-xl font-bold ${roi >= 0 ? "text-green-600" : "text-red-600"}`}>
                   {(roi * 100).toFixed(2)}%
                 </p>
               </div>
@@ -67,14 +67,14 @@ const BackingDashboardSection = () => {
         </Card>
 
         <Card>
-          <CardContent className="p-3 sm:p-4">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1.5 sm:p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 shrink-0">
-                <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-poker-gold" />
+          <CardContent className="p-2 sm:p-4">
+            <div className="flex items-center gap-1.5 sm:gap-3">
+              <div className="p-1 sm:p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30 shrink-0">
+                <DollarSign className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-poker-gold" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">Lucro Cavaleiro</p>
-                <p className="text-base sm:text-lg font-bold text-poker-gold truncate">
+                <p className="text-[10px] sm:text-sm text-muted-foreground truncate">Lucro Cavaleiro</p>
+                <p className="text-sm sm:text-lg font-bold text-poker-gold truncate">
                   R$ {playerProfit.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
                 </p>
               </div>
@@ -83,14 +83,14 @@ const BackingDashboardSection = () => {
         </Card>
 
         <Card className="sm:col-span-2 lg:col-span-1">
-          <CardContent className="p-3 sm:p-4">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="p-1.5 sm:p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 shrink-0">
-                <Users className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
+          <CardContent className="p-2 sm:p-4">
+            <div className="flex items-center gap-1.5 sm:gap-3">
+              <div className="p-1 sm:p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 shrink-0">
+                <Users className="h-3.5 w-3.5 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">Backers Ativos</p>
-                <p className="text-lg sm:text-xl font-bold text-foreground">{numBackers}</p>
+                <p className="text-[10px] sm:text-sm text-muted-foreground truncate">Backers Ativos</p>
+                <p className="text-base sm:text-xl font-bold text-foreground">{numBackers}</p>
               </div>
             </div>
           </CardContent>
