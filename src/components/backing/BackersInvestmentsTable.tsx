@@ -59,7 +59,7 @@ const statusLabel = (
   return (
     <div
       className={
-        "px-2 py-1 rounded flex items-center gap-1 min-w-[80px] bg-white border " +
+        "px-2 py-1 rounded flex items-center gap-1 min-w-[80px] bg-card border " +
         (isPending
           ? "border-yellow-500 text-yellow-600"
           : "border-green-500 text-green-600")
@@ -148,7 +148,7 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
   }
 
   return (
-    <div className="border border-gray-200 rounded-b-md bg-white w-full">
+    <div className="border border-border rounded-b-md bg-card w-full">
       {/* Modal de edição */}
       <EditInvestmentModal
         open={!!editing}
@@ -168,7 +168,7 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
         onSubmit={handleEditSubmit}
         isUpdating={updating}
       />
-      <table className="w-full table-fixed text-sm text-gray-900">
+      <table className="w-full table-fixed text-sm text-foreground">
         <colgroup>
           <col style={{ width: "32%" }} />
           <col style={{ width: "13%" }} />
@@ -227,7 +227,7 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
                     <Button
                       size="sm"
                       variant="ghost"
-                      className="text-poker-gold hover:bg-gray-100 p-1"
+                      className="text-poker-gold hover:bg-muted p-1"
                       disabled={!!hasPayouts}
                       title={
                         hasPayouts

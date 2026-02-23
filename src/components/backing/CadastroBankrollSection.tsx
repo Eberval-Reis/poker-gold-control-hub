@@ -100,7 +100,7 @@ const CadastroBankrollSection = () => {
         <PlayerInfoFields playerName={playerName} setPlayerName={setPlayerName} />
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-foreground">
             Valor Total do Bankroll (R$) *
           </label>
           <Input
@@ -114,7 +114,7 @@ const CadastroBankrollSection = () => {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-foreground">
             Descrição do Período/Evento *
           </label>
           <Input
@@ -127,7 +127,7 @@ const CadastroBankrollSection = () => {
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-foreground">
               Data Início
             </label>
             <Input
@@ -137,7 +137,7 @@ const CadastroBankrollSection = () => {
             />
           </div>
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-foreground">
               Data Fim
             </label>
             <Input

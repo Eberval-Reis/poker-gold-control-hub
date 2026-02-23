@@ -71,7 +71,7 @@ const ControleBackersSection = () => {
             />
             <BackersInvestmentsTable investments={investments} />
             <div className="flex justify-end items-center gap-4 mt-2 ">
-              <span className="font-bold text-base text-gray-900">
+              <span className="font-bold text-base text-foreground">
                 Total Arrecadado: R$ {total.toLocaleString(undefined, { minimumFractionDigits: 2 })} ({buyin > 0 ? ((total / buyin) * 100).toFixed(0) : "0"}% do buy-in)
               </span>
             </div>
