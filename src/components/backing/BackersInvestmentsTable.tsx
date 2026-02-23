@@ -148,7 +148,7 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
   }
 
   return (
-    <div className="border border-border rounded-b-md bg-card w-full">
+    <div className="border border-border rounded-b-md bg-card w-full overflow-x-auto">
       {/* Modal de edição */}
       <EditInvestmentModal
         open={!!editing}
@@ -168,21 +168,14 @@ const BackersInvestmentsTable: React.FC<BackersInvestmentsTableProps> = ({
         onSubmit={handleEditSubmit}
         isUpdating={updating}
       />
-      <table className="w-full table-fixed text-sm text-foreground">
-        <colgroup>
-          <col style={{ width: "32%" }} />
-          <col style={{ width: "13%" }} />
-          <col style={{ width: "20%" }} />
-          <col style={{ width: "17%" }} />
-          <col style={{ width: "18%" }} />
-        </colgroup>
+      <table className="w-full text-[10px] sm:text-sm text-foreground min-w-[450px]">
         <thead>
           <tr className="bg-muted">
-            <th className="py-2 px-3 text-left align-middle">Nome</th>
-            <th className="py-2 px-3 text-center align-middle">% Ação</th>
-            <th className="py-2 px-3 text-center align-middle">Valor Pago</th>
-            <th className="py-2 px-3 text-center align-middle">Status Pag.</th>
-            <th className="py-2 px-3 text-right align-middle">Ações</th>
+            <th className="py-2 px-1 sm:px-3 text-left align-middle">Nome</th>
+            <th className="py-2 px-1 sm:px-3 text-center align-middle">% Ação</th>
+            <th className="py-2 px-1 sm:px-3 text-center align-middle">Valor Pago</th>
+            <th className="py-2 px-1 sm:px-3 text-center align-middle">Status Pag.</th>
+            <th className="py-2 px-1 sm:px-3 text-right align-middle">Ações</th>
           </tr>
         </thead>
         <tbody>

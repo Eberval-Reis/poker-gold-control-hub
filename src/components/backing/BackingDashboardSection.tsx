@@ -134,7 +134,14 @@ const BackingDashboardSection = () => {
                     />
                     <Tooltip
                       formatter={(value: number) => [`R$ ${value.toLocaleString("pt-BR")}`, "Receita"]}
-                      contentStyle={{ fontSize: 12 }}
+                      contentStyle={{
+                        fontSize: 12,
+                        backgroundColor: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "4px",
+                        color: "hsl(var(--foreground))"
+                      }}
+                      itemStyle={{ color: "hsl(var(--poker-gold))" }}
                     />
                     <Bar dataKey="value" fill="#F6C94A" radius={[4, 4, 0, 0]} />
                   </BarChart>
@@ -181,7 +188,13 @@ const BackingDashboardSection = () => {
                     />
                     <Tooltip
                       formatter={(value: number) => [`R$ ${value.toLocaleString("pt-BR")}`, "Lucro"]}
-                      contentStyle={{ fontSize: 12 }}
+                      contentStyle={{
+                        fontSize: 12,
+                        backgroundColor: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
+                        borderRadius: "4px",
+                        color: "hsl(var(--foreground))"
+                      }}
                     />
                   </RePieChart>
                 </ResponsiveContainer>

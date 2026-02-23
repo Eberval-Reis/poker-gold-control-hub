@@ -29,7 +29,7 @@ const AppHeader = () => {
           Poker<span className="text-poker-gold" style={{ fontFamily: "'Caveat', cursive", fontSize: '1.2rem', textTransform: 'none' }}>Control</span>
         </h1>
       </div>
-      <div className="flex gap-1">
+      <div className="flex gap-1 flex-shrink-0">
         <ThemeToggle />
         <Button
           variant="ghost"
@@ -38,7 +38,7 @@ const AppHeader = () => {
           className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
           title="Sair"
         >
-          <LogOut size={24} />
+          <LogOut size={20} className="sm:w-6 sm:h-6" />
         </Button>
       </div>
     </header>
