@@ -160,14 +160,14 @@ const VenderAcoesSection = () => {
             <span className="font-bold text-lg text-poker-gold mb-0" style={{ lineHeight: 1.1 }}>
               {selectedOffer?.period_description || "Bankroll"}
             </span>
-            <span className="text-gray-900 font-medium text-base">
+            <span className="text-foreground font-medium text-base">
               Jogador: <span className="font-bold">{selectedOffer?.player_name ?? "-"}</span>
             </span>
-            <span className="font-medium text-gray-900 text-base">
+            <span className="font-medium text-foreground text-base">
               Valor Total: <span className="font-bold">R$ {baseAmount.toLocaleString()}</span>
             </span>
             {selectedOffer?.start_date && selectedOffer?.end_date && (
-              <span className="text-gray-700 text-sm">
+              <span className="text-muted-foreground text-sm">
                 Período: {new Date(selectedOffer.start_date).toLocaleDateString('pt-BR')} - {new Date(selectedOffer.end_date).toLocaleDateString('pt-BR')}
               </span>
             )}
@@ -182,25 +182,25 @@ const VenderAcoesSection = () => {
             <span className="font-medium text-poker-gold text-lg" style={{ marginTop: selectedOffer?.event_name ? '2px' : 0 }}>
               {selectedOffer?.tournament_name || "-"}
             </span>
-            <span className="text-gray-900 font-medium text-base">
+            <span className="text-foreground font-medium text-base">
               Jogador: <span className="font-bold">{selectedOffer?.player_name ?? "-"}</span>
             </span>
-            <span className="font-medium text-gray-900 text-base">
+            <span className="font-medium text-foreground text-base">
               Buy-in: <span className="font-bold">R$ {baseAmount.toLocaleString()}</span>
             </span>
           </>
         )}
         
-        <span className="text-gray-700">
+        <span className="text-muted-foreground">
           Ações Disponíveis: <span className="font-bold">{disponivel}%</span>
         </span>
-        <span className="text-gray-700">
+        <span className="text-muted-foreground">
           Mark-up: <span className="font-bold">{markup}</span>
         </span>
       </div>
 
       <form 
-        className="flex flex-col gap-5 bg-white/90 rounded-xl px-2 py-6 shadow border border-gray-100 min-w-0"
+        className="flex flex-col gap-5 bg-card rounded-xl px-2 py-6 shadow border border-border min-w-0"
         onSubmit={handleSubmit}
       >
         <BackerSelectWithModal value={backerId} onChange={setBackerId} />

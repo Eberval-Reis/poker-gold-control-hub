@@ -163,7 +163,7 @@ const CadastroTorneioSection = () => {
 
         <div className="flex items-center gap-3 mt-2 flex-wrap">
           <Switch checked={cavEnable} onCheckedChange={setCavEnable} />
-          <span className="font-medium text-gray-800 text-sm sm:text-base">
+          <span className="font-medium text-foreground text-sm sm:text-base">
             Habilitar Cavalagem?
           </span>
         </div>
@@ -183,9 +183,9 @@ const CadastroTorneioSection = () => {
       {/* Modal de edição de evento */}
       {editModal.open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-          <div className="bg-white rounded-lg p-6 w-[94vw] max-w-xs shadow space-y-3 relative">
+          <div className="bg-card rounded-lg p-6 w-[94vw] max-w-xs shadow space-y-3 relative border border-border">
             <button
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-700"
+              className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
               type="button"
               onClick={() => setEditModal({ open: false, eventId: null })}
               aria-label="Fechar"
