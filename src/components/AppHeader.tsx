@@ -22,23 +22,23 @@ const AppHeader = () => {
   };
 
   return (
-    <header className="bg-background/80 backdrop-blur-md border-b border-border/40 p-3 sm:p-4 flex justify-between items-center transition-all sticky top-0 z-30">
+    <header className="bg-background/80 backdrop-blur-md border-b border-border/40 p-2 sm:p-4 flex justify-between items-center transition-all sticky top-0 z-30">
       <div className="flex items-center gap-0.5 sm:gap-2 min-w-0 flex-1">
-        <SidebarTrigger className="mr-0.5 sm:mr-2 hover:text-poker-gold transition-colors flex-shrink-0" />
-        <h1 className="text-base sm:text-xl font-extrabold font-montserrat tracking-tight uppercase text-foreground truncate min-w-0 flex-shrink">
+        <SidebarTrigger className="mr-0.5 sm:mr-2 hover:text-poker-gold transition-colors flex-shrink-0 scale-90 sm:scale-100" />
+        <h1 className="text-sm sm:text-xl font-extrabold font-montserrat tracking-tight uppercase text-foreground truncate min-w-0 flex-shrink">
           Poker<span className="text-poker-gold" style={{ fontFamily: "'Caveat', cursive", fontSize: '1.2rem', textTransform: 'none' }}>Control</span>
         </h1>
       </div>
-      <div className="flex gap-1 flex-shrink-0">
+      <div className="flex gap-0.5 sm:gap-1 flex-shrink-0 items-center">
         <ThemeToggle />
         <Button
           variant="ghost"
           size="icon"
           onClick={handleLogout}
-          className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 h-8 w-8 sm:h-10 sm:w-10"
           title="Sair"
         >
-          <LogOut size={20} className="sm:w-6 sm:h-6" />
+          <LogOut size={18} className="sm:w-6 sm:h-6" />
         </Button>
       </div>
     </header>

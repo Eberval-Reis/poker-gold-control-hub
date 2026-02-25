@@ -85,15 +85,15 @@ const BackersPayoutTable: React.FC = () => {
   }
 
   return (
-    <div className="overflow-x-auto max-w-full -mx-0">
-      <table className="w-full text-[10px] sm:text-sm min-w-[380px] sm:min-w-[500px]">
+    <div className="overflow-x-auto max-w-full -mx-0 scrollbar-thin">
+      <table className="w-full text-[9px] sm:text-sm min-w-[340px] sm:min-w-[500px]">
         <thead>
           <tr className="bg-muted border-b">
-            <th className="py-1.5 sm:py-2 px-1 sm:px-3 text-left align-middle font-medium">Torneio</th>
-            <th className="py-1.5 sm:py-2 px-1 sm:px-3 text-left align-middle font-medium">Backer</th>
-            <th className="py-1.5 sm:py-2 px-1 sm:px-3 text-center align-middle font-medium">% Ação</th>
-            <th className="py-1.5 sm:py-2 px-1 sm:px-3 text-right align-middle font-medium">Investido</th>
-            <th className="py-1.5 sm:py-2 px-1 sm:px-3 text-right align-middle font-medium">Retorno</th>
+            <th className="py-1 sm:py-2 px-1 sm:px-3 text-left align-middle font-medium">Torneio</th>
+            <th className="py-1 sm:py-2 px-1 sm:px-3 text-left align-middle font-medium">Backer</th>
+            <th className="py-1 sm:py-2 px-1 sm:px-3 text-center align-middle font-medium">% Ação</th>
+            <th className="py-1 sm:py-2 px-1 sm:px-3 text-right align-middle font-medium whitespace-nowrap">Investido</th>
+            <th className="py-1 sm:py-2 px-1 sm:px-3 text-right align-middle font-medium">Retorno</th>
           </tr>
         </thead>
         <tbody>
