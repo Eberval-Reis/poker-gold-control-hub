@@ -17,8 +17,10 @@ const BackingManagement = () => {
   const isMobile = useIsMobile();
 
   const handleTabSelect = (v: string) => {
-    if (v === "cadastro") setModalidadeSelecionada("torneio");
-    if (v === "bankroll") setModalidadeSelecionada("bankroll");
+    if (!modalidadeSelecionada) {
+      if (v === "cadastro") setModalidadeSelecionada("torneio");
+      if (v === "bankroll") setModalidadeSelecionada("bankroll");
+    }
     setCurrentTab(v);
   };
 
@@ -26,12 +28,12 @@ const BackingManagement = () => {
     {
       value: "cadastro",
       label: "Cadastrar Torneio",
-      disabled: false
+      disabled: modalidadeSelecionada === "bankroll"
     },
     {
       value: "bankroll",
       label: "Cadastrar Bankroll",
-      disabled: false
+      disabled: modalidadeSelecionada === "torneio"
     },
     { value: "vender", label: "Vender Ações", disabled: false },
     { value: "controle", label: "Controle de Backers", disabled: false },
@@ -41,6 +43,11 @@ const BackingManagement = () => {
 
   const tabOptions = getTabOptions();
 
+  const handleTrocarModalidade = () => {
+    setModalidadeSelecionada(null);
+    setCurrentTab("cadastro"); // Volta para aba neutra ou a primeira
+  };
+
   return (
     <div className="mx-auto px-0 sm:px-4 py-4 sm:py-8 w-full max-w-2xl sm:max-w-4xl overflow-x-hidden">
       <h1 className="text-xl sm:text-2xl font-bold text-poker-gold mb-2 sm:mb-4 text-center sm:text-left">
@@ -48,15 +55,15 @@ const BackingManagement = () => {
       </h1>
 
       {modalidadeSelecionada && (
-        <div className="mb-4 p-2 bg-muted rounded-md flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">
-            Modalidade: <strong className="text-foreground">
+        <div className="mb-4 p-2 bg-muted rounded-md flex items-center justify-between border border-poker-gold/20">
+          <span className="text-sm text-muted-foreground font-medium">
+            Modalidade Ativa: <strong className="text-poker-gold uppercase tracking-wider">
               {modalidadeSelecionada === "torneio" ? "Torneio" : "Bankroll"}
             </strong>
           </span>
           <button
-            onClick={() => setModalidadeSelecionada(null)}
-            className="text-xs text-primary hover:underline"
+            onClick={handleTrocarModalidade}
+            className="text-xs font-bold text-poker-gold hover:text-poker-gold/80 underline underline-offset-2"
           >
             Trocar modalidade
           </button>
