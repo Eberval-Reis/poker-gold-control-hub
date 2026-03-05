@@ -57,15 +57,16 @@ export default function EditInvestmentModal({
     });
   }, [investment, buy_in_amount, markup_percentage, reset]);
 
+  const currentPercentageBought = watch("percentage_bought");
+
   // Recalcula "amount_paid" ao atualizar percentage_bought
   React.useEffect(() => {
-    const perc = watch("percentage_bought");
     if (!buy_in_amount || !markup_percentage) return;
     setValue(
       "amount_paid",
-      (buy_in_amount * markup_percentage * Number(perc)) / 100
+      (buy_in_amount * markup_percentage * Number(currentPercentageBought)) / 100
     );
-  }, [watch("percentage_bought"), buy_in_amount, markup_percentage, setValue]);
+  }, [currentPercentageBought, buy_in_amount, markup_percentage, setValue]);
 
   if (!investment) return null;
 
@@ -107,7 +108,7 @@ export default function EditInvestmentModal({
               step={0.01}
               {...register("amount_paid")}
               disabled
-              />
+            />
           </div>
           <div className="flex items-center gap-3 mt-1">
             <Switch

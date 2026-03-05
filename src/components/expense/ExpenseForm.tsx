@@ -25,7 +25,7 @@ const ExpenseForm = () => {
   const queryClient = useQueryClient();
   const [receiptFileName, setReceiptFileName] = useState<string | null>(null);
   const isEditing = Boolean(id);
-  
+
   const form = useForm<ExpenseFormData>({
     resolver: zodResolver(expenseFormSchema),
     defaultValues: {
@@ -43,7 +43,7 @@ const ExpenseForm = () => {
     queryKey: ['tournaments'],
     queryFn: tournamentService.getTournaments,
   });
-  
+
   // Get expense data if editing
   const { data: expenseData, isLoading: isLoadingExpense, error: expenseError } = useQuery({
     queryKey: ['expense', id],
@@ -79,7 +79,7 @@ const ExpenseForm = () => {
         description: expenseData.description || '',
         receipt: null, // Can't set File object from URL
       });
-      
+
       if (expenseData.receipt_url) {
         const fileName = expenseData.receipt_url.split('/').pop() || 'comprovante';
         setReceiptFileName(fileName);
@@ -97,21 +97,21 @@ const ExpenseForm = () => {
       });
       navigate('/expenses');
     }
-  }, [expenseError, toast, navigate]);
-  
+  }, [expenseError, navigate]);
+
   // Create or update expense mutation
   const mutation = useMutation({
     mutationFn: (data: ExpenseFormData) => {
       const { receipt, ...expenseData } = data;
       const numericAmount = parseFloat(expenseData.amount);
-      
+
       const formattedData = {
         ...expenseData,
         type: expenseData.type,
         amount: numericAmount,
         date: data.date.toISOString().split('T')[0],
       };
-      
+
       return isEditing
         ? expenseService.updateExpense(id as string, formattedData, receipt || undefined)
         : expenseService.createExpense(formattedData, receipt || undefined);
@@ -145,16 +145,16 @@ const ExpenseForm = () => {
         <DateField form={form} />
         <TournamentField form={form} tournaments={tournaments} />
         <DescriptionField form={form} />
-        <ReceiptField 
-          form={form} 
-          receiptFileName={receiptFileName} 
+        <ReceiptField
+          form={form}
+          receiptFileName={receiptFileName}
           setReceiptFileName={setReceiptFileName}
           isEditing={isEditing}
         />
-        <FormActions 
-          isSubmitting={mutation.isPending} 
-          isEditing={isEditing} 
-          onCancel={() => navigate('/expenses')} 
+        <FormActions
+          isSubmitting={mutation.isPending}
+          isEditing={isEditing}
+          onCancel={() => navigate('/expenses')}
         />
       </form>
     </Form>

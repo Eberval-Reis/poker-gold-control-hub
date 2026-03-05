@@ -8,8 +8,10 @@ import { toast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 
+const MIN_ACTION_PERCENT = 5;
+
 const VenderAcoesSection = () => {
-  const [percent, setPercent] = React.useState(5);
+  const [percent, setPercent] = React.useState(MIN_ACTION_PERCENT);
   const [backerId, setBackerId] = React.useState<string | null>(null);
   const [selectedOfferId, setSelectedOfferId] = React.useState<string | null>(null);
   const [isPaid, setIsPaid] = React.useState(false);
@@ -25,9 +27,9 @@ const VenderAcoesSection = () => {
 
   React.useEffect(() => {
     if (selectedOffer) {
-      setPercent(Math.min(5, selectedOffer.available_percentage));
+      setPercent(Math.min(MIN_ACTION_PERCENT, selectedOffer.available_percentage));
     }
-  }, [selectedOfferId]);
+  }, [selectedOffer]);
 
   React.useEffect(() => {
     setIsPaid(false);
@@ -44,8 +46,8 @@ const VenderAcoesSection = () => {
   }
 
   const isBankroll = selectedOffer?.offer_type === 'bankroll';
-  const baseAmount = isBankroll 
-    ? (selectedOffer?.total_bankroll ?? 0) 
+  const baseAmount = isBankroll
+    ? (selectedOffer?.total_bankroll ?? 0)
     : (selectedOffer?.buy_in_amount ?? 0);
   const markup = selectedOffer?.markup_percentage ?? 1;
   const disponivel = selectedOffer?.available_percentage ?? 0;
@@ -63,11 +65,11 @@ const VenderAcoesSection = () => {
       toast({ variant: "destructive", title: "Financiador não selecionado" });
       return;
     }
-    if (!percent || percent < 5 || percent > selectedOffer.available_percentage) {
+    if (!percent || percent < MIN_ACTION_PERCENT || percent > selectedOffer.available_percentage) {
       toast({
         variant: "destructive",
         title: "Percentual inválido",
-        description: `O percentual deve ser entre 5% e o disponível (${selectedOffer.available_percentage}%)`
+        description: `O percentual deve ser entre ${MIN_ACTION_PERCENT}% e o disponível (${selectedOffer.available_percentage}%)`
       });
       return;
     }
@@ -95,9 +97,9 @@ const VenderAcoesSection = () => {
     }
 
     toast({ title: "Salvando investimento..." });
-    
+
     const amountPaid = Number((baseAmount * (percent / 100) * markup).toFixed(2));
-    
+
     const { data, error } = await supabase
       .from("backing_investments")
       .insert([
@@ -120,14 +122,14 @@ const VenderAcoesSection = () => {
 
     setBackerId(null);
     setSelectedOfferId(null);
-    setPercent(5);
+    setPercent(MIN_ACTION_PERCENT);
     setIsPaid(false);
   }
 
   return (
     <div className="space-y-7 max-w-lg mx-auto px-2 overflow-x-hidden">
       <h2 className="text-2xl font-bold text-poker-gold mb-1">Vender Ações</h2>
-      
+
       <div>
         <label className="block text-poker-gold font-semibold mb-1" htmlFor="offerselect">
           Oferta para venda de ação
@@ -140,8 +142,8 @@ const VenderAcoesSection = () => {
         >
           {offers?.map(offer => (
             <option key={offer.id} value={offer.id}>
-              {offer.offer_type === 'bankroll' 
-                ? `[Bankroll] ${offer.period_description || offer.player_name}` 
+              {offer.offer_type === 'bankroll'
+                ? `[Bankroll] ${offer.period_description || offer.player_name}`
                 : offer.tournament_name || "—"}
             </option>
           ))}
@@ -154,7 +156,7 @@ const VenderAcoesSection = () => {
             {isBankroll ? "Bankroll" : "Torneio"}
           </Badge>
         </div>
-        
+
         {isBankroll ? (
           <>
             <span className="font-bold text-lg text-poker-gold mb-0" style={{ lineHeight: 1.1 }}>
@@ -190,7 +192,7 @@ const VenderAcoesSection = () => {
             </span>
           </>
         )}
-        
+
         <span className="text-muted-foreground">
           Ações Disponíveis: <span className="font-bold">{disponivel}%</span>
         </span>
@@ -199,7 +201,7 @@ const VenderAcoesSection = () => {
         </span>
       </div>
 
-      <form 
+      <form
         className="flex flex-col gap-5 bg-card rounded-xl px-2 py-6 shadow border border-border min-w-0"
         onSubmit={handleSubmit}
       >
@@ -209,11 +211,11 @@ const VenderAcoesSection = () => {
             % da ação *
           </label>
           <Slider
-            min={5}
+            min={MIN_ACTION_PERCENT}
             max={disponivel}
             value={[percent]}
             onValueChange={(vals) => setPercent(vals[0])}
-            step={5}
+            step={MIN_ACTION_PERCENT}
             className="mb-2 mt-2"
             disabled={!selectedOffer}
           />
@@ -227,7 +229,7 @@ const VenderAcoesSection = () => {
             readOnly
             value={
               selectedOffer
-                ? `R$ ${(baseAmount * (percent / 100) * markup).toLocaleString(undefined, {maximumFractionDigits:2})}`
+                ? `R$ ${(baseAmount * (percent / 100) * markup).toLocaleString(undefined, { maximumFractionDigits: 2 })}`
                 : ""
             }
             className="w-full p-2 rounded border border-input bg-background text-base"

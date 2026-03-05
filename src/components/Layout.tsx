@@ -13,7 +13,7 @@ const Layout = ({ children }: LayoutProps) => {
   return (
     <ThemeProvider>
       <SidebarProvider>
-        <div className="h-screen flex w-full overflow-hidden relative font-sans">
+        <div className="h-screen flex w-full overflow-clip relative font-sans">
           <div className="bg-grain" />
           <AppSidebar />
           <SidebarInset className="flex-1 flex flex-col relative z-20">
