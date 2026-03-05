@@ -23,8 +23,15 @@ const MetricCard: React.FC<MetricCardProps> = React.memo(({
   description,
   loading = false
 }) => {
+  const borderColorClass =
+    color === "green"
+      ? "border-b-green-500/70"
+      : color === "red"
+        ? "border-b-red-500/70"
+        : "border-b-poker-gold/40";
+
   return (
-    <Card className="overflow-hidden border-border/40 hover:border-poker-gold/40 transition-all duration-500 hover:shadow-gold-glow animate-reveal group">
+    <Card className={`overflow-hidden border-border/40 border-b-2 ${borderColorClass} hover:border-t-poker-gold/40 transition-all duration-500 hover:shadow-gold-glow animate-reveal group cursor-default select-none`}>
       <CardContent className="p-6 relative">
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
           {icon}

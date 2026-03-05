@@ -68,11 +68,9 @@ const Index = () => {
       const { data, error } = await query;
 
       if (error) {
-        console.error("Erro ao buscar performances:", error);
         return [];
       }
 
-      console.log("Performances carregadas:", data);
       return data || [];
     },
   });
@@ -100,8 +98,6 @@ const Index = () => {
       */
 
       const { data } = await query;
-      // LOG: Despesas retornadas da query
-      console.log("Despesas carregadas do banco:", data);
       return data || [];
     },
   });
@@ -117,8 +113,8 @@ const Index = () => {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Carregando dashboard...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-2 border-poker-gold/20 border-t-poker-gold mx-auto mb-4" />
+          <p className="text-muted-foreground text-sm">Carregando dashboard...</p>
         </div>
       </div>
     );
@@ -130,21 +126,42 @@ const Index = () => {
     <div className="p-3 sm:p-6">
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">Visão geral das suas performances no poker</p>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-1 h-6 rounded-full bg-poker-gold" />
+            <h1 className="text-2xl font-extrabold font-montserrat tracking-tight text-foreground uppercase">Dashboard</h1>
+          </div>
+          <p className="text-muted-foreground text-sm pl-3">Visão geral das suas performances no poker</p>
         </div>
         <div className="flex gap-2">
           <Select
             value={selectedYear?.toString() || "all"}
-            onValueChange={(val) => setSelectedYear(val === "all" ? null : Number(val))}
+            onValueChange={(val) => {
+              setSelectedYear(val === "all" ? null : Number(val));
+              setSelectedMonth(null);
+            }}
           >
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[130px]">
               <SelectValue placeholder="Ano" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os anos</SelectItem>
               {availableYears.map((year) => (
                 <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={selectedMonth?.toString() || "all"}
+            onValueChange={(val) => setSelectedMonth(val === "all" ? null : Number(val))}
+            disabled={selectedYear === null}
+          >
+            <SelectTrigger className="w-[130px]">
+              <SelectValue placeholder="Mês" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os meses</SelectItem>
+              {["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"].map((m, i) => (
+                <SelectItem key={i + 1} value={(i + 1).toString()}>{m}</SelectItem>
               ))}
             </SelectContent>
           </Select>
