@@ -112,7 +112,7 @@ const Login = () => {
             <span>♠</span>
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight uppercase text-white font-montserrat">
-            Poker<span className="text-poker-gold">Control</span>
+            Poker<span className="text-poker-gold font-bold ml-1">CONTROL</span>
           </h1>
           <div className="mt-1 h-px w-24 mx-auto bg-gradient-to-r from-transparent via-poker-gold/60 to-transparent" />
         </div>

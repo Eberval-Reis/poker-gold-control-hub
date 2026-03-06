@@ -48,7 +48,7 @@ const AppHeader = () => {
       <div className="flex items-center gap-0.5 sm:gap-2 flex-shrink-0">
         <SidebarTrigger className="mr-0.5 sm:mr-2 hover:text-poker-gold transition-colors flex-shrink-0 scale-90 sm:scale-100" />
         <h1 className="text-sm sm:text-xl font-montserrat tracking-tight text-foreground whitespace-nowrap">
-          <span className="font-extrabold uppercase">Poker</span><span className="text-poker-gold font-light uppercase tracking-widest text-[0.85em] sm:text-[0.85em]">CONTROL</span>
+          <span className="font-extrabold uppercase">Poker</span><span className="text-poker-gold font-bold uppercase tracking-widest text-[0.85em] sm:text-[0.85em] ml-1">CONTROL</span>
         </h1>
       </div>
 
